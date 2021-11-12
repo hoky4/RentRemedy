@@ -6,4 +6,7 @@ Set up Flutter https://flutter.dev/docs/get-started/install
 2. Update path
 3. Run "flutter doctor" in terminal
 4. Download IDE
-5. Download flutter plugin
+  4a. Download flutter plugin in IDE
+  4b. Configure dart and flutter path in IDE
+  4c. Set up android emulator in IDE
+

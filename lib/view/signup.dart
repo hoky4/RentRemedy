@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-class SignupScreen extends StatefulWidget {
-  const SignupScreen({Key? key}) : super(key: key);
+import 'login.dart';
+
+class Signup extends StatefulWidget {
+  const Signup({Key? key}) : super(key: key);
 
   @override
-  _SignupScreenState createState() => _SignupScreenState();
+  _SignupState createState() => _SignupState();
 }
 
-class _SignupScreenState extends State<SignupScreen> {
+class _SignupState extends State<Signup> {
+  final _formKey = GlobalKey<FormState>();
+
   final TextEditingController txtFirstName = TextEditingController();
   final TextEditingController txtLastName = TextEditingController();
   final TextEditingController txtEmail = TextEditingController();
@@ -18,52 +23,51 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(_isSignup ? 'Sign up Screen' : 'Log in Screen'),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.logout),
-              onPressed: () {
-                _message = 'User Logged Out';
-              },
-            ),
-          ],
-        ),
         body: Container(
+            alignment: Alignment.center,
             padding: EdgeInsets.all(36),
-            child: ListView(
-              children: [
-                Visibility(child: firstNameInput(), visible: _isSignup),
-                Visibility(child: lastNameInput(), visible: _isSignup),
-                emailInput(),
-                passwordInput(),
-                btnSignup(),
-                btnSecondary(),
-              ],
-            )));
+            child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    SizedBox(height: 100),
+                    Text(
+                      "Signup",
+                      style: GoogleFonts.pacifico(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 50,
+                          color: Colors.black),
+                    ),
+                    SizedBox(height: 25),
+                    firstNameInput(),
+                    lastNameInput(),
+                    emailInput(),
+                    passwordInput(),
+                    btnSignup(),
+                    btnSecondary(),
+                  ],
+                ))));
   }
 
-  Row btnSecondary() {
-    String buttonText = _isSignup ? 'Log in' : 'Sign up';
-    String prompt =
-        _isSignup ? "Already have an account? " : "Don't have an account? ";
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(prompt),
-        TextButton(
-          child: Text(buttonText),
-          style: TextButton.styleFrom(
-            textStyle: TextStyle(fontSize: 18),
+  Widget btnSecondary() {
+    return Padding(
+        padding: const EdgeInsets.fromLTRB(65, 20, 0, 0),
+        child: Row(children: [
+          Text(
+            'Already have Account ? ',
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
           ),
-          onPressed: () {
-            setState(() {
-              _isSignup = !_isSignup;
-            });
-          },
-        ),
-      ],
-    );
+          InkWell(
+            onTap: () {
+              Navigator.push(context,
+                  new MaterialPageRoute(builder: (context) => Login()));
+            },
+            child: Text(
+              'Signin',
+              style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ]));
   }
 
   Widget firstNameInput() {
@@ -121,6 +125,7 @@ class _SignupScreenState extends State<SignupScreen> {
         padding: EdgeInsets.only(top: 48),
         child: Container(
             height: 60,
+            width: 200,
             child: ElevatedButton(
               style: ButtonStyle(
                 backgroundColor:
@@ -136,7 +141,11 @@ class _SignupScreenState extends State<SignupScreen> {
                 style: TextStyle(fontSize: 18, color: Colors.white),
               ),
               onPressed: () {
-                String userId = '';
+                if (_formKey.currentState!.validate()) {
+                  print('ok');
+                } else {
+                  print('not ok');
+                }
               },
             )));
   }

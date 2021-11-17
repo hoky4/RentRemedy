@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rentremedy_mobile/view/signup.dart';
+import 'package:rentremedy_mobile/view/login.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: SignupScreen(),
+      home: Login(),
     );
   }
 }

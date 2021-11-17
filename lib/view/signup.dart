@@ -17,36 +17,36 @@ class _SignupState extends State<Signup> {
   final TextEditingController txtLastName = TextEditingController();
   final TextEditingController txtEmail = TextEditingController();
   final TextEditingController txtPassword = TextEditingController();
-  bool _isSignup = true;
-  late String _message;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Container(
-            alignment: Alignment.center,
-            padding: EdgeInsets.all(36),
-            child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    SizedBox(height: 100),
-                    Text(
-                      "Signup",
-                      style: GoogleFonts.pacifico(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 50,
-                          color: Colors.black),
-                    ),
-                    SizedBox(height: 25),
-                    firstNameInput(),
-                    lastNameInput(),
-                    emailInput(),
-                    passwordInput(),
-                    btnSignup(),
-                    btnSecondary(),
-                  ],
-                ))));
+        body: SingleChildScrollView(
+      child: Container(
+          alignment: Alignment.center,
+          padding: EdgeInsets.all(36),
+          child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  SizedBox(height: 100),
+                  Text(
+                    "Signup",
+                    style: GoogleFonts.pacifico(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 50,
+                        color: Colors.black),
+                  ),
+                  SizedBox(height: 25),
+                  firstNameInput(),
+                  lastNameInput(),
+                  emailInput(),
+                  passwordInput(),
+                  btnSignup(),
+                  btnSecondary(),
+                ],
+              ))),
+    ));
   }
 
   Widget btnSecondary() {
@@ -120,7 +120,6 @@ class _SignupState extends State<Signup> {
   }
 
   Widget btnSignup() {
-    String btnText = _isSignup ? 'Sign up' : 'Log in';
     return Padding(
         padding: EdgeInsets.only(top: 48),
         child: Container(
@@ -132,12 +131,13 @@ class _SignupState extends State<Signup> {
                     MaterialStateProperty.all(Theme.of(context).primaryColor),
                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                   RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24.0),
-                      side: BorderSide(color: Colors.red)),
+                    borderRadius: BorderRadius.circular(24.0),
+                    // side: BorderSide(color: Colors.red)
+                  ),
                 ),
               ),
               child: Text(
-                btnText,
+                'Sign up',
                 style: TextStyle(fontSize: 18, color: Colors.white),
               ),
               onPressed: () {

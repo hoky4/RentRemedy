@@ -15,7 +15,8 @@ class Signup extends StatefulWidget {
 
 class _SignupState extends State<Signup> {
   final _formKey = GlobalKey<FormState>();
-
+  String _message = '';
+  late Color _messageColor = Colors.black;
   final TextEditingController txtFirstName = TextEditingController();
   final TextEditingController txtLastName = TextEditingController();
   final TextEditingController txtEmail = TextEditingController();
@@ -41,6 +42,7 @@ class _SignupState extends State<Signup> {
                         color: Colors.black),
                   ),
                   SizedBox(height: 25),
+                  txtMessage(),
                   firstNameInput(),
                   lastNameInput(),
                   emailInput(),
@@ -103,7 +105,7 @@ class _SignupState extends State<Signup> {
   }
 
   Widget btnSignup() {
-    var statusCode = '';
+    http.Response response;
     return Padding(
         padding: EdgeInsets.only(top: 48),
         child: Container(
@@ -126,17 +128,26 @@ class _SignupState extends State<Signup> {
               ),
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
-                  print('ok');
-                  statusCode = await signup(txtFirstName.text, txtLastName.text,
+                  response = await signup(txtFirstName.text, txtLastName.text,
                       txtEmail.text, txtPassword.text);
-                  print('Status Code: $statusCode');
 
-                  if (statusCode == '201') {
+                  if (response.statusCode == 201) {
+                    setState(() {
+                      _message = 'Signup Success';
+                      _messageColor = Colors.green;
+                    });
+                    await Future.delayed(Duration(seconds: 1));
                     Navigator.push(context,
                         new MaterialPageRoute(builder: (context) => Login()));
+                  } else if (response.statusCode == 400) {
+                    print('Response error: ${response.body}');
+                    setState(() {
+                      _message = 'Error signing up.';
+                      _messageColor = Colors.red;
+                    });
                   }
                 } else {
-                  print('not ok');
+                  print('Missing required fields');
                 }
               },
             )));
@@ -162,10 +173,17 @@ class _SignupState extends State<Signup> {
           ),
         ]));
   }
+
+  Widget txtMessage() {
+    return Text(
+      _message,
+      style: TextStyle(
+          fontSize: 16, color: _messageColor, fontWeight: FontWeight.bold),
+    );
+  }
 }
 
-Future<String> signup(firstName, lastName, email, password) async {
-  print("signup called");
+Future<http.Response> signup(firstName, lastName, email, password) async {
   var url = "https://localhost:5001/api/users";
   final response = await http.post(
     Uri.parse(url),
@@ -181,17 +199,18 @@ Future<String> signup(firstName, lastName, email, password) async {
       'roles': [0]
     }),
   );
+  return response;
 
-  if (response.statusCode == 201) {
-    // If the server did return a 201 CREATED response,
-    // then parse the JSON.
-
-    print('Response ${response.body}');
-    return '${response.statusCode}';
-  } else {
-    // If the server did not return a 201 CREATED response,
-    // then throw an exception.
-    print('Error Status: ${response.statusCode}');
-    throw Exception('Failed to create user.');
-  }
+  // if (response.statusCode == 201) {
+  //   // If the server did return a 201 CREATED response,
+  //   // then parse the JSON.
+  //
+  //   print('Response ${response.body}');
+  //   return '${response.statusCode}';
+  // } else {
+  //   // If the server did not return a 201 CREATED response,
+  //   // then throw an exception.
+  //   print('Error Status: ${response.statusCode}');
+  //   throw Exception('Failed to create user.');
+  // }
 }

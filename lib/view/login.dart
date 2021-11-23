@@ -16,12 +16,13 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
-
+  String _message = '';
+  late Color _messageColor = Colors.black;
   User user = User('', '');
 
   @override
   Widget build(BuildContext context) {
-    var statusCode = '';
+    http.Response response;
 
     return Scaffold(
       body: Padding(
@@ -44,6 +45,7 @@ class _LoginState extends State<Login> {
                           color: Colors.black),
                     ),
                     SizedBox(height: 25),
+                    txtMessage(),
                     Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: TextFormField(
@@ -128,15 +130,24 @@ class _LoginState extends State<Login> {
                           ),
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
-                              print('ok');
-                              statusCode =
-                                  await login(user.email, user.password);
-                              if (statusCode == '200') {
+                              response = await login(user.email, user.password);
+                              if (response.statusCode == 200) {
+                                setState(() {
+                                  _message = 'Login Success';
+                                  _messageColor = Colors.green;
+                                });
+                                await Future.delayed(Duration(seconds: 1));
                                 // Navigator.push(context,
                                 //     new MaterialPageRoute(builder: (context) => SuccessScreen()));
+                              } else if (response.statusCode == 400) {
+                                print('Response error: ${response.body}');
+                                setState(() {
+                                  _message = 'Error logging in.';
+                                  _messageColor = Colors.red;
+                                });
                               }
                             } else {
-                              print('not ok');
+                              print('Missing required fields');
                             }
                           },
                           child: const Text('Login'),
@@ -174,10 +185,17 @@ class _LoginState extends State<Login> {
       ),
     );
   }
+
+  Widget txtMessage() {
+    return Text(
+      _message,
+      style: TextStyle(
+          fontSize: 16, color: _messageColor, fontWeight: FontWeight.bold),
+    );
+  }
 }
 
-Future<String> login(email, password) async {
-  print("login called");
+Future<http.Response> login(email, password) async {
   var url = "https://localhost:5001/api/login";
   final response = await http.post(
     Uri.parse(url),
@@ -191,16 +209,18 @@ Future<String> login(email, password) async {
     }),
   );
 
-  if (response.statusCode == 200) {
-    // If the server did return a 201 CREATED response,
-    // then parse the JSON.
+  return response;
 
-    print('Response body ${response.body}');
-    return '${response.statusCode}';
-  } else {
-    // If the server did not return a 201 CREATED response,
-    // then throw an exception.
-    print('Error Status: ${response.statusCode}');
-    throw Exception('Failed to create user.');
-  }
+  // if (response.statusCode == 200) {
+  //   // If the server did return a 201 CREATED response,
+  //   // then parse the JSON.
+  //
+  //   print('Response body ${response.body}');
+  //   return '${response.statusCode}';
+  // } else {
+  //   // If the server did not return a 201 CREATED response,
+  //   // then throw an exception.
+  //   print('Error Status: ${response.statusCode}');
+  //   throw Exception('Failed to create user.');
+  // }
 }

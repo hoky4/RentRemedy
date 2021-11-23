@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 
 import 'login.dart';
 
@@ -49,27 +52,6 @@ class _SignupState extends State<Signup> {
     ));
   }
 
-  Widget btnSecondary() {
-    return Padding(
-        padding: const EdgeInsets.fromLTRB(65, 20, 0, 0),
-        child: Row(children: [
-          Text(
-            'Already have Account ? ',
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-          ),
-          InkWell(
-            onTap: () {
-              Navigator.push(context,
-                  new MaterialPageRoute(builder: (context) => Login()));
-            },
-            child: Text(
-              'Signin',
-              style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
-            ),
-          ),
-        ]));
-  }
-
   Widget firstNameInput() {
     return Padding(
         padding: EdgeInsets.only(top: 24),
@@ -78,7 +60,8 @@ class _SignupState extends State<Signup> {
           keyboardType: TextInputType.name,
           decoration:
               InputDecoration(hintText: 'First Name', icon: Icon(Icons.person)),
-          validator: (text) => text!.isEmpty ? 'First Name is required' : '',
+          validator: (text) => text!.isEmpty ? 'First Name is required' : null,
+          onChanged: (value) {},
         ));
   }
 
@@ -90,7 +73,7 @@ class _SignupState extends State<Signup> {
           keyboardType: TextInputType.name,
           decoration:
               InputDecoration(hintText: 'Last Name', icon: Icon(Icons.person)),
-          validator: (text) => text!.isEmpty ? 'Last Name is required' : '',
+          validator: (text) => text!.isEmpty ? 'Last Name is required' : null,
         ));
   }
 
@@ -102,7 +85,7 @@ class _SignupState extends State<Signup> {
           keyboardType: TextInputType.emailAddress,
           decoration:
               InputDecoration(hintText: 'Email', icon: Icon(Icons.email)),
-          validator: (text) => text!.isEmpty ? 'Email is required' : '',
+          validator: (text) => text!.isEmpty ? 'Email is required' : null,
         ));
   }
 
@@ -115,11 +98,12 @@ class _SignupState extends State<Signup> {
           obscureText: true,
           decoration:
               InputDecoration(hintText: 'Password', icon: Icon(Icons.lock)),
-          validator: (text) => text!.isEmpty ? 'Password is required' : '',
+          validator: (text) => text!.isEmpty ? 'Password is required' : null,
         ));
   }
 
   Widget btnSignup() {
+    var statusCode = '';
     return Padding(
         padding: EdgeInsets.only(top: 48),
         child: Container(
@@ -140,13 +124,73 @@ class _SignupState extends State<Signup> {
                 'Sign up',
                 style: TextStyle(fontSize: 18, color: Colors.white),
               ),
-              onPressed: () {
+              onPressed: () async {
                 if (_formKey.currentState!.validate()) {
                   print('ok');
+                  statusCode = await signup(txtFirstName.text, txtLastName.text,
+                      txtEmail.text, txtPassword.text);
+                  print('Status Code: $statusCode');
+
+                  if (statusCode == '201') {
+                    Navigator.push(context,
+                        new MaterialPageRoute(builder: (context) => Login()));
+                  }
                 } else {
                   print('not ok');
                 }
               },
             )));
+  }
+
+  Widget btnSecondary() {
+    return Padding(
+        padding: const EdgeInsets.fromLTRB(65, 20, 0, 0),
+        child: Row(children: [
+          Text(
+            'Already have Account ? ',
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          ),
+          InkWell(
+            onTap: () {
+              Navigator.push(context,
+                  new MaterialPageRoute(builder: (context) => Login()));
+            },
+            child: Text(
+              'Login',
+              style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ]));
+  }
+}
+
+Future<String> signup(firstName, lastName, email, password) async {
+  print("signup called");
+  var url = "https://localhost:5001/api/users";
+  final response = await http.post(
+    Uri.parse(url),
+    headers: <String, String>{
+      'accept': 'application/json',
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, dynamic>{
+      'firstName': firstName,
+      'lastName': lastName,
+      'email': email,
+      'password': password,
+      'roles': [0]
+    }),
+  );
+
+  if (response.statusCode == 201) {
+    // If the server did return a 201 CREATED response,
+    // then parse the JSON.
+
+    print('Response ${response.body}');
+    return '201';
+  } else {
+    // If the server did not return a 201 CREATED response,
+    // then throw an exception.
+    throw Exception('Failed to create user.');
   }
 }

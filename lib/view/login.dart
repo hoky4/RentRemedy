@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 import 'package:rentremedy_mobile/models/user.dart';
 import 'package:rentremedy_mobile/view/signup.dart';
 
@@ -18,6 +21,8 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
+    var statusCode = '';
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(36.0),
@@ -59,9 +64,10 @@ class _LoginState extends State<Login> {
                         },
                         decoration: InputDecoration(
                           hintText: 'Enter Email',
+                          icon: Icon(Icons.email),
                           enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
-                              borderSide: BorderSide(color: Colors.blue)),
+                              borderSide: BorderSide(color: Colors.grey)),
                           focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
                               borderSide: BorderSide(color: Colors.blue)),
@@ -90,9 +96,10 @@ class _LoginState extends State<Login> {
                         },
                         decoration: InputDecoration(
                           hintText: 'Enter Password',
+                          icon: Icon(Icons.lock),
                           enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
-                              borderSide: BorderSide(color: Colors.blue)),
+                              borderSide: BorderSide(color: Colors.grey)),
                           focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
                               borderSide: BorderSide(color: Colors.blue)),
@@ -119,9 +126,15 @@ class _LoginState extends State<Login> {
                                 borderRadius: BorderRadius.circular(16.0)),
                             textStyle: const TextStyle(fontSize: 20),
                           ),
-                          onPressed: () {
+                          onPressed: () async {
                             if (_formKey.currentState!.validate()) {
                               print('ok');
+                              statusCode =
+                                  await login(user.email, user.password);
+                              if (statusCode == '200') {
+                                // Navigator.push(context,
+                                //     new MaterialPageRoute(builder: (context) => SuccessScreen()));
+                              }
                             } else {
                               print('not ok');
                             }
@@ -160,5 +173,34 @@ class _LoginState extends State<Login> {
         ),
       ),
     );
+  }
+}
+
+Future<String> login(email, password) async {
+  print("login called");
+  var url = "https://localhost:5001/api/login";
+  final response = await http.post(
+    Uri.parse(url),
+    headers: <String, String>{
+      'accept': 'application/json',
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, dynamic>{
+      'email': email,
+      'password': password,
+    }),
+  );
+
+  if (response.statusCode == 200) {
+    // If the server did return a 201 CREATED response,
+    // then parse the JSON.
+
+    print('Response body ${response.body}');
+    return '${response.statusCode}';
+  } else {
+    // If the server did not return a 201 CREATED response,
+    // then throw an exception.
+    print('Error Status: ${response.statusCode}');
+    throw Exception('Failed to create user.');
   }
 }

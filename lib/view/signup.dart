@@ -187,10 +187,11 @@ Future<String> signup(firstName, lastName, email, password) async {
     // then parse the JSON.
 
     print('Response ${response.body}');
-    return '201';
+    return '${response.statusCode}';
   } else {
     // If the server did not return a 201 CREATED response,
     // then throw an exception.
+    print('Error Status: ${response.statusCode}');
     throw Exception('Failed to create user.');
   }
 }

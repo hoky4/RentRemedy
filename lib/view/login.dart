@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:rentremedy_mobile/models/user.dart';
 import 'package:rentremedy_mobile/view/signup.dart';
+import 'package:rentremedy_mobile/view/success_screen.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -89,6 +90,7 @@ class _LoginState extends State<Login> {
                         onChanged: (value) {
                           user.password = value;
                         },
+                        obscureText: true,
                         validator: (value) {
                           if (value!.isEmpty) {
                             return 'Password is required';
@@ -136,9 +138,15 @@ class _LoginState extends State<Login> {
                                   _message = 'Login Success';
                                   _messageColor = Colors.green;
                                 });
+                                Map<String, dynamic> responseJson =
+                                    json.decode(response.body);
+                                var name = responseJson['firstName'];
                                 await Future.delayed(Duration(seconds: 1));
-                                // Navigator.push(context,
-                                //     new MaterialPageRoute(builder: (context) => SuccessScreen()));
+                                Navigator.push(
+                                    context,
+                                    new MaterialPageRoute(
+                                        builder: (context) =>
+                                            SuccessScreen(name: name)));
                               } else if (response.statusCode == 400) {
                                 print('Response error: ${response.body}');
                                 setState(() {
@@ -210,17 +218,4 @@ Future<http.Response> login(email, password) async {
   );
 
   return response;
-
-  // if (response.statusCode == 200) {
-  //   // If the server did return a 201 CREATED response,
-  //   // then parse the JSON.
-  //
-  //   print('Response body ${response.body}');
-  //   return '${response.statusCode}';
-  // } else {
-  //   // If the server did not return a 201 CREATED response,
-  //   // then throw an exception.
-  //   print('Error Status: ${response.statusCode}');
-  //   throw Exception('Failed to create user.');
-  // }
 }

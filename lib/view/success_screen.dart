@@ -53,9 +53,8 @@ class _SuccessScreenState extends State<SuccessScreen> {
     if (rawCookie != null) {
       int index = rawCookie.indexOf(';');
 
-      headers['Cookie'] = (index == -1)
-          ? rawCookie
-          : json.decode(rawCookie.substring(0, index));
+      headers['Cookie'] =
+          (index == -1) ? rawCookie : rawCookie.substring(0, index);
     }
   }
 

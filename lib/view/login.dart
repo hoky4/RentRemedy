@@ -196,7 +196,7 @@ class _LoginState extends State<Login> {
 }
 
 Future<http.Response> login(email, password) async {
-  var url = "https://localhost:5001/api/login";
+  var url = "https://10.0.2.2:5001/api/login";
   final response = await http.post(
     Uri.parse(url),
     headers: <String, String>{

@@ -184,7 +184,7 @@ class _SignupState extends State<Signup> {
 }
 
 Future<http.Response> signup(firstName, lastName, email, password) async {
-  var url = "https://localhost:5001/api/users";
+  var url = "https://10.0.2.2:5001/api/users";
   final response = await http.post(
     Uri.parse(url),
     headers: <String, String>{

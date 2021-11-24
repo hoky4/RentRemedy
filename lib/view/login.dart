@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 import 'package:rentremedy_mobile/models/user.dart';
 import 'package:rentremedy_mobile/view/signup.dart';
+import 'package:rentremedy_mobile/view/success_screen.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -13,11 +17,15 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
-
+  String _message = '';
+  late Color _messageColor = Colors.black;
   User user = User('', '');
+  Map<String, String> headers = {};
 
   @override
   Widget build(BuildContext context) {
+    http.Response response;
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(36.0),
@@ -39,6 +47,7 @@ class _LoginState extends State<Login> {
                           color: Colors.black),
                     ),
                     SizedBox(height: 25),
+                    txtMessage(),
                     Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: TextFormField(
@@ -59,9 +68,10 @@ class _LoginState extends State<Login> {
                         },
                         decoration: InputDecoration(
                           hintText: 'Enter Email',
+                          icon: Icon(Icons.email),
                           enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
-                              borderSide: BorderSide(color: Colors.blue)),
+                              borderSide: BorderSide(color: Colors.grey)),
                           focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
                               borderSide: BorderSide(color: Colors.blue)),
@@ -81,6 +91,7 @@ class _LoginState extends State<Login> {
                         onChanged: (value) {
                           user.password = value;
                         },
+                        obscureText: true,
                         validator: (value) {
                           if (value!.isEmpty) {
                             return 'Password is required';
@@ -90,9 +101,10 @@ class _LoginState extends State<Login> {
                         },
                         decoration: InputDecoration(
                           hintText: 'Enter Password',
+                          icon: Icon(Icons.lock),
                           enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
-                              borderSide: BorderSide(color: Colors.blue)),
+                              borderSide: BorderSide(color: Colors.grey)),
                           focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
                               borderSide: BorderSide(color: Colors.blue)),
@@ -119,11 +131,44 @@ class _LoginState extends State<Login> {
                                 borderRadius: BorderRadius.circular(16.0)),
                             textStyle: const TextStyle(fontSize: 20),
                           ),
-                          onPressed: () {
+                          onPressed: () async {
                             if (_formKey.currentState!.validate()) {
-                              print('ok');
+                              response = await login(user.email, user.password);
+                              if (response.statusCode == 200) {
+                                setState(() {
+                                  _message = 'Login Success';
+                                  _messageColor = Colors.green;
+                                });
+                                print(
+                                    'response headers: ${response.headers['set-cookie']}');
+                                Map<String, dynamic> responseBodyJson =
+                                    json.decode(response.body);
+                                var name = responseBodyJson['firstName'];
+
+                                var rawCookie = response.headers['set-cookie'];
+                                if (rawCookie != null) {
+                                  int index = rawCookie.indexOf(';');
+                                  headers['cookie'] = (index == -1)
+                                      ? rawCookie
+                                      : rawCookie.substring(0, index);
+                                }
+                                print('header: ${headers['cookie']}');
+                                await Future.delayed(Duration(seconds: 1));
+
+                                Navigator.push(
+                                    context,
+                                    new MaterialPageRoute(
+                                        builder: (context) =>
+                                            SuccessScreen(name: name, response: response)));
+                              } else if (response.statusCode == 400) {
+                                print('Response error: ${response.body}');
+                                setState(() {
+                                  _message = 'Error logging in.';
+                                  _messageColor = Colors.red;
+                                });
+                              }
                             } else {
-                              print('not ok');
+                              print('Missing required fields');
                             }
                           },
                           child: const Text('Login'),
@@ -161,4 +206,29 @@ class _LoginState extends State<Login> {
       ),
     );
   }
+
+  Widget txtMessage() {
+    return Text(
+      _message,
+      style: TextStyle(
+          fontSize: 16, color: _messageColor, fontWeight: FontWeight.bold),
+    );
+  }
+}
+
+Future<http.Response> login(email, password) async {
+  var url = "https://10.0.2.2:5001/api/login";
+  final response = await http.post(
+    Uri.parse(url),
+    headers: <String, String>{
+      'accept': 'application/json',
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, dynamic>{
+      'email': email,
+      'password': password,
+    }),
+  );
+
+  return response;
 }

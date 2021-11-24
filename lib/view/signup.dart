@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 
 import 'login.dart';
 
@@ -12,7 +15,8 @@ class Signup extends StatefulWidget {
 
 class _SignupState extends State<Signup> {
   final _formKey = GlobalKey<FormState>();
-
+  String _message = '';
+  late Color _messageColor = Colors.black;
   final TextEditingController txtFirstName = TextEditingController();
   final TextEditingController txtLastName = TextEditingController();
   final TextEditingController txtEmail = TextEditingController();
@@ -38,6 +42,7 @@ class _SignupState extends State<Signup> {
                         color: Colors.black),
                   ),
                   SizedBox(height: 25),
+                  txtMessage(),
                   firstNameInput(),
                   lastNameInput(),
                   emailInput(),
@@ -49,27 +54,6 @@ class _SignupState extends State<Signup> {
     ));
   }
 
-  Widget btnSecondary() {
-    return Padding(
-        padding: const EdgeInsets.fromLTRB(65, 20, 0, 0),
-        child: Row(children: [
-          Text(
-            'Already have Account ? ',
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-          ),
-          InkWell(
-            onTap: () {
-              Navigator.push(context,
-                  new MaterialPageRoute(builder: (context) => Login()));
-            },
-            child: Text(
-              'Signin',
-              style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
-            ),
-          ),
-        ]));
-  }
-
   Widget firstNameInput() {
     return Padding(
         padding: EdgeInsets.only(top: 24),
@@ -78,7 +62,8 @@ class _SignupState extends State<Signup> {
           keyboardType: TextInputType.name,
           decoration:
               InputDecoration(hintText: 'First Name', icon: Icon(Icons.person)),
-          validator: (text) => text!.isEmpty ? 'First Name is required' : '',
+          validator: (text) => text!.isEmpty ? 'First Name is required' : null,
+          onChanged: (value) {},
         ));
   }
 
@@ -90,7 +75,7 @@ class _SignupState extends State<Signup> {
           keyboardType: TextInputType.name,
           decoration:
               InputDecoration(hintText: 'Last Name', icon: Icon(Icons.person)),
-          validator: (text) => text!.isEmpty ? 'Last Name is required' : '',
+          validator: (text) => text!.isEmpty ? 'Last Name is required' : null,
         ));
   }
 
@@ -102,7 +87,7 @@ class _SignupState extends State<Signup> {
           keyboardType: TextInputType.emailAddress,
           decoration:
               InputDecoration(hintText: 'Email', icon: Icon(Icons.email)),
-          validator: (text) => text!.isEmpty ? 'Email is required' : '',
+          validator: (text) => text!.isEmpty ? 'Email is required' : null,
         ));
   }
 
@@ -115,11 +100,12 @@ class _SignupState extends State<Signup> {
           obscureText: true,
           decoration:
               InputDecoration(hintText: 'Password', icon: Icon(Icons.lock)),
-          validator: (text) => text!.isEmpty ? 'Password is required' : '',
+          validator: (text) => text!.isEmpty ? 'Password is required' : null,
         ));
   }
 
   Widget btnSignup() {
+    http.Response response;
     return Padding(
         padding: EdgeInsets.only(top: 48),
         child: Container(
@@ -140,13 +126,78 @@ class _SignupState extends State<Signup> {
                 'Sign up',
                 style: TextStyle(fontSize: 18, color: Colors.white),
               ),
-              onPressed: () {
+              onPressed: () async {
                 if (_formKey.currentState!.validate()) {
-                  print('ok');
+                  response = await signup(txtFirstName.text, txtLastName.text,
+                      txtEmail.text, txtPassword.text);
+
+                  if (response.statusCode == 201) {
+                    setState(() {
+                      _message = 'Signup Success';
+                      _messageColor = Colors.green;
+                    });
+                    await Future.delayed(Duration(seconds: 1));
+                    Navigator.push(context,
+                        new MaterialPageRoute(builder: (context) => Login()));
+                  } else if (response.statusCode == 400) {
+                    print('Response error: ${response.body}');
+                    setState(() {
+                      _message = 'Error signing up.';
+                      _messageColor = Colors.red;
+                    });
+                  }
                 } else {
-                  print('not ok');
+                  print('Missing required fields');
                 }
               },
             )));
   }
+
+  Widget btnSecondary() {
+    return Padding(
+        padding: const EdgeInsets.fromLTRB(65, 20, 0, 0),
+        child: Row(children: [
+          Text(
+            'Already have Account ? ',
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          ),
+          InkWell(
+            onTap: () {
+              Navigator.push(context,
+                  new MaterialPageRoute(builder: (context) => Login()));
+            },
+            child: Text(
+              'Login',
+              style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ]));
+  }
+
+  Widget txtMessage() {
+    return Text(
+      _message,
+      style: TextStyle(
+          fontSize: 16, color: _messageColor, fontWeight: FontWeight.bold),
+    );
+  }
+}
+
+Future<http.Response> signup(firstName, lastName, email, password) async {
+  var url = "https://10.0.2.2:5001/api/users";
+  final response = await http.post(
+    Uri.parse(url),
+    headers: <String, String>{
+      'accept': 'application/json',
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, dynamic>{
+      'firstName': firstName,
+      'lastName': lastName,
+      'email': email,
+      'password': password,
+      'roles': [0]
+    }),
+  );
+  return response;
 }

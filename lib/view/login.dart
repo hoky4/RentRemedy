@@ -20,6 +20,7 @@ class _LoginState extends State<Login> {
   String _message = '';
   late Color _messageColor = Colors.black;
   User user = User('', '');
+  Map<String, String> headers = {};
 
   @override
   Widget build(BuildContext context) {
@@ -138,15 +139,27 @@ class _LoginState extends State<Login> {
                                   _message = 'Login Success';
                                   _messageColor = Colors.green;
                                 });
-                                Map<String, dynamic> responseJson =
+                                print(
+                                    'response headers: ${response.headers['set-cookie']}');
+                                Map<String, dynamic> responseBodyJson =
                                     json.decode(response.body);
-                                var name = responseJson['firstName'];
+                                var name = responseBodyJson['firstName'];
+
+                                var rawCookie = response.headers['set-cookie'];
+                                if (rawCookie != null) {
+                                  int index = rawCookie.indexOf(';');
+                                  headers['cookie'] = (index == -1)
+                                      ? rawCookie
+                                      : rawCookie.substring(0, index);
+                                }
+                                print('header: ${headers['cookie']}');
                                 await Future.delayed(Duration(seconds: 1));
+
                                 Navigator.push(
                                     context,
                                     new MaterialPageRoute(
                                         builder: (context) =>
-                                            SuccessScreen(name: name)));
+                                            SuccessScreen(name: name, response: response)));
                               } else if (response.statusCode == 400) {
                                 print('Response error: ${response.body}');
                                 setState(() {

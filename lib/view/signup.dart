@@ -48,7 +48,7 @@ class _SignupState extends State<Signup> {
     ));
   }
 
-  Text titleLogo() {
+  Widget titleLogo() {
     return Text(
       "Signup",
       style: GoogleFonts.pacifico(

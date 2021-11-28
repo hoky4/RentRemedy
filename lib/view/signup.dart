@@ -135,10 +135,10 @@ class _SignupState extends State<Signup> {
                 'Sign up',
                 style: TextStyle(fontSize: 18, color: Colors.white),
               ),
-              onPressed: () async {
+              onPressed: () {
                 if (_formKey.currentState!.validate()) {
-                  await signup(txtFirstName.text, txtLastName.text,
-                      txtEmail.text, txtPassword.text);
+                  signup(txtFirstName.text, txtLastName.text, txtEmail.text,
+                      txtPassword.text);
                 } else {
                   print('Missing required fields');
                 }
@@ -167,7 +167,7 @@ class _SignupState extends State<Signup> {
         ]));
   }
 
-  Future<http.Response> signup(firstName, lastName, email, password) async {
+  signup(firstName, lastName, email, password) async {
     var url = "https://10.0.2.2:5001/api/users";
     final response = await http.post(
       Uri.parse(url),
@@ -199,7 +199,5 @@ class _SignupState extends State<Signup> {
         _messageColor = Colors.red;
       });
     }
-
-    return response;
   }
 }

@@ -34,24 +34,34 @@ class _SignupState extends State<Signup> {
               child: Column(
                 children: [
                   SizedBox(height: 100),
-                  Text(
-                    "Signup",
-                    style: GoogleFonts.pacifico(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 50,
-                        color: Colors.black),
-                  ),
+                  titleLogo(),
                   SizedBox(height: 25),
-                  txtMessage(),
+                  statusMessage(),
                   firstNameInput(),
                   lastNameInput(),
                   emailInput(),
                   passwordInput(),
-                  btnSignup(),
-                  btnSecondary(),
+                  signupButton(),
+                  showLoginButton(),
                 ],
               ))),
     ));
+  }
+
+  Text titleLogo() {
+    return Text(
+      "Signup",
+      style: GoogleFonts.pacifico(
+          fontWeight: FontWeight.bold, fontSize: 50, color: Colors.black),
+    );
+  }
+
+  Widget statusMessage() {
+    return Text(
+      _message,
+      style: TextStyle(
+          fontSize: 16, color: _messageColor, fontWeight: FontWeight.bold),
+    );
   }
 
   Widget firstNameInput() {
@@ -104,8 +114,7 @@ class _SignupState extends State<Signup> {
         ));
   }
 
-  Widget btnSignup() {
-    http.Response response;
+  Widget signupButton() {
     return Padding(
         padding: EdgeInsets.only(top: 48),
         child: Container(
@@ -128,24 +137,8 @@ class _SignupState extends State<Signup> {
               ),
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
-                  response = await signup(txtFirstName.text, txtLastName.text,
+                  await signup(txtFirstName.text, txtLastName.text,
                       txtEmail.text, txtPassword.text);
-
-                  if (response.statusCode == 201) {
-                    setState(() {
-                      _message = 'Signup Success';
-                      _messageColor = Colors.green;
-                    });
-                    await Future.delayed(Duration(seconds: 1));
-                    Navigator.push(context,
-                        new MaterialPageRoute(builder: (context) => Login()));
-                  } else if (response.statusCode == 400) {
-                    print('Response error: ${response.body}');
-                    setState(() {
-                      _message = 'Error signing up.';
-                      _messageColor = Colors.red;
-                    });
-                  }
                 } else {
                   print('Missing required fields');
                 }
@@ -153,7 +146,7 @@ class _SignupState extends State<Signup> {
             )));
   }
 
-  Widget btnSecondary() {
+  Widget showLoginButton() {
     return Padding(
         padding: const EdgeInsets.fromLTRB(65, 20, 0, 0),
         child: Row(children: [
@@ -174,30 +167,39 @@ class _SignupState extends State<Signup> {
         ]));
   }
 
-  Widget txtMessage() {
-    return Text(
-      _message,
-      style: TextStyle(
-          fontSize: 16, color: _messageColor, fontWeight: FontWeight.bold),
+  Future<http.Response> signup(firstName, lastName, email, password) async {
+    var url = "https://10.0.2.2:5001/api/users";
+    final response = await http.post(
+      Uri.parse(url),
+      headers: <String, String>{
+        'accept': 'application/json',
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'firstName': firstName,
+        'lastName': lastName,
+        'email': email,
+        'password': password,
+        'roles': [0]
+      }),
     );
-  }
-}
 
-Future<http.Response> signup(firstName, lastName, email, password) async {
-  var url = "https://10.0.2.2:5001/api/users";
-  final response = await http.post(
-    Uri.parse(url),
-    headers: <String, String>{
-      'accept': 'application/json',
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-    body: jsonEncode(<String, dynamic>{
-      'firstName': firstName,
-      'lastName': lastName,
-      'email': email,
-      'password': password,
-      'roles': [0]
-    }),
-  );
-  return response;
+    if (response.statusCode == 201) {
+      setState(() {
+        _message = 'Signup Success';
+        _messageColor = Colors.green;
+      });
+      await Future.delayed(Duration(seconds: 1));
+      Navigator.push(
+          context, new MaterialPageRoute(builder: (context) => Login()));
+    } else if (response.statusCode == 400) {
+      print('Response error: ${response.body}');
+      setState(() {
+        _message = 'Error signing up.';
+        _messageColor = Colors.red;
+      });
+    }
+
+    return response;
+  }
 }

@@ -1,10 +1,9 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
 import 'package:rentremedy_mobile/models/user.dart';
+import 'package:rentremedy_mobile/networking/api_exception.dart';
+import 'package:rentremedy_mobile/networking/api_service.dart';
 import 'package:rentremedy_mobile/view/signup.dart';
 import 'package:rentremedy_mobile/view/success_screen.dart';
 
@@ -157,9 +156,29 @@ class _LoginState extends State<Login> {
                 borderRadius: BorderRadius.circular(16.0)),
             textStyle: const TextStyle(fontSize: 20),
           ),
-          onPressed: () {
+          onPressed: () async {
             if (_formKey.currentState!.validate()) {
-              login(user.email, user.password);
+              try {
+                ApiService apiService = ApiService();
+                var resp = await apiService.login(user.email, user.password);
+
+                setState(() {
+                  _message = 'Signup Success';
+                  _messageColor = Colors.green;
+                });
+                await Future.delayed(Duration(seconds: 1));
+                Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                        builder: (context) =>
+                            SuccessScreen(name: resp[0], rawCookie: resp[1])));
+              } on BadRequestException catch (e) {
+                print('error-msg: ${e.toString()}');
+                setState(() {
+                  _message = 'Bad Request.';
+                  _messageColor = Colors.red;
+                });
+              }
             } else {
               print('Missing required fields');
             }
@@ -191,6 +210,7 @@ class _LoginState extends State<Login> {
         ]));
   }
 
+  /*
   login(email, password) async {
     var url = "https://10.0.2.2:5001/api/login";
     final response = await http.post(
@@ -231,4 +251,6 @@ class _LoginState extends State<Login> {
       });
     }
   }
+
+   */
 }

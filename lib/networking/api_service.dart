@@ -7,7 +7,6 @@ import 'package:rentremedy_mobile/networking/api_exception.dart';
 class ApiService {
   signup(firstName, lastName, email, password) async {
     var url = "https://10.0.2.2:5001/api/users";
-    var responseJson;
     try {
       final response = await http.post(
         Uri.parse(url),
@@ -24,51 +23,79 @@ class ApiService {
         }),
       );
 
+      _returnResponse(response);
+    } on SocketException {
+      print('No net');
+      throw Exception('No Internet connection');
+    }
+  }
+
+  dynamic login(email, password) async {
+    var url = "https://10.0.2.2:5001/api/login";
+    var responseJson;
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: <String, String>{
+          'accept': 'application/json',
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'email': email,
+          'password': password,
+        }),
+      );
+
       responseJson = _returnResponse(response);
     } on SocketException {
       print('No net');
       throw Exception('No Internet connection');
     }
 
-    // final responseData = json.decode(response.body);
-    // print('responseData: ${responseData}');
-    // print('error: ${responseData['errors']}');
+    return responseJson;
+    // if (response.statusCode == 200) {
+    //   setState(() {
+    //     _message = 'Login Success';
+    //     _messageColor = Colors.green;
+    //   });
+    // Map<String, dynamic> responseBodyJson = json.decode(response.body);
+    // var name = responseBodyJson['firstName'];
     //
-    // if (responseData['errors'] != null) {
-    //   print('throws');
-    //   throw HttpException(responseData['errors'].toString());
-    // }
+    // String rawCookie = response.headers['set-cookie']!;
+    //
+    // print('cookie: $rawCookie');
+    // await Future.delayed(Duration(seconds: 1));
 
-    // if (response.statusCode == 201) {
-    //   await Future.delayed(Duration(seconds: 1));
-    //   // Navigator.push(
-    //   //     context, new MaterialPageRoute(builder: (context) => Login()));
-    // } else {
-    //   // If the server did not return a 201 CREATED response,
-    //   // then throw an exception.
-    //   throw Exception('Failed to create album.');
+    //   Navigator.push(
+    //       context,
+    //       new MaterialPageRoute(
+    //           builder: (context) =>
+    //               SuccessScreen(name: name, rawCookie: rawCookie)));
+    // } else if (response.statusCode == 400) {
+    //   print('Response error: ${response.body}');
+    //   setState(() {
+    //     _message = 'Error logging in.';
+    //     _messageColor = Colors.red;
+    //   });
     // }
-    /*else if (response.statusCode == 400) {
-      print('Response error: ${response.body}');
-      setState(() {
-        _message = 'Error signing up.';
-        _messageColor = Colors.red;
-      });
-    }
-
-     */
   }
 
   dynamic _returnResponse(http.Response response) {
     switch (response.statusCode) {
+      case 200:
+        Map<String, dynamic> responseBodyJson = json.decode(response.body);
+        var name = responseBodyJson['firstName'];
+
+        String rawCookie = response.headers['set-cookie']!;
+
+        print('cookie: $rawCookie');
+        return [name, rawCookie];
       case 201:
         var responseJson = json.decode(response.body.toString());
-        print('response $responseJson');
+        print('201-response $responseJson');
         return responseJson;
       case 400:
-        // final responseData = json.decode(response.body);
-        // print('responseData: ${responseData}');
-
         throw BadRequestException(response.body.toString());
 
       default:

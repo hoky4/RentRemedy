@@ -1,8 +1,5 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
 import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
 
@@ -139,8 +136,6 @@ class _SignupState extends State<Signup> {
               ),
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
-                  // signup(txtFirstName.text, txtLastName.text, txtEmail.text,
-                  // txtPassword.text);
                   try {
                     ApiService apiService = ApiService();
                     await apiService.signup(txtFirstName.text, txtLastName.text,
@@ -185,35 +180,5 @@ class _SignupState extends State<Signup> {
             ),
           ),
         ]));
-  }
-
-  signup(firstName, lastName, email, password) async {
-    var url = "https://10.0.2.2:5001/api/users";
-    final response = await http.post(
-      Uri.parse(url),
-      headers: <String, String>{
-        'accept': 'application/json',
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, dynamic>{
-        'firstName': firstName,
-        'lastName': lastName,
-        'email': email,
-        'password': password,
-        'roles': [0]
-      }),
-    );
-
-    if (response.statusCode == 201) {
-      await Future.delayed(Duration(seconds: 1));
-      Navigator.push(
-          context, new MaterialPageRoute(builder: (context) => Login()));
-    } else if (response.statusCode == 400) {
-      print('Response error: ${response.body}');
-      setState(() {
-        _message = 'Error signing up.';
-        _messageColor = Colors.red;
-      });
-    }
   }
 }

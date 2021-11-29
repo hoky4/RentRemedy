@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:rentremedy_mobile/networking/api_exception.dart';
+import 'package:rentremedy_mobile/networking/api_service.dart';
 
 import 'login.dart';
 
@@ -135,10 +137,28 @@ class _SignupState extends State<Signup> {
                 'Sign up',
                 style: TextStyle(fontSize: 18, color: Colors.white),
               ),
-              onPressed: () {
+              onPressed: () async {
                 if (_formKey.currentState!.validate()) {
-                  signup(txtFirstName.text, txtLastName.text, txtEmail.text,
-                      txtPassword.text);
+                  // signup(txtFirstName.text, txtLastName.text, txtEmail.text,
+                  // txtPassword.text);
+                  try {
+                    ApiService apiService = ApiService();
+                    await apiService.signup(txtFirstName.text, txtLastName.text,
+                        txtEmail.text, txtPassword.text);
+                    setState(() {
+                      _message = 'Signup Success';
+                      _messageColor = Colors.green;
+                    });
+                    await Future.delayed(Duration(seconds: 1));
+                    Navigator.push(context,
+                        new MaterialPageRoute(builder: (context) => Login()));
+                  } on BadRequestException catch (e) {
+                    print('e-msg: ${e.toString()}');
+                    setState(() {
+                      _message = 'Bad Request.';
+                      _messageColor = Colors.red;
+                    });
+                  }
                 } else {
                   print('Missing required fields');
                 }
@@ -185,10 +205,6 @@ class _SignupState extends State<Signup> {
     );
 
     if (response.statusCode == 201) {
-      setState(() {
-        _message = 'Signup Success';
-        _messageColor = Colors.green;
-      });
       await Future.delayed(Duration(seconds: 1));
       Navigator.push(
           context, new MaterialPageRoute(builder: (context) => Login()));

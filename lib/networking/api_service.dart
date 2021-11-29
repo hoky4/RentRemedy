@@ -54,31 +54,25 @@ class ApiService {
     }
 
     return responseJson;
-    // if (response.statusCode == 200) {
-    //   setState(() {
-    //     _message = 'Login Success';
-    //     _messageColor = Colors.green;
-    //   });
-    // Map<String, dynamic> responseBodyJson = json.decode(response.body);
-    // var name = responseBodyJson['firstName'];
-    //
-    // String rawCookie = response.headers['set-cookie']!;
-    //
-    // print('cookie: $rawCookie');
-    // await Future.delayed(Duration(seconds: 1));
+  }
 
-    //   Navigator.push(
-    //       context,
-    //       new MaterialPageRoute(
-    //           builder: (context) =>
-    //               SuccessScreen(name: name, rawCookie: rawCookie)));
-    // } else if (response.statusCode == 400) {
-    //   print('Response error: ${response.body}');
-    //   setState(() {
-    //     _message = 'Error logging in.';
-    //     _messageColor = Colors.red;
-    //   });
-    // }
+  logout(rawCookie) async {
+    var url = "https://10.0.2.2:5001/api/logout";
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: <String, String>{
+          'cookie': rawCookie,
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{}),
+      );
+
+      _returnResponse(response);
+    } on SocketException {
+      print('No net');
+      throw Exception('No Internet connection');
+    }
   }
 
   dynamic _returnResponse(http.Response response) {
@@ -86,18 +80,18 @@ class ApiService {
       case 200:
         Map<String, dynamic> responseBodyJson = json.decode(response.body);
         var name = responseBodyJson['firstName'];
-
         String rawCookie = response.headers['set-cookie']!;
-
         print('cookie: $rawCookie');
         return [name, rawCookie];
       case 201:
         var responseJson = json.decode(response.body.toString());
         print('201-response $responseJson');
         return responseJson;
+      case 204:
+        print('statusCoe: 204-response');
+        return;
       case 400:
         throw BadRequestException(response.body.toString());
-
       default:
         throw Exception('Error occured while Communication with Server with'
             'StatusCode: ${response.statusCode}');

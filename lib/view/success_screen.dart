@@ -1,7 +1,5 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:rentremedy_mobile/networking/api_service.dart';
 
 import 'login.dart';
 
@@ -26,8 +24,12 @@ class _SuccessScreenState extends State<SuccessScreen> {
           actions: [
             IconButton(
               icon: Icon(Icons.logout),
-              onPressed: () {
-                logout(widget.rawCookie);
+              onPressed: () async {
+                ApiService apiService = ApiService();
+                await apiService.logout(widget.rawCookie);
+
+                Navigator.push(context,
+                    new MaterialPageRoute(builder: (context) => Login()));
               },
             )
           ],
@@ -35,6 +37,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
         body: Center(child: Text('Welcome, ${widget.name}!')));
   }
 
+  /*
   logout(rawCookie) async {
     var url = "https://10.0.2.2:5001/api/logout";
     final response = await http.post(
@@ -52,4 +55,6 @@ class _SuccessScreenState extends State<SuccessScreen> {
           context, new MaterialPageRoute(builder: (context) => Login()));
     }
   }
+
+   */
 }

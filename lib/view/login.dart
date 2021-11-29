@@ -209,48 +209,4 @@ class _LoginState extends State<Login> {
           ),
         ]));
   }
-
-  /*
-  login(email, password) async {
-    var url = "https://10.0.2.2:5001/api/login";
-    final response = await http.post(
-      Uri.parse(url),
-      headers: <String, String>{
-        'accept': 'application/json',
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, dynamic>{
-        'email': email,
-        'password': password,
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      setState(() {
-        _message = 'Login Success';
-        _messageColor = Colors.green;
-      });
-      Map<String, dynamic> responseBodyJson = json.decode(response.body);
-      var name = responseBodyJson['firstName'];
-
-      String rawCookie = response.headers['set-cookie']!;
-
-      print('cookie: $rawCookie');
-      await Future.delayed(Duration(seconds: 1));
-
-      Navigator.push(
-          context,
-          new MaterialPageRoute(
-              builder: (context) =>
-                  SuccessScreen(name: name, rawCookie: rawCookie)));
-    } else if (response.statusCode == 400) {
-      print('Response error: ${response.body}');
-      setState(() {
-        _message = 'Error logging in.';
-        _messageColor = Colors.red;
-      });
-    }
-  }
-
-   */
 }

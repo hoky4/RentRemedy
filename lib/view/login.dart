@@ -160,18 +160,17 @@ class _LoginState extends State<Login> {
             if (_formKey.currentState!.validate()) {
               try {
                 ApiService apiService = ApiService();
-                var resp = await apiService.login(user.email, user.password);
+                await apiService.login(user.email, user.password);
 
                 setState(() {
-                  _message = 'Signup Success';
+                  _message = 'Login Success';
                   _messageColor = Colors.green;
                 });
                 await Future.delayed(Duration(seconds: 1));
                 Navigator.push(
                     context,
                     new MaterialPageRoute(
-                        builder: (context) =>
-                            SuccessScreen(name: resp[0], rawCookie: resp[1])));
+                        builder: (context) => SuccessScreen()));
               } on BadRequestException catch (e) {
                 print('error-msg: ${e.toString()}');
                 setState(() {

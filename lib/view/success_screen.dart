@@ -36,25 +36,4 @@ class _SuccessScreenState extends State<SuccessScreen> {
         ),
         body: Center(child: Text('Welcome, ${widget.name}!')));
   }
-
-  /*
-  logout(rawCookie) async {
-    var url = "https://10.0.2.2:5001/api/logout";
-    final response = await http.post(
-      Uri.parse(url),
-      headers: <String, String>{
-        'cookie': rawCookie,
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, dynamic>{}),
-    );
-
-    if (response.statusCode == 204) {
-      await Future.delayed(Duration(seconds: 1));
-      Navigator.push(
-          context, new MaterialPageRoute(builder: (context) => Login()));
-    }
-  }
-
-   */
 }

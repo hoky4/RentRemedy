@@ -126,7 +126,6 @@ class _SignupState extends State<Signup> {
                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                   RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(24.0),
-                    // side: BorderSide(color: Colors.red)
                   ),
                 ),
               ),

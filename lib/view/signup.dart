@@ -1,8 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
+import 'package:rentremedy_mobile/networking/api_exception.dart';
+import 'package:rentremedy_mobile/networking/api_service.dart';
 
 import 'login.dart';
 
@@ -21,6 +20,8 @@ class _SignupState extends State<Signup> {
   final TextEditingController txtLastName = TextEditingController();
   final TextEditingController txtEmail = TextEditingController();
   final TextEditingController txtPassword = TextEditingController();
+  ApiService apiService = ApiService();
+
 
   @override
   Widget build(BuildContext context) {
@@ -34,24 +35,34 @@ class _SignupState extends State<Signup> {
               child: Column(
                 children: [
                   SizedBox(height: 100),
-                  Text(
-                    "Signup",
-                    style: GoogleFonts.pacifico(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 50,
-                        color: Colors.black),
-                  ),
+                  titleLogo(),
                   SizedBox(height: 25),
-                  txtMessage(),
+                  statusMessage(),
                   firstNameInput(),
                   lastNameInput(),
                   emailInput(),
                   passwordInput(),
-                  btnSignup(),
-                  btnSecondary(),
+                  signupButton(),
+                  showLoginButton(),
                 ],
               ))),
     ));
+  }
+
+  Widget titleLogo() {
+    return Text(
+      "Signup",
+      style: GoogleFonts.pacifico(
+          fontWeight: FontWeight.bold, fontSize: 50, color: Colors.black),
+    );
+  }
+
+  Widget statusMessage() {
+    return Text(
+      _message,
+      style: TextStyle(
+          fontSize: 16, color: _messageColor, fontWeight: FontWeight.bold),
+    );
   }
 
   Widget firstNameInput() {
@@ -104,8 +115,7 @@ class _SignupState extends State<Signup> {
         ));
   }
 
-  Widget btnSignup() {
-    http.Response response;
+  Widget signupButton() {
     return Padding(
         padding: EdgeInsets.only(top: 48),
         child: Container(
@@ -118,7 +128,6 @@ class _SignupState extends State<Signup> {
                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                   RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(24.0),
-                    // side: BorderSide(color: Colors.red)
                   ),
                 ),
               ),
@@ -128,10 +137,9 @@ class _SignupState extends State<Signup> {
               ),
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
-                  response = await signup(txtFirstName.text, txtLastName.text,
-                      txtEmail.text, txtPassword.text);
-
-                  if (response.statusCode == 201) {
+                  try {
+                    await apiService.signup(txtFirstName.text, txtLastName.text,
+                        txtEmail.text, txtPassword.text);
                     setState(() {
                       _message = 'Signup Success';
                       _messageColor = Colors.green;
@@ -139,10 +147,9 @@ class _SignupState extends State<Signup> {
                     await Future.delayed(Duration(seconds: 1));
                     Navigator.push(context,
                         new MaterialPageRoute(builder: (context) => Login()));
-                  } else if (response.statusCode == 400) {
-                    print('Response error: ${response.body}');
+                  } on BadRequestException catch (e) {
                     setState(() {
-                      _message = 'Error signing up.';
+                      _message = e.toString();
                       _messageColor = Colors.red;
                     });
                   }
@@ -153,7 +160,7 @@ class _SignupState extends State<Signup> {
             )));
   }
 
-  Widget btnSecondary() {
+  Widget showLoginButton() {
     return Padding(
         padding: const EdgeInsets.fromLTRB(65, 20, 0, 0),
         child: Row(children: [
@@ -173,31 +180,4 @@ class _SignupState extends State<Signup> {
           ),
         ]));
   }
-
-  Widget txtMessage() {
-    return Text(
-      _message,
-      style: TextStyle(
-          fontSize: 16, color: _messageColor, fontWeight: FontWeight.bold),
-    );
-  }
-}
-
-Future<http.Response> signup(firstName, lastName, email, password) async {
-  var url = "https://10.0.2.2:5001/api/users";
-  final response = await http.post(
-    Uri.parse(url),
-    headers: <String, String>{
-      'accept': 'application/json',
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-    body: jsonEncode(<String, dynamic>{
-      'firstName': firstName,
-      'lastName': lastName,
-      'email': email,
-      'password': password,
-      'roles': [0]
-    }),
-  );
-  return response;
 }

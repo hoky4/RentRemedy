@@ -82,7 +82,8 @@ class ApiService {
         String rawCookie = response.headers['set-cookie']!;
         print('cookie: $rawCookie');
 
-        if (responseBodyJson['roles'].toString().contains("1")) {
+        if (responseBodyJson['roles'].toString().contains("1") &&
+            !responseBodyJson['roles'].toString().contains("0")) {
           throw UnauthorizedException("Unable to login");
         }
 

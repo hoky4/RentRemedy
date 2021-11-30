@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:rentremedy_mobile/models/user.dart';
 import 'package:rentremedy_mobile/networking/api.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
 
@@ -80,6 +81,13 @@ class ApiService {
         var name = responseBodyJson['firstName'];
         String rawCookie = response.headers['set-cookie']!;
         print('cookie: $rawCookie');
+
+        if (responseBodyJson['roles'].toString().contains("1")) {
+          throw UnauthorizedException("Unable to login");
+        }
+
+        User user = User.fromJson(jsonDecode(response.body));
+        print('User: ${user.id}');
         return [name, rawCookie];
       case 201:
         var responseJson = json.decode(response.body.toString());

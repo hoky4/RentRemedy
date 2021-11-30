@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:rentremedy_mobile/models/user.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
 import 'package:rentremedy_mobile/view/signup.dart';
@@ -18,7 +17,8 @@ class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
   String _message = '';
   late Color _messageColor = Colors.black;
-  User user = User('', '');
+  final TextEditingController txtEmail = TextEditingController();
+  final TextEditingController txtPassword = TextEditingController();
   ApiService apiService = ApiService();
 
   @override
@@ -71,10 +71,7 @@ class _LoginState extends State<Login> {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: TextFormField(
-        controller: TextEditingController(text: user.email),
-        onChanged: (value) {
-          user.email = value;
-        },
+        controller: txtEmail,
         validator: (value) {
           if (value!.isEmpty) {
             return 'Email is required';
@@ -106,10 +103,7 @@ class _LoginState extends State<Login> {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: TextFormField(
-        controller: TextEditingController(text: user.password),
-        onChanged: (value) {
-          user.password = value;
-        },
+        controller: txtPassword,
         obscureText: true,
         validator: (value) {
           if (value!.isEmpty) {
@@ -156,7 +150,8 @@ class _LoginState extends State<Login> {
           onPressed: () async {
             if (_formKey.currentState!.validate()) {
               try {
-                var resp = await apiService.login(user.email, user.password);
+                var resp =
+                    await apiService.login(txtEmail.text, txtPassword.text);
 
                 setState(() {
                   _message = 'Signup Success';
@@ -169,6 +164,11 @@ class _LoginState extends State<Login> {
                         builder: (context) =>
                             SuccessScreen(name: resp[0], rawCookie: resp[1])));
               } on BadRequestException catch (e) {
+                setState(() {
+                  _message = e.toString();
+                  _messageColor = Colors.red;
+                });
+              } on UnauthorizedException catch (e) {
                 setState(() {
                   _message = e.toString();
                   _messageColor = Colors.red;

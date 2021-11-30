@@ -19,6 +19,7 @@ class _LoginState extends State<Login> {
   String _message = '';
   late Color _messageColor = Colors.black;
   User user = User('', '');
+  ApiService apiService = ApiService();
 
   @override
   Widget build(BuildContext context) {
@@ -155,7 +156,6 @@ class _LoginState extends State<Login> {
           onPressed: () async {
             if (_formKey.currentState!.validate()) {
               try {
-                ApiService apiService = ApiService();
                 var resp = await apiService.login(user.email, user.password);
 
                 setState(() {

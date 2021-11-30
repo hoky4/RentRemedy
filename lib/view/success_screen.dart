@@ -15,6 +15,8 @@ class SuccessScreen extends StatefulWidget {
 }
 
 class _SuccessScreenState extends State<SuccessScreen> {
+  ApiService apiService = ApiService();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,7 +27,6 @@ class _SuccessScreenState extends State<SuccessScreen> {
             IconButton(
               icon: Icon(Icons.logout),
               onPressed: () async {
-                ApiService apiService = ApiService();
                 await apiService.logout(widget.rawCookie);
 
                 Navigator.push(context,

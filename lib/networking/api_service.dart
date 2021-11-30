@@ -2,14 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:rentremedy_mobile/networking/api.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
 
 class ApiService {
   signup(firstName, lastName, email, password) async {
-    var url = "https://10.0.2.2:5001/api/users";
     try {
       final response = await http.post(
-        Uri.parse(url),
+        Uri.parse(REGISTRATION),
         headers: <String, String>{
           'accept': 'application/json',
           'Content-Type': 'application/json; charset=UTF-8',
@@ -31,12 +31,12 @@ class ApiService {
   }
 
   dynamic login(email, password) async {
-    var url = "https://10.0.2.2:5001/api/login";
+    // var url = "https://10.0.2.2:5001/api/login";
     var responseJson;
 
     try {
       final response = await http.post(
-        Uri.parse(url),
+        Uri.parse(LOGIN),
         headers: <String, String>{
           'accept': 'application/json',
           'Content-Type': 'application/json; charset=UTF-8',
@@ -57,10 +57,10 @@ class ApiService {
   }
 
   logout(rawCookie) async {
-    var url = "https://10.0.2.2:5001/api/logout";
+    // var url = "https://10.0.2.2:5001/api/logout";
     try {
       final response = await http.post(
-        Uri.parse(url),
+        Uri.parse(LOGOUT),
         headers: <String, String>{
           'cookie': rawCookie,
           'Content-Type': 'application/json; charset=UTF-8',

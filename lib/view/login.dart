@@ -77,12 +77,8 @@ class _LoginState extends State<Login> {
         validator: (value) {
           if (value!.isEmpty) {
             return 'Email is required';
-          } else if (RegExp(
-                  r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-              .hasMatch(value)) {
-            return null;
           } else {
-            return 'Enter valid email';
+            return null;
           }
         },
         decoration: InputDecoration(
@@ -173,9 +169,8 @@ class _LoginState extends State<Login> {
                         builder: (context) =>
                             SuccessScreen(name: resp[0], rawCookie: resp[1])));
               } on BadRequestException catch (e) {
-                print('error-msg: ${e.toString()}');
                 setState(() {
-                  _message = 'Bad Request.';
+                  _message = e.toString();
                   _messageColor = Colors.red;
                 });
               }

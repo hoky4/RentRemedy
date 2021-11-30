@@ -31,7 +31,6 @@ class ApiService {
   }
 
   dynamic login(email, password) async {
-    // var url = "https://10.0.2.2:5001/api/login";
     var responseJson;
 
     try {
@@ -57,7 +56,6 @@ class ApiService {
   }
 
   logout(rawCookie) async {
-    // var url = "https://10.0.2.2:5001/api/logout";
     try {
       final response = await http.post(
         Uri.parse(LOGOUT),
@@ -88,10 +86,21 @@ class ApiService {
         print('201-response $responseJson');
         return responseJson;
       case 204:
-        print('statusCoe: 204-response');
+        print('statusCode: 204-response');
         return;
       case 400:
-        throw BadRequestException(response.body.toString());
+        String message = '';
+        Map<String, dynamic> responseBodyJson = json.decode(response.body);
+
+        if (responseBodyJson['detail'] != null) {
+          message = responseBodyJson['detail'];
+        } else if (responseBodyJson['errors'] != null) {
+          Map<String, dynamic> responseErrorsJson = responseBodyJson['errors'];
+          responseErrorsJson
+              .forEach((i, value) => message += '\n' + value.toString());
+        }
+
+        throw BadRequestException(message);
       default:
         throw Exception('Error occured while Communication with Server with'
             'StatusCode: ${response.statusCode}');

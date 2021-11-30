@@ -147,9 +147,8 @@ class _SignupState extends State<Signup> {
                     Navigator.push(context,
                         new MaterialPageRoute(builder: (context) => Login()));
                   } on BadRequestException catch (e) {
-                    print('e-msg: ${e.toString()}');
                     setState(() {
-                      _message = 'Bad Request.';
+                      _message = e.toString();
                       _messageColor = Colors.red;
                     });
                   }

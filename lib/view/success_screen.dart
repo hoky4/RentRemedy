@@ -18,6 +18,7 @@ class SuccessScreen extends StatefulWidget {
 
 class _SuccessScreenState extends State<SuccessScreen> {
   String _name = '';
+  ApiService apiService = ApiService();
 
   @override
   void initState() {
@@ -33,6 +34,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,7 +45,6 @@ class _SuccessScreenState extends State<SuccessScreen> {
             IconButton(
               icon: Icon(Icons.logout),
               onPressed: () async {
-                ApiService apiService = ApiService();
                 await apiService.logout();
 
                 Navigator.push(context,

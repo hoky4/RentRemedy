@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:rentremedy_mobile/models/user.dart';
+import 'package:rentremedy_mobile/networking/api.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -11,10 +13,9 @@ class ApiService {
   final myKey = 'myCookie';
 
   signup(firstName, lastName, email, password) async {
-    var url = "https://10.0.2.2:5001/api/users";
     try {
       final response = await http.post(
-        Uri.parse(url),
+        Uri.parse(REGISTRATION),
         headers: <String, String>{
           'accept': 'application/json',
           'Content-Type': 'application/json; charset=UTF-8',
@@ -35,13 +36,12 @@ class ApiService {
     }
   }
 
-  login(email, password) async {
-    var url = "https://10.0.2.2:5001/api/login";
+  dynamic login(email, password) async {
     var responseJson;
 
     try {
       final response = await http.post(
-        Uri.parse(url),
+        Uri.parse(LOGIN),
         headers: <String, String>{
           'accept': 'application/json',
           'Content-Type': 'application/json; charset=UTF-8',
@@ -52,20 +52,21 @@ class ApiService {
         }),
       );
 
-      _returnResponse(response);
+      responseJson = _returnResponse(response);
     } on SocketException {
       print('No net');
       throw Exception('No Internet connection');
     }
+
+    return responseJson;
   }
 
   logout() async {
-    var url = "https://10.0.2.2:5001/api/logout";
     String rawCookie = '';
     await readFromSecureStorage('myCookie').then((value) => rawCookie = value!);
     try {
       final response = await http.post(
-        Uri.parse(url),
+        Uri.parse(LOGOUT),
         headers: <String, String>{
           'cookie': rawCookie,
           'Content-Type': 'application/json; charset=UTF-8',
@@ -94,16 +95,35 @@ class ApiService {
         writeToSecureStorage(myKey, rawCookie);
         print('cookie: $rawCookie');
 
+        if (responseBodyJson['roles'].toString().contains("1") &&
+            !responseBodyJson['roles'].toString().contains("0")) {
+          throw UnauthorizedException("Unable to login");
+        }
+
+        User user = User.fromJson(jsonDecode(response.body));
+        print('User: ${user.id}');
+
         return;
       case 201:
         var responseJson = json.decode(response.body.toString());
         print('201-response $responseJson');
         return responseJson;
       case 204:
-        print('statusCoe: 204-response');
+        print('statusCode: 204-response');
         return;
       case 400:
-        throw BadRequestException(response.body.toString());
+        String message = '';
+        Map<String, dynamic> responseBodyJson = json.decode(response.body);
+
+        if (responseBodyJson['detail'] != null) {
+          message = responseBodyJson['detail'];
+        } else if (responseBodyJson['errors'] != null) {
+          Map<String, dynamic> responseErrorsJson = responseBodyJson['errors'];
+          responseErrorsJson
+              .forEach((i, value) => message += '\n' + value.toString());
+        }
+
+        throw BadRequestException(message);
       default:
         throw Exception('Error occured while Communication with Server with'
             'StatusCode: ${response.statusCode}');

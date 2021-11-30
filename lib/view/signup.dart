@@ -20,6 +20,8 @@ class _SignupState extends State<Signup> {
   final TextEditingController txtLastName = TextEditingController();
   final TextEditingController txtEmail = TextEditingController();
   final TextEditingController txtPassword = TextEditingController();
+  ApiService apiService = ApiService();
+
 
   @override
   Widget build(BuildContext context) {
@@ -136,7 +138,6 @@ class _SignupState extends State<Signup> {
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
                   try {
-                    ApiService apiService = ApiService();
                     await apiService.signup(txtFirstName.text, txtLastName.text,
                         txtEmail.text, txtPassword.text);
                     setState(() {
@@ -147,9 +148,8 @@ class _SignupState extends State<Signup> {
                     Navigator.push(context,
                         new MaterialPageRoute(builder: (context) => Login()));
                   } on BadRequestException catch (e) {
-                    print('e-msg: ${e.toString()}');
                     setState(() {
-                      _message = 'Bad Request.';
+                      _message = e.toString();
                       _messageColor = Colors.red;
                     });
                   }

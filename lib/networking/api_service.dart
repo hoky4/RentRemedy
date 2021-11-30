@@ -29,7 +29,7 @@ class ApiService {
         }),
       );
 
-      _returnResponse(response);
+      await _returnResponse(response);
     } on SocketException {
       print('No net');
       throw Exception('No Internet connection');
@@ -115,6 +115,8 @@ class ApiService {
         String message = '';
         Map<String, dynamic> responseBodyJson = json.decode(response.body);
 
+        print('response: $response');
+        print('responseBodyJson: $responseBodyJson');
         if (responseBodyJson['detail'] != null) {
           message = responseBodyJson['detail'];
         } else if (responseBodyJson['errors'] != null) {
@@ -123,6 +125,7 @@ class ApiService {
               .forEach((i, value) => message += '\n' + value.toString());
         }
 
+        print('message: $message');
         throw BadRequestException(message);
       default:
         throw Exception('Error occured while Communication with Server with'

@@ -34,7 +34,6 @@ class _SuccessScreenState extends State<SuccessScreen> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -21,7 +21,7 @@ class _SignupState extends State<Signup> {
   final TextEditingController txtEmail = TextEditingController();
   final TextEditingController txtPassword = TextEditingController();
   ApiService apiService = ApiService();
-
+  bool visible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +43,12 @@ class _SignupState extends State<Signup> {
                   emailInput(),
                   passwordInput(),
                   signupButton(),
+                  Visibility(
+                      maintainSize: true,
+                      maintainAnimation: true,
+                      maintainState: true,
+                      visible: visible,
+                      child: CircularProgressIndicator()),
                   showLoginButton(),
                 ],
               ))),
@@ -138,19 +144,24 @@ class _SignupState extends State<Signup> {
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
                   try {
+                    setState(() {
+                      visible = true;
+                    });
                     await apiService.signup(txtFirstName.text, txtLastName.text,
                         txtEmail.text, txtPassword.text);
+                    
                     setState(() {
                       _message = 'Signup Success';
                       _messageColor = Colors.green;
+                      visible = false;
                     });
-                    await Future.delayed(Duration(seconds: 1));
                     Navigator.push(context,
                         new MaterialPageRoute(builder: (context) => Login()));
                   } on BadRequestException catch (e) {
                     setState(() {
                       _message = e.toString();
                       _messageColor = Colors.red;
+                      visible = false;
                     });
                   }
                 } else {

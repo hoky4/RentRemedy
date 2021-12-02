@@ -20,6 +20,7 @@ class _LoginState extends State<Login> {
   final TextEditingController txtEmail = TextEditingController();
   final TextEditingController txtPassword = TextEditingController();
   ApiService apiService = ApiService();
+  bool visible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +43,12 @@ class _LoginState extends State<Login> {
                     emailInput(),
                     passwordInput(),
                     loginButton(),
+                    Visibility(
+                        maintainSize: true,
+                        maintainAnimation: true,
+                        maintainState: true,
+                        visible: visible,
+                        child: CircularProgressIndicator()),
                     showSignupButton(),
                   ],
                 ),
@@ -150,14 +157,17 @@ class _LoginState extends State<Login> {
           onPressed: () async {
             if (_formKey.currentState!.validate()) {
               try {
-                var resp =
-                    await apiService.login(txtEmail.text, txtPassword.text);
+                setState(() {
+                  visible = true;
+                });
+                await apiService.login(txtEmail.text, txtPassword.text);
 
                 setState(() {
                   _message = 'Login Success';
                   _messageColor = Colors.green;
+                  visible = false;
                 });
-                await Future.delayed(Duration(seconds: 1));
+
                 Navigator.push(
                     context,
                     new MaterialPageRoute(
@@ -166,11 +176,13 @@ class _LoginState extends State<Login> {
                 setState(() {
                   _message = e.toString();
                   _messageColor = Colors.red;
+                  visible = false;
                 });
               } on UnauthorizedException catch (e) {
                 setState(() {
                   _message = e.toString();
                   _messageColor = Colors.red;
+                  visible = false;
                 });
               }
             } else {

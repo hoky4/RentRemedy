@@ -149,7 +149,7 @@ class _SignupState extends State<Signup> {
                     });
                     await apiService.signup(txtFirstName.text, txtLastName.text,
                         txtEmail.text, txtPassword.text);
-                    
+
                     setState(() {
                       _message = 'Signup Success';
                       _messageColor = Colors.green;

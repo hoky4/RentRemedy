@@ -82,9 +82,12 @@ class ApiService {
   }
 
   dynamic _returnResponse(http.Response response) async {
+    Map<String, dynamic> responseBodyJson = {};
+    String message = '';
+
     switch (response.statusCode) {
       case 200:
-        Map<String, dynamic> responseBodyJson = json.decode(response.body);
+        responseBodyJson = json.decode(response.body);
         var name = responseBodyJson['firstName'];
 
         // obtain shared preferences
@@ -112,11 +115,7 @@ class ApiService {
         print('statusCode: 204-response');
         return;
       case 400:
-        String message = '';
-        Map<String, dynamic> responseBodyJson = json.decode(response.body);
-
-        print('response: $response');
-        print('responseBodyJson: $responseBodyJson');
+        responseBodyJson = json.decode(response.body);
         if (responseBodyJson['detail'] != null) {
           message = responseBodyJson['detail'];
         } else if (responseBodyJson['errors'] != null) {
@@ -125,8 +124,13 @@ class ApiService {
               .forEach((i, value) => message += '\n' + value.toString());
         }
 
-        print('message: $message');
         throw BadRequestException(message);
+      case 401:
+        responseBodyJson = json.decode(response.body);
+        if (responseBodyJson['detail'] != null) {
+          message = responseBodyJson['detail'];
+        }
+        throw UnauthorizedException(message);
       default:
         throw Exception('Error occured while Communication with Server with'
             'StatusCode: ${response.statusCode}');

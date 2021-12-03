@@ -18,6 +18,7 @@ class _RoutePageState extends State<RoutePage> {
   @override
   initState() {
     super.initState();
+
     apiService.loggedInUser().then((value) {
       if (value == null) {
         setState(() {

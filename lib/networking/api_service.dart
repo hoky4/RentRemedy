@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ApiService {
   final storage = FlutterSecureStorage();
   final myKey = 'myCookie';
+  var cookie = '';
 
   Future<void> signup(firstName, lastName, email, password) async {
     try {
@@ -73,13 +74,13 @@ class ApiService {
   }
 
   logout() async {
-    String rawCookie = '';
-    await readFromSecureStorage('myCookie').then((value) => rawCookie = value!);
+    await readFromSecureStorage('myCookie');
+
     try {
       final response = await http.post(
         Uri.parse(LOGOUT),
         headers: <String, String>{
-          'cookie': rawCookie,
+          'cookie': cookie,
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, dynamic>{}),
@@ -93,13 +94,17 @@ class ApiService {
   }
 
   Future<User?> loggedInUser() async {
-    String rawCookie = '';
     User? user;
-    await readFromSecureStorage('myCookie').then((value) => rawCookie = value!);
+
+    await readFromSecureStorage('myCookie');
+    if (cookie.isEmpty) {
+      return null;
+    }
+
     try {
       final response =
           await http.get(Uri.parse(LOGGEDINUSER), headers: <String, String>{
-        'cookie': rawCookie,
+        'cookie': cookie,
         'Content-Type': 'application/json; charset=UTF-8',
       });
 
@@ -108,14 +113,11 @@ class ApiService {
       print('No net');
       throw Exception('No Internet connection');
     }
-    print('user: $user');
+
     return user;
   }
 
   dynamic _returnResponse(http.Response response) async {
-    print('response-headers: ${response.headers}');
-    print('response-body: ${response.body}');
-
     Map<String, dynamic> responseBodyJson = {};
     String message = '';
 
@@ -149,6 +151,8 @@ class ApiService {
         print('201-response $responseJson');
         return responseJson;
       case 204:
+        writeToSecureStorage(myKey, '');
+        cookie = '';
         print('statusCode: 204-response');
         return;
       case 400:
@@ -178,8 +182,7 @@ class ApiService {
     await storage.write(key: myKey, value: rawCookie);
   }
 
-  Future<String?> readFromSecureStorage(myKey) async {
-    String? secret = await storage.read(key: myKey);
-    return secret;
+  Future<void> readFromSecureStorage(myKey) async {
+    cookie = (await storage.read(key: myKey))!;
   }
 }

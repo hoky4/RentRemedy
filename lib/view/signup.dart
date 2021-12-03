@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
@@ -14,14 +16,14 @@ class Signup extends StatefulWidget {
 
 class _SignupState extends State<Signup> {
   final _formKey = GlobalKey<FormState>();
-  String _message = '';
+  String _statusMessage = '';
   late Color _messageColor = Colors.black;
   final TextEditingController txtFirstName = TextEditingController();
   final TextEditingController txtLastName = TextEditingController();
   final TextEditingController txtEmail = TextEditingController();
   final TextEditingController txtPassword = TextEditingController();
   ApiService apiService = ApiService();
-  bool visible = false;
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +49,7 @@ class _SignupState extends State<Signup> {
                       maintainSize: true,
                       maintainAnimation: true,
                       maintainState: true,
-                      visible: visible,
+                      visible: isLoading,
                       child: CircularProgressIndicator()),
                   showLoginButton(),
                 ],
@@ -65,7 +67,7 @@ class _SignupState extends State<Signup> {
 
   Widget statusMessage() {
     return Text(
-      _message,
+      _statusMessage,
       style: TextStyle(
           fontSize: 16, color: _messageColor, fontWeight: FontWeight.bold),
     );
@@ -145,23 +147,29 @@ class _SignupState extends State<Signup> {
                 if (_formKey.currentState!.validate()) {
                   try {
                     setState(() {
-                      visible = true;
+                      isLoading = true;
                     });
                     await apiService.signup(txtFirstName.text, txtLastName.text,
                         txtEmail.text, txtPassword.text);
 
                     setState(() {
-                      _message = 'Signup Success';
+                      _statusMessage = 'Signup Success';
                       _messageColor = Colors.green;
-                      visible = false;
+                      isLoading = false;
                     });
                     Navigator.push(context,
                         new MaterialPageRoute(builder: (context) => Login()));
                   } on BadRequestException catch (e) {
                     setState(() {
-                      _message = e.toString();
+                      _statusMessage = e.toString();
                       _messageColor = Colors.red;
-                      visible = false;
+                      isLoading = false;
+                    });
+                  } on TimeoutException catch (e) {
+                    setState(() {
+                      _statusMessage = e.toString();
+                      _messageColor = Colors.red;
+                      isLoading = false;
                     });
                   }
                 } else {

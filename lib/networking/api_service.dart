@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -12,9 +13,10 @@ class ApiService {
   final storage = FlutterSecureStorage();
   final myKey = 'myCookie';
 
-  signup(firstName, lastName, email, password) async {
+  Future<void> signup(firstName, lastName, email, password) async {
     try {
-      final response = await http.post(
+      final response = await http
+          .post(
         Uri.parse(REGISTRATION),
         headers: <String, String>{
           'accept': 'application/json',
@@ -27,7 +29,11 @@ class ApiService {
           'password': password,
           'roles': [0]
         }),
-      );
+      )
+          .timeout(Duration(seconds: 7), onTimeout: () {
+        throw TimeoutException(
+            'The connection has timed out, Please try again!');
+      });
 
       await _returnResponse(response);
     } on SocketException {
@@ -40,7 +46,8 @@ class ApiService {
     var responseJson;
 
     try {
-      final response = await http.post(
+      final response = await http
+          .post(
         Uri.parse(LOGIN),
         headers: <String, String>{
           'accept': 'application/json',
@@ -50,7 +57,11 @@ class ApiService {
           'email': email,
           'password': password,
         }),
-      );
+      )
+          .timeout(Duration(seconds: 7), onTimeout: () {
+        throw TimeoutException(
+            'The connection has timed out, Please try again!');
+      });
 
       responseJson = _returnResponse(response);
     } on SocketException {
@@ -82,6 +93,7 @@ class ApiService {
   }
 
   dynamic _returnResponse(http.Response response) async {
+    print('in ReturnResponse');
     Map<String, dynamic> responseBodyJson = {};
     String message = '';
 

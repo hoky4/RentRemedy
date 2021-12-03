@@ -14,23 +14,31 @@ class RoutePage extends StatefulWidget {
 class _RoutePageState extends State<RoutePage> {
   final ApiService apiService = ApiService();
   bool isLoggedIn = false;
+  bool isLoading = false;
 
   @override
   initState() {
     super.initState();
 
+    setState(() {
+      isLoading = true;
+    });
+
     apiService.loggedInUser().then((value) {
       if (value == null) {
         setState(() {
           isLoggedIn = false;
+          isLoading = false;
         });
       } else if (value != null) {
         setState(() {
           isLoggedIn = true;
+          isLoading = false;
         });
       } else {
         setState(() {
           isLoggedIn = false;
+          isLoading = false;
         });
       }
     }).catchError((e) {
@@ -40,6 +48,21 @@ class _RoutePageState extends State<RoutePage> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoggedIn ? SuccessScreen() : Login();
+    return Stack(
+      children: [
+        isLoggedIn ? SuccessScreen() : Login(),
+        Visibility(
+            maintainSize: true,
+            maintainAnimation: true,
+            maintainState: true,
+            visible: isLoading,
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height / 1.3,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ))
+      ],
+    );
   }
 }

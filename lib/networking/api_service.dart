@@ -92,8 +92,30 @@ class ApiService {
     }
   }
 
+  Future<User?> loggedInUser() async {
+    String rawCookie = '';
+    User? user;
+    await readFromSecureStorage('myCookie').then((value) => rawCookie = value!);
+    try {
+      final response =
+          await http.get(Uri.parse(LOGGEDINUSER), headers: <String, String>{
+        'cookie': rawCookie,
+        'Content-Type': 'application/json; charset=UTF-8',
+      });
+
+      user = await _returnResponse(response);
+    } on SocketException {
+      print('No net');
+      throw Exception('No Internet connection');
+    }
+    print('user: $user');
+    return user;
+  }
+
   dynamic _returnResponse(http.Response response) async {
-    print('in ReturnResponse');
+    print('response-headers: ${response.headers}');
+    print('response-body: ${response.body}');
+
     Map<String, dynamic> responseBodyJson = {};
     String message = '';
 
@@ -101,24 +123,27 @@ class ApiService {
       case 200:
         responseBodyJson = json.decode(response.body);
         var name = responseBodyJson['firstName'];
+        var user = null;
 
         // obtain shared preferences
         final prefs = await SharedPreferences.getInstance();
         prefs.setString('name', name);
 
-        String rawCookie = response.headers['set-cookie']!;
-        writeToSecureStorage(myKey, rawCookie);
-        print('cookie: $rawCookie');
+        if (response.headers['set-cookie'] != null) {
+          String rawCookie = response.headers['set-cookie']!;
+          writeToSecureStorage(myKey, rawCookie);
+          print('cookie: $rawCookie');
+        }
 
         if (responseBodyJson['roles'].toString().contains("1") &&
             !responseBodyJson['roles'].toString().contains("0")) {
           throw UnauthorizedException("Unable to login");
         }
 
-        User user = User.fromJson(jsonDecode(response.body));
+        user = User.fromJson(jsonDecode(response.body));
         print('User: ${user.id}');
 
-        return;
+        return user;
       case 201:
         var responseJson = json.decode(response.body.toString());
         print('201-response $responseJson');

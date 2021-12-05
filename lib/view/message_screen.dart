@@ -9,7 +9,25 @@ class MessageScreen extends StatefulWidget {
 }
 
 class _MessageScreenState extends State<MessageScreen> {
-  final TextEditingController txtMessage = TextEditingController();
+  late final TextEditingController txtMessage;
+  bool isButtonActive = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    txtMessage = TextEditingController();
+    txtMessage.addListener(() {
+      final isButtonActive = txtMessage.text.isNotEmpty;
+      setState(() => this.isButtonActive = isButtonActive);
+    });
+  }
+
+  @override
+  void dispose() {
+    txtMessage.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +83,20 @@ class _MessageScreenState extends State<MessageScreen> {
               ),
             ),
           ),
-          IconButton(icon: Icon(Icons.send), onPressed: () {})
+          IconButton(
+            icon: Icon(Icons.send),
+            onPressed: isButtonActive
+                ? () {
+                    setState(() {
+                      final userInput =
+                          ChatMessage(text: txtMessage.text, isSender: true);
+                      demoChatMessage.add(userInput);
+                      isButtonActive = false;
+                      txtMessage.clear();
+                    });
+                  }
+                : null,
+          )
         ],
       ),
     );

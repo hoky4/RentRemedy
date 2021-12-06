@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -15,12 +17,12 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
-  String _message = '';
+  String _statusMessage = '';
   late Color _messageColor = Colors.black;
   final TextEditingController txtEmail = TextEditingController();
   final TextEditingController txtPassword = TextEditingController();
   ApiService apiService = ApiService();
-  bool visible = false;
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +49,7 @@ class _LoginState extends State<Login> {
                         maintainSize: true,
                         maintainAnimation: true,
                         maintainState: true,
-                        visible: visible,
+                        visible: isLoading,
                         child: CircularProgressIndicator()),
                     showSignupButton(),
                   ],
@@ -68,7 +70,7 @@ class _LoginState extends State<Login> {
 
   Widget statusMessage() {
     return Text(
-      _message,
+      _statusMessage,
       style: TextStyle(
           fontSize: 16, color: _messageColor, fontWeight: FontWeight.bold),
     );
@@ -158,14 +160,14 @@ class _LoginState extends State<Login> {
             if (_formKey.currentState!.validate()) {
               try {
                 setState(() {
-                  visible = true;
+                  isLoading = true;
                 });
                 await apiService.login(txtEmail.text, txtPassword.text);
 
                 setState(() {
-                  _message = 'Login Success';
+                  _statusMessage = 'Login Success';
                   _messageColor = Colors.green;
-                  visible = false;
+                  isLoading = false;
                 });
 
                 Navigator.push(
@@ -174,15 +176,21 @@ class _LoginState extends State<Login> {
                         builder: (context) => SuccessScreen()));
               } on BadRequestException catch (e) {
                 setState(() {
-                  _message = e.toString();
+                  _statusMessage = e.toString();
                   _messageColor = Colors.red;
-                  visible = false;
+                  isLoading = false;
                 });
               } on UnauthorizedException catch (e) {
                 setState(() {
-                  _message = e.toString();
+                  _statusMessage = e.toString();
                   _messageColor = Colors.red;
-                  visible = false;
+                  isLoading = false;
+                });
+              } on TimeoutException catch (e) {
+                setState(() {
+                  _statusMessage = e.toString();
+                  _messageColor = Colors.red;
+                  isLoading = false;
                 });
               }
             } else {

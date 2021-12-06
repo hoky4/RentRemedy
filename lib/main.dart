@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:rentremedy_mobile/view/message_screen.dart';
 
 void main() {
   HttpOverrides.global = MyHttpOverrides();

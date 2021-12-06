@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -11,10 +12,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ApiService {
   final storage = FlutterSecureStorage();
   final myKey = 'myCookie';
+  var cookie = '';
 
-  signup(firstName, lastName, email, password) async {
+  Future<void> signup(firstName, lastName, email, password) async {
     try {
-      final response = await http.post(
+      final response = await http
+          .post(
         Uri.parse(REGISTRATION),
         headers: <String, String>{
           'accept': 'application/json',
@@ -27,7 +30,11 @@ class ApiService {
           'password': password,
           'roles': [0]
         }),
-      );
+      )
+          .timeout(Duration(seconds: 7), onTimeout: () {
+        throw TimeoutException(
+            'The connection has timed out, Please try again!');
+      });
 
       await _returnResponse(response);
     } on SocketException {
@@ -40,7 +47,8 @@ class ApiService {
     var responseJson;
 
     try {
-      final response = await http.post(
+      final response = await http
+          .post(
         Uri.parse(LOGIN),
         headers: <String, String>{
           'accept': 'application/json',
@@ -50,7 +58,11 @@ class ApiService {
           'email': email,
           'password': password,
         }),
-      );
+      )
+          .timeout(Duration(seconds: 7), onTimeout: () {
+        throw TimeoutException(
+            'The connection has timed out, Please try again!');
+      });
 
       responseJson = _returnResponse(response);
     } on SocketException {
@@ -62,13 +74,13 @@ class ApiService {
   }
 
   logout() async {
-    String rawCookie = '';
-    await readFromSecureStorage('myCookie').then((value) => rawCookie = value!);
+    await readFromSecureStorage('myCookie');
+
     try {
       final response = await http.post(
         Uri.parse(LOGOUT),
         headers: <String, String>{
-          'cookie': rawCookie,
+          'cookie': cookie,
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, dynamic>{}),
@@ -81,42 +93,70 @@ class ApiService {
     }
   }
 
+  Future<User?> loggedInUser() async {
+    User? user;
+
+    await readFromSecureStorage('myCookie');
+    if (cookie.isEmpty) {
+      return null;
+    }
+
+    try {
+      final response =
+          await http.get(Uri.parse(LOGGEDINUSER), headers: <String, String>{
+        'cookie': cookie,
+        'Content-Type': 'application/json; charset=UTF-8',
+      });
+
+      user = await _returnResponse(response);
+    } on SocketException {
+      print('No net');
+      throw Exception('No Internet connection');
+    }
+
+    return user;
+  }
+
   dynamic _returnResponse(http.Response response) async {
+    Map<String, dynamic> responseBodyJson = {};
+    String message = '';
+
     switch (response.statusCode) {
       case 200:
-        Map<String, dynamic> responseBodyJson = json.decode(response.body);
+        responseBodyJson = json.decode(response.body);
         var name = responseBodyJson['firstName'];
+        var user = null;
 
         // obtain shared preferences
         final prefs = await SharedPreferences.getInstance();
         prefs.setString('name', name);
 
-        String rawCookie = response.headers['set-cookie']!;
-        writeToSecureStorage(myKey, rawCookie);
-        print('cookie: $rawCookie');
+        if (response.headers['set-cookie'] != null) {
+          String rawCookie = response.headers['set-cookie']!;
+          writeToSecureStorage(myKey, rawCookie);
+          print('cookie: $rawCookie');
+        }
 
         if (responseBodyJson['roles'].toString().contains("1") &&
             !responseBodyJson['roles'].toString().contains("0")) {
           throw UnauthorizedException("Unable to login");
         }
 
-        User user = User.fromJson(jsonDecode(response.body));
+        user = User.fromJson(jsonDecode(response.body));
         print('User: ${user.id}');
 
-        return;
+        return user;
       case 201:
         var responseJson = json.decode(response.body.toString());
         print('201-response $responseJson');
         return responseJson;
       case 204:
+        writeToSecureStorage(myKey, '');
+        cookie = '';
         print('statusCode: 204-response');
         return;
       case 400:
-        String message = '';
-        Map<String, dynamic> responseBodyJson = json.decode(response.body);
-
-        print('response: $response');
-        print('responseBodyJson: $responseBodyJson');
+        responseBodyJson = json.decode(response.body);
         if (responseBodyJson['detail'] != null) {
           message = responseBodyJson['detail'];
         } else if (responseBodyJson['errors'] != null) {
@@ -125,8 +165,13 @@ class ApiService {
               .forEach((i, value) => message += '\n' + value.toString());
         }
 
-        print('message: $message');
         throw BadRequestException(message);
+      case 401:
+        responseBodyJson = json.decode(response.body);
+        if (responseBodyJson['detail'] != null) {
+          message = responseBodyJson['detail'];
+        }
+        throw UnauthorizedException(message);
       default:
         throw Exception('Error occured while Communication with Server with'
             'StatusCode: ${response.statusCode}');
@@ -137,8 +182,7 @@ class ApiService {
     await storage.write(key: myKey, value: rawCookie);
   }
 
-  Future<String?> readFromSecureStorage(myKey) async {
-    String? secret = await storage.read(key: myKey);
-    return secret;
+  Future<void> readFromSecureStorage(myKey) async {
+    cookie = (await storage.read(key: myKey))!;
   }
 }

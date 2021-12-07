@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:rentremedy_mobile/models/lease_agreement.dart';
 import 'package:rentremedy_mobile/models/user.dart';
 import 'package:rentremedy_mobile/networking/api.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
@@ -13,6 +14,34 @@ class ApiService {
   final storage = FlutterSecureStorage();
   final myKey = 'myCookie';
   var cookie = '';
+
+  dynamic findExistingLeaseAgreements(id) async {
+    await readFromSecureStorage('myCookie');
+    var leaseAgreement = null;
+
+    final response = await http.get(
+        Uri.parse('${LEASEAGREEMENTS}tenant=${id}&status=2'),
+        headers: <String, String>{
+          'cookie': cookie,
+          'Content-Type': 'application/json; charset=UTF-8',
+        });
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseBodyJson = json.decode(response.body);
+      List<dynamic> leaseAgreements = responseBodyJson['leaseAgreements'];
+
+      if (leaseAgreements.isEmpty) {
+        print('No existing lease agreements');
+        return null;
+      } else {
+        print('response-body: ${response.body}');
+        leaseAgreement = LeaseAgreement.fromJson(jsonDecode(response.body));
+        return leaseAgreement;
+      }
+    } else {
+      _handleError(response);
+    }
+  }
 
   Future<void> signup(firstName, lastName, email, password) async {
     try {
@@ -117,6 +146,35 @@ class ApiService {
     return user;
   }
 
+  void _handleError(http.Response response) async {
+    Map<String, dynamic> responseBodyJson = {};
+    String message = '';
+    final statusCode = response.statusCode;
+
+    switch (statusCode) {
+      case 400:
+        responseBodyJson = json.decode(response.body);
+        if (responseBodyJson['detail'] != null) {
+          message = responseBodyJson['detail'];
+        } else if (responseBodyJson['errors'] != null) {
+          Map<String, dynamic> responseErrorsJson = responseBodyJson['errors'];
+          responseErrorsJson
+              .forEach((i, value) => message += '\n' + value.toString());
+        }
+
+        throw BadRequestException(message);
+      case 401:
+        responseBodyJson = json.decode(response.body);
+        if (responseBodyJson['detail'] != null) {
+          message = responseBodyJson['detail'];
+        }
+        throw UnauthorizedException(message);
+      default:
+        throw Exception('Error occured while Communication with Server with'
+            'StatusCode: ${response.statusCode}');
+    }
+  }
+
   dynamic _returnResponse(http.Response response) async {
     Map<String, dynamic> responseBodyJson = {};
     String message = '';
@@ -126,10 +184,12 @@ class ApiService {
         responseBodyJson = json.decode(response.body);
         var name = responseBodyJson['firstName'];
         var user = null;
+        var id = responseBodyJson['id'];
 
         // obtain shared preferences
         final prefs = await SharedPreferences.getInstance();
         prefs.setString('name', name);
+        prefs.setString('id', id);
 
         if (response.headers['set-cookie'] != null) {
           String rawCookie = response.headers['set-cookie']!;

@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:rentremedy_mobile/view/route_page.dart';
+import 'package:rentremedy_mobile/view/login.dart';
 
 void main() {
   HttpOverrides.global = MyHttpOverrides();
@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: RoutePage(),
+      home: Login(),
     );
   }
 }

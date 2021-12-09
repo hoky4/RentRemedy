@@ -6,7 +6,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
 import 'package:rentremedy_mobile/view/signup.dart';
-import 'package:rentremedy_mobile/view/success_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'message_screen.dart';
+import 'onboarding/confirmation_screen.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -23,6 +26,7 @@ class _LoginState extends State<Login> {
   final TextEditingController txtPassword = TextEditingController();
   ApiService apiService = ApiService();
   bool isLoading = false;
+  var hasLeaseAgreement = false;
 
   @override
   Widget build(BuildContext context) {
@@ -164,16 +168,25 @@ class _LoginState extends State<Login> {
                 });
                 await apiService.login(txtEmail.text, txtPassword.text);
 
+                final bool hasLeaseAgreement = await _findLeaseAgreement();
+
                 setState(() {
                   _statusMessage = 'Login Success';
                   _messageColor = Colors.green;
                   isLoading = false;
                 });
 
-                Navigator.push(
-                    context,
-                    new MaterialPageRoute(
-                        builder: (context) => SuccessScreen()));
+                if (hasLeaseAgreement) {
+                  Navigator.pushReplacement(
+                      context,
+                      new MaterialPageRoute(
+                          builder: (context) => MessageScreen()));
+                } else {
+                  Navigator.pushReplacement(
+                      context,
+                      new MaterialPageRoute(
+                          builder: (context) => ConfirmationScreen()));
+                }
               } on BadRequestException catch (e) {
                 setState(() {
                   _statusMessage = e.toString();
@@ -222,5 +235,12 @@ class _LoginState extends State<Login> {
             ),
           ),
         ]));
+  }
+
+  Future<bool> _findLeaseAgreement() async {
+    final prefs = await SharedPreferences.getInstance();
+    final id = (prefs.getString('id') ?? '');
+    var leaseAgreement = await apiService.findExistingLeaseAgreements(id);
+    return leaseAgreement != null ? true : false;
   }
 }

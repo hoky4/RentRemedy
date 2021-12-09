@@ -16,3 +16,7 @@ class BadRequestException extends AppException {
 class UnauthorizedException extends AppException {
   UnauthorizedException([message]) : super(message, 'Unauthorized: ');
 }
+
+class NotFoundException extends AppException {
+  NotFoundException([message]) : super(message, 'Not Found: ');
+}

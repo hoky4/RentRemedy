@@ -5,9 +5,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'login.dart';
 
 class SuccessScreen extends StatefulWidget {
-  // final String name;
-  // final String rawCookie;
-
   SuccessScreen({
     Key? key,
   }) : super(key: key);

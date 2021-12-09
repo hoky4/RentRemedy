@@ -7,10 +7,10 @@ class LeaseAgreement {
   late String description;
   late String landlord;
   late String tenant;
-  late List<String> signatures;
+  late Map<String, String> signatures;
   late String startDate;
   late String endDate;
-  late List<dynamic> fees;
+  late Map<String, dynamic> fees;
 
   LeaseAgreement({
     required this.id,
@@ -26,21 +26,41 @@ class LeaseAgreement {
   });
 
   LeaseAgreement.fromJson(Map<String, dynamic> json) {
-    this.id = json['id'].toString();
-    this.shortId = json['shortId'].toString();
-    this.name = json['name'].toString();
-    this.description = json['description'].toString();
-    this.landlord = json['landlord'].toString();
-    this.tenant = json['tenant'].toString();
-    this.signatures = <String>[];
-    json['fees'].forEach((v) {
-      signatures.add(v);
+    // print('json: $json');
+    Map<String, dynamic> leaseAgreement = json['leaseAgreements'][0];
+    // print('la-id: ${leaseAgreement['id']}');
+    // leaseAgreement.forEach((element) {
+    //   print('element-type: ${element.runtimeType}');
+    //   print('item: $element,\ntype: ${element.runtimeType}');
+    // });
+
+    this.id = leaseAgreement['id'].toString();
+
+    this.shortId = leaseAgreement['shortId'].toString();
+    this.name = leaseAgreement['name'].toString();
+    this.description = leaseAgreement['description'].toString();
+    this.landlord = leaseAgreement['landlord'].toString();
+    this.tenant = leaseAgreement['tenant'].toString();
+    this.signatures = leaseAgreement['signatures'];
+    // print('signatures-type: ${leaseAgreement['signatures'].runtimeType}');
+    // if (leaseAgreement['signatures'] != null) {
+    // leaseAgreement['signatures'].forEach((k, v) {
+    //   print('key: $k, value: $v');
+    //   signatures[k] = v;
+    // });
+    // }
+
+    // print('signatures: $signatures');
+    this.startDate = leaseAgreement['startDate'].toString();
+    this.endDate = leaseAgreement['endDate'].toString();
+    this.fees = {};
+    // print('fees-type: ${leaseAgreement['fees'][0].runtimeType}');
+
+    Map<String, dynamic> leaseAgreementFees = leaseAgreement['fees'][0];
+    leaseAgreementFees.forEach((k, v) {
+      // print('key: $k, value: $v');
+      fees[k] = v;
     });
-    this.startDate = json['startDate'].toString();
-    this.endDate = json['endDate'].toString();
-    this.fees = <dynamic>[];
-    json['results'].forEach((v) {
-      signatures.add(v);
-    });
+    // print('fees: $fees');
   }
 }

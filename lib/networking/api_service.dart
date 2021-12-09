@@ -15,6 +15,31 @@ class ApiService {
   final myKey = 'myCookie';
   var cookie = '';
 
+  Future<LeaseAgreement?> getLeaseAgreement(code) async {
+    await readFromSecureStorage('myCookie');
+
+    final response = await http.get(Uri.parse('${LEASEAGREEMENTS}code=$code'),
+        headers: <String, String>{
+          'cookie': cookie,
+          'Content-Type': 'application/json; charset=UTF-8',
+        });
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseBodyJson = json.decode(response.body);
+      List<dynamic> leaseAgreements = responseBodyJson['leaseAgreements'];
+      if (leaseAgreements.isEmpty) {
+        throw NotFoundException("No Results Found");
+      }
+
+      LeaseAgreement leaseAgreement = LeaseAgreement.fromJson(responseBodyJson);
+
+      return leaseAgreement;
+    } else {
+      _handleError(response);
+    }
+    return null;
+  }
+
   dynamic findExistingLeaseAgreements(id) async {
     await readFromSecureStorage('myCookie');
     var leaseAgreement = null;

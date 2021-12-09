@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
 
 class ConfirmationScreen extends StatefulWidget {
@@ -10,7 +11,10 @@ class ConfirmationScreen extends StatefulWidget {
 
 class _ConfirmationScreenState extends State<ConfirmationScreen> {
   final _formKey = GlobalKey<FormState>();
+  String _statusMessage = '';
+  late Color _messageColor = Colors.black;
   ApiService apiService = ApiService();
+  bool isLoading = false;
   final TextEditingController txtCode = TextEditingController();
 
   @override
@@ -33,6 +37,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(height: 200),
+                  statusMessage(),
                   TextFormField(
                       controller: txtCode,
                       keyboardType: TextInputType.text,
@@ -42,17 +47,62 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                       validator: (text) =>
                           text!.isEmpty ? 'Code is required' : null),
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        // TODO: get lease agreement
+                        try {
+                          setState(() {
+                            isLoading = true;
+                          });
+                          final leaseAgreement =
+                              await apiService.getLeaseAgreement(txtCode.text);
+                          //TODO: navigate to validate_screen
+                          setState(() {
+                            isLoading = false;
+                          });
+                          if (leaseAgreement != null) {
+                            print('lease agreement not null ${leaseAgreement}');
+                          }
+                        } on BadRequestException catch (e) {
+                          setState(() {
+                            _statusMessage = e.toString();
+                            _messageColor = Colors.red;
+                            isLoading = false;
+                          });
+                        } on UnauthorizedException catch (e) {
+                          setState(() {
+                            _statusMessage = e.toString();
+                            _messageColor = Colors.red;
+                            isLoading = false;
+                          });
+                        } on NotFoundException catch (e) {
+                          setState(() {
+                            _statusMessage = e.toString();
+                            _messageColor = Colors.red;
+                            isLoading = false;
+                          });
+                        }
                       }
                     },
                     child: Text('Submit'),
-                  )
+                  ),
+                  Visibility(
+                      maintainSize: true,
+                      maintainAnimation: true,
+                      maintainState: true,
+                      visible: isLoading,
+                      child: CircularProgressIndicator()),
                 ],
               ),
             )),
       ),
+    );
+  }
+
+  Widget statusMessage() {
+    return Text(
+      _statusMessage,
+      style: TextStyle(
+          fontSize: 16, color: _messageColor, fontWeight: FontWeight.bold),
     );
   }
 }

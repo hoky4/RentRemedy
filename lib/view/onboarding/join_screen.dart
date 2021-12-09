@@ -37,8 +37,8 @@ class JoinScreen extends StatelessWidget {
                         propertyDetailLine(
                             'description: ', '${leaseAgreement.description}'),
                         SizedBox(height: 8),
-                        propertyDetailLine(
-                            'landlord: ', '${leaseAgreement.landlord}'),
+                        propertyDetailLine('landlord: ',
+                            '${leaseAgreement.landlord['firstName']}'),
                       ],
                     ),
                   ),

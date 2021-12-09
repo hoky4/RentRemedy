@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:rentremedy_mobile/models/lease_agreement.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
+
+import 'join_screen.dart';
 
 class ConfirmationScreen extends StatefulWidget {
   const ConfirmationScreen({Key? key}) : super(key: key);
@@ -53,14 +56,19 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                           setState(() {
                             isLoading = true;
                           });
-                          final leaseAgreement =
+                          LeaseAgreement? leaseAgreement =
                               await apiService.getLeaseAgreement(txtCode.text);
                           //TODO: navigate to validate_screen
                           setState(() {
                             isLoading = false;
                           });
                           if (leaseAgreement != null) {
-                            print('lease agreement not null ${leaseAgreement}');
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => JoinScreen(
+                                          leaseAgreement: leaseAgreement,
+                                        )));
                           }
                         } on BadRequestException catch (e) {
                           setState(() {

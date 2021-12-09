@@ -15,16 +15,56 @@ class ApiService {
   final myKey = 'myCookie';
   var cookie = '';
 
-  Future<LeaseAgreement?> getLeaseAgreement(code) async {
+  signLeaseAgreement(id) async {
     await readFromSecureStorage('myCookie');
 
-    final response = await http.get(Uri.parse('${LEASEAGREEMENTS}code=$code'),
+    final response = await http.post(
+      Uri.parse('$LEASEAGREEMENTS/$id/signatures'),
+      headers: <String, String>{
+        'cookie': cookie,
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{}),
+    );
+
+    if (response.statusCode == 200) {
+      return;
+    } else {
+      _handleError(response);
+    }
+  }
+
+  joinLeaseAgreement(id) async {
+    await readFromSecureStorage('myCookie');
+
+    final response = await http.post(
+      Uri.parse('$LEASEAGREEMENTS/$id/join'),
+      headers: <String, String>{
+        'cookie': cookie,
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{}),
+    );
+
+    if (response.statusCode == 200) {
+      return;
+    } else {
+      _handleError(response);
+    }
+  }
+
+  Future<LeaseAgreement?> getLeaseAgreement(code) async {
+    print('code: $code');
+    await readFromSecureStorage('myCookie');
+
+    final response = await http.get(Uri.parse('$LEASEAGREEMENTS?code=$code'),
         headers: <String, String>{
           'cookie': cookie,
           'Content-Type': 'application/json; charset=UTF-8',
         });
 
     if (response.statusCode == 200) {
+      print('response: ${response.body}');
       Map<String, dynamic> responseBodyJson = json.decode(response.body);
       List<dynamic> leaseAgreements = responseBodyJson['leaseAgreements'];
       if (leaseAgreements.isEmpty) {
@@ -45,7 +85,7 @@ class ApiService {
     var leaseAgreement = null;
 
     final response = await http.get(
-        Uri.parse('${LEASEAGREEMENTS}tenant=${id}&status=2'),
+        Uri.parse('$LEASEAGREEMENTS?tenant=$id&status=1'),
         headers: <String, String>{
           'cookie': cookie,
           'Content-Type': 'application/json; charset=UTF-8',
@@ -59,7 +99,7 @@ class ApiService {
         print('No existing lease agreements');
         return null;
       } else {
-        print('response-body: ${response.body}');
+        print('Active lease agreement found.');
         leaseAgreement = LeaseAgreement.fromJson(jsonDecode(response.body));
         return leaseAgreement;
       }

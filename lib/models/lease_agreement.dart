@@ -7,7 +7,7 @@ class LeaseAgreement {
   late String description;
   late String landlord;
   late String tenant;
-  late Map<String, String> signatures;
+  late Map<String, dynamic> signatures;
   late String startDate;
   late String endDate;
   late Map<String, dynamic> fees;
@@ -25,6 +25,11 @@ class LeaseAgreement {
     required this.fees,
   });
 
+  @override
+  String toString() {
+    return 'Name: $name,\nDescription: $description,\nStart Date: $startDate';
+  }
+
   LeaseAgreement.fromJson(Map<String, dynamic> json) {
     // print('json: $json');
     Map<String, dynamic> leaseAgreement = json['leaseAgreements'][0];
@@ -41,13 +46,19 @@ class LeaseAgreement {
     this.description = leaseAgreement['description'].toString();
     this.landlord = leaseAgreement['landlord'].toString();
     this.tenant = leaseAgreement['tenant'].toString();
-    this.signatures = leaseAgreement['signatures'];
-    // print('signatures-type: ${leaseAgreement['signatures'].runtimeType}');
+    print('signatures-type: ${leaseAgreement['signatures'].runtimeType}');
+    List<dynamic> la = leaseAgreement['signatures'];
+    if (la.isEmpty) {
+      this.signatures = {};
+    } else {
+      this.signatures = leaseAgreement['signatures'][0];
+    }
+
     // if (leaseAgreement['signatures'] != null) {
-    // leaseAgreement['signatures'].forEach((k, v) {
-    //   print('key: $k, value: $v');
-    //   signatures[k] = v;
-    // });
+    //   leaseAgreement['signatures'].forEach((k, v) {
+    //     print('key: $k, value: $v');
+    //     signatures[k] = v;
+    //   });
     // }
 
     // print('signatures: $signatures');

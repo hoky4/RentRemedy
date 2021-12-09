@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:rentremedy_mobile/models/lease_agreement.dart';
+import 'package:rentremedy_mobile/networking/api_service.dart';
+
+import 'accept_screen.dart';
+import 'confirmation_screen.dart';
 
 class JoinScreen extends StatelessWidget {
-  const JoinScreen({Key? key}) : super(key: key);
+  late LeaseAgreement leaseAgreement;
+  JoinScreen({Key? key, required this.leaseAgreement}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    ApiService apiService = ApiService();
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Join Property'),
@@ -26,9 +34,11 @@ class JoinScreen extends StatelessWidget {
                         BoxDecoration(border: Border.all(color: Colors.black)),
                     child: Column(
                       children: [
-                        propertyDetailLine('description: ', 'For apartment 3a'),
+                        propertyDetailLine(
+                            'description: ', '${leaseAgreement.description}'),
                         SizedBox(height: 8),
-                        propertyDetailLine('landlord: ', 'asdf'),
+                        propertyDetailLine(
+                            'landlord: ', '${leaseAgreement.landlord}'),
                       ],
                     ),
                   ),
@@ -36,7 +46,12 @@ class JoinScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                              context,
+                              new MaterialPageRoute(
+                                  builder: (context) => ConfirmationScreen()));
+                        },
                         child: Text(
                           'No',
                           style: TextStyle(
@@ -55,7 +70,17 @@ class JoinScreen extends StatelessWidget {
                       ),
                       SizedBox(width: 8),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          print('la-id: ${leaseAgreement.id}');
+
+                          apiService.joinLeaseAgreement('${leaseAgreement.id}');
+                          Navigator.pushReplacement(
+                              context,
+                              new MaterialPageRoute(
+                                  builder: (context) => AcceptScreen(
+                                        leaseAgreement: leaseAgreement,
+                                      )));
+                        },
                         child: Text(
                           'Yes',
                           style: TextStyle(

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:rentremedy_mobile/models/chat_message.dart';
+import 'package:rentremedy_mobile/networking/api_service.dart';
+
+import 'login.dart';
 
 class MessageScreen extends StatefulWidget {
   const MessageScreen({Key? key}) : super(key: key);
@@ -11,6 +14,7 @@ class MessageScreen extends StatefulWidget {
 class _MessageScreenState extends State<MessageScreen> {
   late final TextEditingController txtMessage;
   bool isButtonActive = false;
+  ApiService apiService = ApiService();
 
   @override
   void initState() {
@@ -35,7 +39,16 @@ class _MessageScreenState extends State<MessageScreen> {
         appBar: AppBar(
           title: Row(
             children: [
-              IconButton(icon: Icon(Icons.menu), onPressed: () {}),
+              // IconButton(icon: Icon(Icons.menu), onPressed: () {}),
+              IconButton(
+                icon: Icon(Icons.logout),
+                onPressed: () async {
+                  await apiService.logout();
+
+                  Navigator.push(context,
+                      new MaterialPageRoute(builder: (context) => Login()));
+                },
+              ),
               Text("General")
             ],
           ),

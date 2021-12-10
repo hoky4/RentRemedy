@@ -30,6 +30,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Confirmation'),
+        automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
         child: Container(

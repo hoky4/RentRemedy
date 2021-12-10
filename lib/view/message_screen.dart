@@ -52,6 +52,7 @@ class _MessageScreenState extends State<MessageScreen> {
               Text("General")
             ],
           ),
+          automaticallyImplyLeading: false,
           actions: [
             IconButton(icon: Icon(Icons.comment_rounded), onPressed: () {}),
             IconButton(

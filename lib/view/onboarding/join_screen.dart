@@ -16,6 +16,7 @@ class JoinScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Join Property'),
+        automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
           child: Container(

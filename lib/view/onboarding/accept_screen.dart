@@ -20,6 +20,7 @@ class _AcceptScreenState extends State<AcceptScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Lease Agreeement Details'),
+        automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
         child: Center(

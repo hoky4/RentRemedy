@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rentremedy_mobile/models/chat_message.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
 
-import 'login.dart';
+import '../auth/login.dart';
 
 class MessageScreen extends StatefulWidget {
   const MessageScreen({Key? key}) : super(key: key);

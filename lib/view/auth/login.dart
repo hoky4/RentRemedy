@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
-import 'package:rentremedy_mobile/view/signup.dart';
+import 'package:rentremedy_mobile/view/auth/signup.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'message_screen.dart';
-import 'onboarding/confirmation_screen.dart';
+import '../chat/message_screen.dart';
+import '../onboarding/confirmation_screen.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);

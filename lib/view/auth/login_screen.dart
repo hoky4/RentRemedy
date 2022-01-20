@@ -167,7 +167,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   isLoading = true;
                 });
                 await apiService.login(txtEmail.text, txtPassword.text);
-
                 final bool hasLeaseAgreement = await _findLeaseAgreement();
 
                 setState(() {

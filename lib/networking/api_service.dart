@@ -139,35 +139,7 @@ class ApiService {
     }
   }
 
-  dynamic login(email, password) async {
-    var responseJson;
 
-    try {
-      final response = await http
-          .post(
-        Uri.parse(LOGIN),
-        headers: <String, String>{
-          'accept': 'application/json',
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(<String, dynamic>{
-          'email': email,
-          'password': password,
-        }),
-      )
-          .timeout(Duration(seconds: 7), onTimeout: () {
-        throw TimeoutException(
-            'The connection has timed out, Please try again!');
-      });
-
-      responseJson = _returnResponse(response);
-    } on SocketException {
-      print('No net');
-      throw Exception('No Internet connection');
-    }
-
-    return responseJson;
-  }
 
   logout() async {
     await readFromSecureStorage('myCookie');
@@ -182,6 +154,7 @@ class ApiService {
         body: jsonEncode(<String, dynamic>{}),
       );
 
+      writeToSecureStorage(myKey, "");
       _returnResponse(response);
     } on SocketException {
       print('No net');
@@ -213,10 +186,11 @@ class ApiService {
     return user;
   }
 
-  void _handleError(http.Response response) async {
+  dynamic _handleError(http.Response response) async {
     Map<String, dynamic> responseBodyJson = {};
     String message = '';
     final statusCode = response.statusCode;
+    print('error-statusCode: $statusCode');
 
     switch (statusCode) {
       case 400:
@@ -242,6 +216,60 @@ class ApiService {
     }
   }
 
+  dynamic login(email, password) async {
+    var responseJson;
+
+    try {
+      final response = await http
+          .post(
+        Uri.parse(LOGIN),
+        headers: <String, String>{
+          'accept': 'application/json',
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'email': email,
+          'password': password,
+        }),
+      )
+          .timeout(Duration(seconds: 7), onTimeout: () {
+        throw TimeoutException(
+            'The connection has timed out, Please try again!');
+      });
+
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseMap = jsonDecode(response.body);
+        User user = User.fromJson(responseMap);
+
+        // obtain shared preferences
+        final prefs = await SharedPreferences.getInstance();
+        prefs.setString('name', user.firstName);
+        prefs.setString('id', user.id);
+
+        // store cookie
+        if (response.headers['set-cookie'] != null) {
+          String rawCookie = response.headers['set-cookie']!;
+          writeToSecureStorage(myKey, rawCookie);
+          print('Stored cookie: $rawCookie');
+        }
+
+        if (user.roles.toString().contains("1") &&
+            !user.roles.toString().contains("0")) {
+          throw UnauthorizedException("Unable to login");
+        }
+
+        return user;
+      } else {
+        responseJson = _handleError(response);
+      }
+    } on SocketException {
+      print('No net');
+      throw Exception('No Internet connection');
+    }
+
+    return responseJson;
+  }
+
   dynamic _returnResponse(http.Response response) async {
     Map<String, dynamic> responseBodyJson = {};
     String message = '';
@@ -261,7 +289,7 @@ class ApiService {
         if (response.headers['set-cookie'] != null) {
           String rawCookie = response.headers['set-cookie']!;
           writeToSecureStorage(myKey, rawCookie);
-          print('cookie: $rawCookie');
+          print('Stored cookie: $rawCookie');
         }
 
         if (responseBodyJson['roles'].toString().contains("1") &&
@@ -313,3 +341,4 @@ class ApiService {
     cookie = (await storage.read(key: myKey))!;
   }
 }
+

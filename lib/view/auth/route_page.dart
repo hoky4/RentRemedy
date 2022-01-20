@@ -15,6 +15,7 @@ class _RoutePageState extends State<RoutePage> {
   final ApiService apiService = ApiService();
   bool isLoggedIn = false;
   bool isLoading = false;
+  // bool hasLeaseAgreement = false;
 
   @override
   initState() {

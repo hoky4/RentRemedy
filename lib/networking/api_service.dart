@@ -4,8 +4,8 @@ import 'dart:io';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
-import 'package:rentremedy_mobile/models/lease_agreement.dart';
-import 'package:rentremedy_mobile/models/user.dart';
+import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
+import 'package:rentremedy_mobile/models/User/user.dart';
 import 'package:rentremedy_mobile/networking/api.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -54,7 +54,6 @@ class ApiService {
   }
 
   Future<LeaseAgreement?> getLeaseAgreement(code) async {
-    print('code: $code');
     await readFromSecureStorage('myCookie');
 
     final response = await http.get(Uri.parse('$LEASEAGREEMENTS?code=$code'),
@@ -65,14 +64,17 @@ class ApiService {
 
     if (response.statusCode == 200) {
       print('response: ${response.body}');
-      Map<String, dynamic> responseBodyJson = json.decode(response.body);
-      List<dynamic> leaseAgreements = responseBodyJson['leaseAgreements'];
+      Map<String, dynamic> responseMap = jsonDecode(response.body);
+      
+      List<dynamic> leaseAgreements = responseMap['leaseAgreements'];
       if (leaseAgreements.isEmpty) {
         throw NotFoundException("No Results Found");
       }
 
-      LeaseAgreement leaseAgreement = LeaseAgreement.fromJson(responseBodyJson);
+      Map<String, dynamic> leaseAgreementMap = responseMap['leaseAgreements'][0];
+      var leaseAgreement = LeaseAgreement.fromJson(leaseAgreementMap);
 
+      print('\nleaseAgreement: ${leaseAgreement}');
       return leaseAgreement;
     } else {
       _handleError(response);

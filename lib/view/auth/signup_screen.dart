@@ -5,16 +5,16 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
 
-import 'login.dart';
+import 'login_screen.dart';
 
-class Signup extends StatefulWidget {
-  const Signup({Key? key}) : super(key: key);
+class SignupScreen extends StatefulWidget {
+  const SignupScreen({Key? key}) : super(key: key);
 
   @override
-  _SignupState createState() => _SignupState();
+  _SignupScreenState createState() => _SignupScreenState();
 }
 
-class _SignupState extends State<Signup> {
+class _SignupScreenState extends State<SignupScreen> {
   final _formKey = GlobalKey<FormState>();
   String _statusMessage = '';
   late Color _messageColor = Colors.black;
@@ -158,7 +158,7 @@ class _SignupState extends State<Signup> {
                       isLoading = false;
                     });
                     Navigator.push(context,
-                        new MaterialPageRoute(builder: (context) => Login()));
+                        new MaterialPageRoute(builder: (context) => LoginScreen()));
                   } on BadRequestException catch (e) {
                     setState(() {
                       _statusMessage = e.toString();
@@ -190,7 +190,7 @@ class _SignupState extends State<Signup> {
           InkWell(
             onTap: () {
               Navigator.push(context,
-                  new MaterialPageRoute(builder: (context) => Login()));
+                  new MaterialPageRoute(builder: (context) => LoginScreen()));
             },
             child: Text(
               'Login',

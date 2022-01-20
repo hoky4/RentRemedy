@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:rentremedy_mobile/models/Fees/monthly_fees.dart';
 import 'package:rentremedy_mobile/models/LeaseAgreement/amenity.dart';
 import 'package:rentremedy_mobile/models/LeaseAgreement/maintenance.dart';
 import 'package:rentremedy_mobile/models/LeaseAgreement/one_time_security_deposit.dart';
@@ -24,6 +25,7 @@ class LeaseAgreement {
       this.status,
       this.property,
       this.securityDeposit,
+      this.monthlyFees,
       this.amenitiesProvided,
       this.utilitiesProvided,
       this.maintenanceProvided
@@ -41,6 +43,7 @@ class LeaseAgreement {
   Status status;
   Property property;
   OneTimeSecurityDeposit securityDeposit;
+  MonthlyFees monthlyFees;
   List<Amenity> amenitiesProvided;
   List<Utility> utilitiesProvided;
   List<Maintenance> maintenanceProvided;

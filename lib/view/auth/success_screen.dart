@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'login.dart';
+import 'login_screen.dart';
 
 class SuccessScreen extends StatefulWidget {
   SuccessScreen({
@@ -44,7 +44,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
                 await apiService.logout();
 
                 Navigator.push(context,
-                    new MaterialPageRoute(builder: (context) => Login()));
+                    new MaterialPageRoute(builder: (context) => LoginScreen()));
               },
             )
           ],

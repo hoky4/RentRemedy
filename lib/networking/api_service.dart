@@ -87,22 +87,22 @@ class ApiService {
     var leaseAgreement = null;
 
     final response = await http.get(
-        Uri.parse('$LEASEAGREEMENTS?tenant=$id&status=1'),
+        Uri.parse('$LEASEAGREEMENTS?tenant=$id&status=AssignedSigned'),
         headers: <String, String>{
           'cookie': cookie,
           'Content-Type': 'application/json; charset=UTF-8',
         });
 
     if (response.statusCode == 200) {
-      Map<String, dynamic> responseBodyJson = json.decode(response.body);
-      List<dynamic> leaseAgreements = responseBodyJson['leaseAgreements'];
+      Map<String, dynamic> responseMap = json.decode(response.body);
+      List<dynamic> leaseAgreements = responseMap['leaseAgreements'];
 
       if (leaseAgreements.isEmpty) {
-        print('No existing lease agreements');
+        print('No existing lease agreements found.');
         return null;
       } else {
         print('Active lease agreement found.');
-        leaseAgreement = LeaseAgreement.fromJson(jsonDecode(response.body));
+        leaseAgreement = LeaseAgreement.fromJson(leaseAgreements[0]);
         return leaseAgreement;
       }
     } else {

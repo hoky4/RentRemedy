@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-enum Amenity
+enum Amenity //extends Iterable
 {
   @JsonValue(0)
   Refrigerator,

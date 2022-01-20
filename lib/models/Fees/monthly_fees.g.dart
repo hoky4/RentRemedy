@@ -10,9 +10,9 @@ MonthlyFees _$MonthlyFeesFromJson(Map<String, dynamic> json) => MonthlyFees(
       MonthlyRentFee.fromJson(json['rentFee'] as Map<String, dynamic>),
       MonthlyPetFee.fromJson(json['petFee'] as Map<String, dynamic>),
       $enumDecode(_$DueDateTypeEnumMap, json['dueDateType']),
-      json['dateTime'] == null
+      json['dueDate'] == null
           ? null
-          : DateTime.parse(json['dateTime'] as String),
+          : DateTime.parse(json['dueDate'] as String),
       (json['lateFee'] as num).toDouble(),
       json['gracePeriod'] as int,
     );
@@ -22,7 +22,7 @@ Map<String, dynamic> _$MonthlyFeesToJson(MonthlyFees instance) =>
       'rentFee': instance.rentFee.toJson(),
       'petFee': instance.petFee.toJson(),
       'dueDateType': _$DueDateTypeEnumMap[instance.dueDateType],
-      'dateTime': instance.dateTime?.toIso8601String(),
+      'dueDate': instance.dueDate?.toIso8601String(),
       'lateFee': instance.lateFee,
       'gracePeriod': instance.gracePeriod,
     };

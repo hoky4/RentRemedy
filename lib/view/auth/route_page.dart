@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
 import 'package:rentremedy_mobile/view/auth/success_screen.dart';
 
-import 'login.dart';
+import 'login_screen.dart';
 
 class RoutePage extends StatefulWidget {
   const RoutePage({Key? key}) : super(key: key);
@@ -50,7 +50,7 @@ class _RoutePageState extends State<RoutePage> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        isLoggedIn ? SuccessScreen() : Login(),
+        isLoggedIn ? SuccessScreen() : LoginScreen(),
         Visibility(
             maintainSize: true,
             maintainAnimation: true,

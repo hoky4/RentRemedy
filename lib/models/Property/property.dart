@@ -15,4 +15,10 @@ class Property {
   factory Property.fromJson(Map<String, dynamic> json) => _$PropertyFromJson(json);
 
   Map<String, dynamic> toJson() => _$PropertyToJson(this);
+
+  @override 
+String toString() {
+  return "${address.line1} ${address.line2}\n${address.city}, ${address.state} ${address.zipCode}";
+  }
 }
+

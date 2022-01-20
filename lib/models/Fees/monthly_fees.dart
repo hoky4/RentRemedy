@@ -6,12 +6,12 @@ part 'monthly_fees.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class MonthlyFees {
-  MonthlyFees(this.rentFee, this.petFee, this.dueDateType, this.dateTime, this.lateFee, this.gracePeriod);
+  MonthlyFees(this.rentFee, this.petFee, this.dueDateType, this.dueDate, this.lateFee, this.gracePeriod);
 
   MonthlyRentFee rentFee;
   MonthlyPetFee petFee;
   DueDateType dueDateType;
-  DateTime? dateTime;
+  DateTime? dueDate;
   double lateFee;
   int gracePeriod;
 

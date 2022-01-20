@@ -25,6 +25,7 @@ LeaseAgreement _$LeaseAgreementFromJson(Map<String, dynamic> json) =>
       Property.fromJson(json['property'] as Map<String, dynamic>),
       OneTimeSecurityDeposit.fromJson(
           json['securityDeposit'] as Map<String, dynamic>),
+      MonthlyFees.fromJson(json['monthlyFees'] as Map<String, dynamic>),
       (json['amenitiesProvided'] as List<dynamic>)
           .map((e) => $enumDecode(_$AmenityEnumMap, e))
           .toList(),
@@ -50,6 +51,7 @@ Map<String, dynamic> _$LeaseAgreementToJson(LeaseAgreement instance) =>
       'status': _$StatusEnumMap[instance.status],
       'property': instance.property.toJson(),
       'securityDeposit': instance.securityDeposit.toJson(),
+      'monthlyFees': instance.monthlyFees.toJson(),
       'amenitiesProvided':
           instance.amenitiesProvided.map((e) => _$AmenityEnumMap[e]).toList(),
       'utilitiesProvided':

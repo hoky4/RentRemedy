@@ -1,7 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:rentremedy_mobile/view/auth/login.dart';
+import 'package:rentremedy_mobile/view/auth/login_screen.dart';
+import 'package:rentremedy_mobile/view/onboarding/terms_screen.dart';
 
 void main() {
   HttpOverrides.global = MyHttpOverrides();
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: Login(),
+      home: const LoginScreen(),
     );
   }
 }

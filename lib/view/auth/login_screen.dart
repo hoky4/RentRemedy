@@ -5,20 +5,20 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
-import 'package:rentremedy_mobile/view/auth/signup.dart';
+import 'package:rentremedy_mobile/view/auth/signup_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../chat/message_screen.dart';
 import '../onboarding/confirmation_screen.dart';
 
-class Login extends StatefulWidget {
-  const Login({Key? key}) : super(key: key);
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({Key? key}) : super(key: key);
 
   @override
-  _LoginState createState() => _LoginState();
+  _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _LoginState extends State<Login> {
+class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   String _statusMessage = '';
   late Color _messageColor = Colors.black;
@@ -227,7 +227,7 @@ class _LoginState extends State<Login> {
           InkWell(
             onTap: () {
               Navigator.push(context,
-                  new MaterialPageRoute(builder: (context) => Signup()));
+                  new MaterialPageRoute(builder: (context) => SignupScreen()));
             },
             child: Text(
               'Signup',

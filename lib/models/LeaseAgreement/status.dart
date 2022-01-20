@@ -4,16 +4,16 @@ enum Status
 {
   @JsonValue(0)
   Incomplete,
-  @JsonValue(2)
+  @JsonValue(1)
   Inactive,
-  @JsonValue(3)
+  @JsonValue(2)
   Unassigned,
-  @JsonValue(4)
+  @JsonValue(3)
   AssignedUnsigned,
-  @JsonValue(5)
+  @JsonValue(4)
   AssignedSigned,
-  @JsonValue(6)
+  @JsonValue(5)
   Completed,
-  @JsonValue(7)
+  @JsonValue(6)
   Terminated
 }

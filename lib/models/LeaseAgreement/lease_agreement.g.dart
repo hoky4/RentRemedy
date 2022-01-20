@@ -63,12 +63,12 @@ Map<String, dynamic> _$LeaseAgreementToJson(LeaseAgreement instance) =>
 
 const _$StatusEnumMap = {
   Status.Incomplete: 0,
-  Status.Inactive: 2,
-  Status.Unassigned: 3,
-  Status.AssignedUnsigned: 4,
-  Status.AssignedSigned: 5,
-  Status.Completed: 6,
-  Status.Terminated: 7,
+  Status.Inactive: 1,
+  Status.Unassigned: 2,
+  Status.AssignedUnsigned: 3,
+  Status.AssignedSigned: 4,
+  Status.Completed: 5,
+  Status.Terminated: 6,
 };
 
 const _$AmenityEnumMap = {

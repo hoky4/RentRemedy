@@ -22,7 +22,9 @@ LeaseAgreement _$LeaseAgreementFromJson(Map<String, dynamic> json) =>
       DateTime.parse(json['startDate'] as String),
       DateTime.parse(json['endDate'] as String),
       $enumDecode(_$StatusEnumMap, json['status']),
-      Property.fromJson(json['property'] as Map<String, dynamic>),
+      json['property'] == null
+          ? null
+          : Property.fromJson(json['property'] as Map<String, dynamic>),
       OneTimeSecurityDeposit.fromJson(
           json['securityDeposit'] as Map<String, dynamic>),
       MonthlyFees.fromJson(json['monthlyFees'] as Map<String, dynamic>),
@@ -49,7 +51,7 @@ Map<String, dynamic> _$LeaseAgreementToJson(LeaseAgreement instance) =>
       'startDate': instance.startDate.toIso8601String(),
       'endDate': instance.endDate.toIso8601String(),
       'status': _$StatusEnumMap[instance.status],
-      'property': instance.property.toJson(),
+      'property': instance.property?.toJson(),
       'securityDeposit': instance.securityDeposit.toJson(),
       'monthlyFees': instance.monthlyFees.toJson(),
       'amenitiesProvided':

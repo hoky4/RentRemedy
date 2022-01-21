@@ -20,3 +20,7 @@ class UnauthorizedException extends AppException {
 class NotFoundException extends AppException {
   NotFoundException([message]) : super(message, 'Not Found: ');
 }
+
+class ForbiddenException extends AppException {
+  ForbiddenException([message]) : super(message, 'Forbidden: ');
+}

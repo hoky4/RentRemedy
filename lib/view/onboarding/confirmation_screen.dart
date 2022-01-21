@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
+import 'package:rentremedy_mobile/models/LeaseAgreement/status.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
 
@@ -63,7 +64,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                           setState(() {
                             isLoading = false;
                           });
-                          if (leaseAgreement != null) {
+                          if (leaseAgreement != null && leaseAgreement.status == Status.Unassigned) {
                             Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
@@ -89,7 +90,8 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                             _messageColor = Colors.red;
                             isLoading = false;
                           });
-                        }
+                        } 
+
                       }
                     },
                     child: Text('Submit'),

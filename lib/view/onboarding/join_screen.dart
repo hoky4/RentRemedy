@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
+import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
 import 'package:rentremedy_mobile/view/onboarding/terms_screen.dart';
 
@@ -74,16 +75,26 @@ class JoinScreen extends StatelessWidget {
                       ),
                       SizedBox(width: 8),
                       TextButton(
-                        onPressed: () {
-                          print('la-id: ${leaseAgreement.id}');
-
-                          apiService.joinLeaseAgreement('${leaseAgreement.id}');
-                          Navigator.pushReplacement(
+                        onPressed: () async {
+                          try {
+                            await apiService.joinLeaseAgreement('${leaseAgreement.id}');
+                            if (leaseAgreement.property != null) {
+                              Navigator.pushReplacement(
                               context,
                               new MaterialPageRoute(
                                   builder: (context) => TermsScreen(
                                         leaseAgreement: leaseAgreement,
                                       )));
+                            }
+                          } on ForbiddenException catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${e.toString()}")));
+
+                            // TODO: show popup for error and navigate back to confirmation screen
+                            Navigator.pushReplacement(
+                                context,
+                                new MaterialPageRoute(
+                                    builder: (context) => ConfirmationScreen()));
+                          }
                         },
                         child: Text(
                           'Yes',

@@ -200,7 +200,7 @@ class TermsScreen extends StatelessWidget {
     );
   }
 
-  Widget address(Property property) {
+  Widget address(Property? property) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(32.0, 0, 0, 0),
       child: Align(
@@ -210,8 +210,8 @@ class TermsScreen extends StatelessWidget {
           children: [
             Text("Address", style: categoryStyle),
             SizedBox(height: 8.0),
-            Text("${property.toString()}",
-                style: bodyStyle),
+            property != null ? Text("${property.toString()}", style: bodyStyle)
+            : Text("No property assigned")
           ],
         ),
       ),

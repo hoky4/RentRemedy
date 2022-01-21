@@ -41,7 +41,7 @@ class LeaseAgreement {
   DateTime startDate;
   DateTime endDate;
   Status status;
-  Property property;
+  Property? property;
   OneTimeSecurityDeposit securityDeposit;
   MonthlyFees monthlyFees;
   List<Amenity> amenitiesProvided;

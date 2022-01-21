@@ -34,7 +34,8 @@ class ApiService {
     }
   }
 
-  joinLeaseAgreement(id) async {
+  dynamic joinLeaseAgreement(id) async {
+    var responseJson;
     await readFromSecureStorage('myCookie');
 
     final response = await http.post(
@@ -49,8 +50,9 @@ class ApiService {
     if (response.statusCode == 200) {
       return;
     } else {
-      _handleError(response);
+      responseJson = _handleError(response);
     }
+    return responseJson;
   }
 
   Future<LeaseAgreement?> getLeaseAgreement(code) async {
@@ -73,7 +75,7 @@ class ApiService {
 
       Map<String, dynamic> leaseAgreementMap = responseMap['leaseAgreements'][0];
       var leaseAgreement = LeaseAgreement.fromJson(leaseAgreementMap);
-
+      print('la-status: ${leaseAgreement.status}');
       return leaseAgreement;
     } else {
       _handleError(response);
@@ -232,6 +234,12 @@ class ApiService {
           message = responseBodyJson['detail'];
         }
         throw UnauthorizedException(message);
+      case 403:
+        responseBodyJson = json.decode(response.body);
+        if (responseBodyJson['detail'] != null) {
+          message = responseBodyJson['detail'];
+        }
+        throw ForbiddenException(message);
       default:
         throw Exception('Error occured while Communication with Server with'
             'StatusCode: ${response.statusCode}');

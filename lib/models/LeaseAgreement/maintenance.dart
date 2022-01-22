@@ -1,7 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-enum Maintenance
-{
+enum Maintenance {
   @JsonValue(0)
   Foundation,
   @JsonValue(1)
@@ -18,5 +17,29 @@ enum Maintenance
   ElectricalSystems,
   @JsonValue(7)
   Structures,
+}
 
+extension MaintenanceExtension on Maintenance {
+  String get value {
+    switch (this) {
+      case Maintenance.Foundation:
+        return "Foundation";
+      case Maintenance.Plumbing:
+        return "Plumbing";
+      case Maintenance.Roof:
+        return "Roof";
+      case Maintenance.Sprinklers:
+        return "Sprinklers";
+      case Maintenance.HVAC:
+        return "HVAC";
+      case Maintenance.MainSystems:
+        return "Main Systems";
+      case Maintenance.ElectricalSystems:
+        return "Electrical Systems";
+      case Maintenance.Structures:
+        return "Structures";
+      default:
+        return "";
+    }
+  }
 }

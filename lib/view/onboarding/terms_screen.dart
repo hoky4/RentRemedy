@@ -19,10 +19,13 @@ class TermsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(title: Text("Terms"), automaticallyImplyLeading: false, centerTitle: true,),
+        appBar: AppBar(
+          title: Text("Terms"),
+          automaticallyImplyLeading: false,
+          centerTitle: true,
+        ),
         body: Column(
           children: [
             Expanded(
@@ -58,7 +61,11 @@ class TermsScreen extends StatelessWidget {
                 width: double.infinity,
                 decoration: new BoxDecoration(color: Colors.black12),
                 child: Row(
-                  children: [Spacer(), acceptButton(context, leaseAgreement.id), Spacer()],
+                  children: [
+                    Spacer(),
+                    acceptButton(context, leaseAgreement.id),
+                    Spacer()
+                  ],
                 )),
           ],
         ),
@@ -89,8 +96,7 @@ class TermsScreen extends StatelessWidget {
                       fit: BoxFit.cover,
                     ),
                     title: Align(
-                      child: Text("${item.toString().split('.').elementAt(1)}",
-                          style: bodyStyle2),
+                      child: Text("${item.value}", style: bodyStyle2),
                       alignment: Alignment(-1.2, 0),
                     ),
                   )
@@ -189,11 +195,15 @@ class TermsScreen extends StatelessWidget {
           children: [
             Text("One Time Security Deposit", style: categoryStyle),
             SizedBox(height: 8.0),
-            Text("Deposit Amount: \$${securityDeposit.depositAmount}", style: bodyStyle),
+            Text("Deposit Amount: \$${securityDeposit.depositAmount}",
+                style: bodyStyle),
             SizedBox(height: 8.0),
-            Text("Refund Amount: \$${securityDeposit.refundAmount}", style: bodyStyle),
+            Text("Refund Amount: \$${securityDeposit.refundAmount}",
+                style: bodyStyle),
             SizedBox(height: 8.0),
-            Text("Due Date: ${DateFormat.yMMMMd('en_US').format(securityDeposit.dueDate)}", style: bodyStyle),
+            Text(
+                "Due Date: ${DateFormat.yMMMMd('en_US').format(securityDeposit.dueDate)}",
+                style: bodyStyle),
           ],
         ),
       ),
@@ -210,8 +220,9 @@ class TermsScreen extends StatelessWidget {
           children: [
             Text("Address", style: categoryStyle),
             SizedBox(height: 8.0),
-            property != null ? Text("${property.toString()}", style: bodyStyle)
-            : Text("No property assigned")
+            property != null
+                ? Text("${property.toString()}", style: bodyStyle)
+                : Text("No property assigned")
           ],
         ),
       ),
@@ -228,15 +239,20 @@ class TermsScreen extends StatelessWidget {
           children: [
             Text("Monthly Fees", style: categoryStyle),
             SizedBox(height: 8.0),
-            Text("Rent Fee: \$${monthlyFees.rentFee.rentFeeAmount}", style: bodyStyle),
+            Text("Rent Fee: \$${monthlyFees.rentFee.rentFeeAmount}",
+                style: bodyStyle),
             SizedBox(height: 4.0),
-            Text("Pet Fee: \$${monthlyFees.petFee.petFeeAmount}", style: bodyStyle),
+            Text("Pet Fee: \$${monthlyFees.petFee.petFeeAmount}",
+                style: bodyStyle),
             SizedBox(height: 4.0),
-            Text("Due Date: ${DateFormat.yMMMMd('en_US').format(monthlyFees.dueDate!)}", style: bodyStyle),
+            Text(
+                "Due Date: ${DateFormat.yMMMMd('en_US').format(monthlyFees.dueDate!)}",
+                style: bodyStyle),
             SizedBox(height: 4.0),
             Text("Late Fee: \$${monthlyFees.lateFee}", style: bodyStyle),
             SizedBox(height: 4.0),
-            Text("Grace Period: ${monthlyFees.gracePeriod} days", style: bodyStyle),
+            Text("Grace Period: ${monthlyFees.gracePeriod} days",
+                style: bodyStyle),
           ],
         ),
       ),
@@ -253,7 +269,9 @@ class TermsScreen extends StatelessWidget {
           children: [
             Text("Duration", style: categoryStyle),
             SizedBox(height: 8.0),
-            Text("${DateFormat.yMMMMd('en_US').format(startDate)} to ${DateFormat.yMMMMd('en_US').format(endDate)}", style: bodyStyle),
+            Text(
+                "${DateFormat.yMMMMd('en_US').format(startDate)} to ${DateFormat.yMMMMd('en_US').format(endDate)}",
+                style: bodyStyle),
           ],
         ),
       ),

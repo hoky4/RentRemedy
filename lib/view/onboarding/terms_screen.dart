@@ -131,8 +131,7 @@ class TermsScreen extends StatelessWidget {
                       fit: BoxFit.cover,
                     ),
                     title: Align(
-                      child: Text("${item.toString().split('.').elementAt(1)}",
-                          style: bodyStyle2),
+                      child: Text("${item.value}", style: bodyStyle2),
                       alignment: Alignment(-1.2, 0),
                     ),
                   )
@@ -171,7 +170,7 @@ class TermsScreen extends StatelessWidget {
                     ),
                     title: Align(
                       child: Text(
-                        "${item.toString().split('.').elementAt(1)}",
+                        "${item.value}",
                         style: bodyStyle2,
                       ),
                       alignment: Alignment(-1.2, 0),

@@ -17,3 +17,26 @@ enum Amenity //extends Iterable
   @JsonValue(6)
   Dryer
 }
+
+extension AmenityExtension on Amenity {
+  String get value {
+    switch (this) {
+      case Amenity.Refrigerator:
+        return "Refrigerator";
+      case Amenity.Microwave:
+        return "Microwave";
+      case Amenity.Stove:
+        return "Stove";
+      case Amenity.Oven:
+        return "Oven";
+      case Amenity.Dishwasher:
+        return "Dishwasher";
+      case Amenity.Washer:
+        return "Washer";
+      case Amenity.Dryer:
+        return "Dryer";
+      default:
+        return "";
+    }
+  }
+}

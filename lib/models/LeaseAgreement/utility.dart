@@ -1,7 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-enum Utility
-{
+enum Utility {
   @JsonValue(0)
   Electricity,
   @JsonValue(1)
@@ -12,4 +11,23 @@ enum Utility
   Internet,
   @JsonValue(4)
   Waste
+}
+
+extension UtilityExtension on Utility {
+  String get value {
+    switch (this) {
+      case Utility.Electricity:
+        return "Electricity";
+      case Utility.Gas:
+        return "Gas";
+      case Utility.Water:
+        return "Water";
+      case Utility.Internet:
+        return "Internet";
+      case Utility.Waste:
+        return "Waste";
+      default:
+        return "";
+    }
+  }
 }

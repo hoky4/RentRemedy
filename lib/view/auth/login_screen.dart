@@ -3,10 +3,13 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
 import 'package:rentremedy_mobile/view/auth/signup_screen.dart';
+import 'package:rentremedy_mobile/view/onboarding/terms_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tuple/tuple.dart';
 
 import '../chat/message_screen.dart';
 import '../onboarding/confirmation_screen.dart';
@@ -167,7 +170,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   isLoading = true;
                 });
                 await apiService.login(txtEmail.text, txtPassword.text);
-                final bool hasLeaseAgreement = await _findLeaseAgreement();
+                LeaseAgreement? leaseAgreement =
+                    await _findLeaseAgreementById();
+                bool hasLeaseAgreement = leaseAgreement != null ? true : false;
 
                 setState(() {
                   _statusMessage = 'Login Success';
@@ -176,10 +181,20 @@ class _LoginScreenState extends State<LoginScreen> {
                 });
 
                 if (hasLeaseAgreement) {
-                  Navigator.pushReplacement(
-                      context,
-                      new MaterialPageRoute(
-                          builder: (context) => MessageScreen()));
+                  if (isSigned(leaseAgreement)) {
+                    Navigator.pushReplacement(
+                        context,
+                        new MaterialPageRoute(
+                            builder: (context) => MessageScreen()));
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text("Lease Agreement not signed yet.")));
+                    Navigator.pushReplacement(
+                        context,
+                        new MaterialPageRoute(
+                            builder: (context) =>
+                                TermsScreen(leaseAgreement: leaseAgreement)));
+                  }
                 } else {
                   Navigator.pushReplacement(
                       context,
@@ -236,10 +251,21 @@ class _LoginScreenState extends State<LoginScreen> {
         ]));
   }
 
-  Future<bool> _findLeaseAgreement() async {
+  Future<LeaseAgreement?> _findLeaseAgreementById() async {
     final prefs = await SharedPreferences.getInstance();
     final id = (prefs.getString('id') ?? '');
     var leaseAgreement = await apiService.findExistingLeaseAgreements(id);
-    return leaseAgreement != null ? true : false;
+    // return leaseAgreement != null ? Tuple2<bool, LeaseAgreement>(true, leaseAgreement) : const Tuple2<bool, LeaseAgreement?>(false, null);
+    return leaseAgreement;
+  }
+
+  bool isSigned(LeaseAgreement leaseAgreement) {
+    if (leaseAgreement.signatures.isEmpty) {
+      print("Existing Lease Agreement Not signed.");
+      return false;
+    }
+    print("Existing Lease Agreement Signed.");
+
+    return true;
   }
 }

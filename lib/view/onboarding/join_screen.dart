@@ -30,92 +30,91 @@ class JoinScreen extends StatelessWidget {
                     height: 150,
                   ),
                   Text('Is this the right property?'),
-                  Container(
-                    margin: const EdgeInsets.all(16.0),
-                    padding: const EdgeInsets.all(16.0),
-                    decoration:
-                        BoxDecoration(border: Border.all(color: Colors.black)),
-                    child: Column(
-                      children: [
-                        propertyDetailLine(
-                            'description: ', '${leaseAgreement.description}'),
-                        SizedBox(height: 8),
-                        // propertyDetailLine('landlord: ', 'Landlord'),
-
-                        propertyDetailLine('landlord: ',
-                            '${leaseAgreement.landlord.firstName.toUpperCase()} ${leaseAgreement.landlord.lastName.toUpperCase()}'),
-                      ],
-                    ),
-                  ),
+                  propertyDetail(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pushReplacement(
-                              context,
-                              new MaterialPageRoute(
-                                  builder: (context) => ConfirmationScreen()));
-                        },
-                        child: Text(
-                          'No',
-                          style: TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.bold),
-                        ),
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all(Colors.red),
-                          shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                          ),
-                        ),
-                      ),
+                      noButton(context),
                       SizedBox(width: 8),
-                      TextButton(
-                        onPressed: () async {
-                          try {
-                            await apiService.joinLeaseAgreement('${leaseAgreement.id}');
-                            if (leaseAgreement.property != null) {
-                              Navigator.pushReplacement(
-                              context,
-                              new MaterialPageRoute(
-                                  builder: (context) => TermsScreen(
-                                        leaseAgreement: leaseAgreement,
-                                      )));
-                            }
-                          } on ForbiddenException catch (e) {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${e.toString()}")));
-
-                            // TODO: show popup for error and navigate back to confirmation screen
-                            Navigator.pushReplacement(
-                                context,
-                                new MaterialPageRoute(
-                                    builder: (context) => ConfirmationScreen()));
-                          }
-                        },
-                        child: Text(
-                          'Yes',
-                          style: TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.bold),
-                        ),
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all(Colors.green),
-                          shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                          ),
-                        ),
-                      ),
+                      yesButton(apiService, context),
                     ],
                   )
                 ],
               ))),
+    );
+  }
+
+  Widget yesButton(ApiService apiService, BuildContext context) {
+    return TextButton(
+      onPressed: () async {
+        try {
+          await apiService.joinLeaseAgreement('${leaseAgreement.id}');
+          if (leaseAgreement.property != null) {
+            Navigator.pushReplacement(
+                context,
+                new MaterialPageRoute(
+                    builder: (context) => TermsScreen(
+                          leaseAgreement: leaseAgreement,
+                        )));
+          }
+        } on ForbiddenException catch (e) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text("${e.toString()}")));
+          Navigator.pushReplacement(
+              context,
+              new MaterialPageRoute(
+                  builder: (context) => ConfirmationScreen()));
+        }
+      },
+      child: Text(
+        'Yes',
+        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+      ),
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all(Colors.green),
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget noButton(BuildContext context) {
+    return TextButton(
+      onPressed: () {
+        Navigator.pushReplacement(context,
+            new MaterialPageRoute(builder: (context) => ConfirmationScreen()));
+      },
+      child: Text(
+        'No',
+        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+      ),
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all(Colors.red),
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget propertyDetail() {
+    return Container(
+      margin: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(border: Border.all(color: Colors.black)),
+      child: Column(
+        children: [
+          propertyDetailLine('description: ', '${leaseAgreement.description}'),
+          SizedBox(height: 8),
+          propertyDetailLine('landlord: ',
+              '${leaseAgreement.landlord.firstName.toUpperCase()} ${leaseAgreement.landlord.lastName.toUpperCase()}'),
+        ],
+      ),
     );
   }
 

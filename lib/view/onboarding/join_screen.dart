@@ -29,7 +29,9 @@ class JoinScreen extends StatelessWidget {
                   SizedBox(
                     height: 150,
                   ),
-                  Text('Is this the right property?'),
+                  Text("Is this the right property?",
+                      style:
+                          TextStyle(fontWeight: FontWeight.w500, fontSize: 20)),
                   propertyDetail(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -109,10 +111,13 @@ class JoinScreen extends StatelessWidget {
       decoration: BoxDecoration(border: Border.all(color: Colors.black)),
       child: Column(
         children: [
-          propertyDetailLine('description: ', '${leaseAgreement.description}'),
+          propertyDetailLine('Description: ', '${leaseAgreement.description}'),
           SizedBox(height: 8),
-          propertyDetailLine('landlord: ',
-              '${leaseAgreement.landlord.firstName.toUpperCase()} ${leaseAgreement.landlord.lastName.toUpperCase()}'),
+          propertyDetailLine(
+              '\Address: ', '\n${leaseAgreement.property.toString()}'),
+          SizedBox(height: 8),
+          propertyDetailLine('Landlord: ',
+              '${leaseAgreement.landlord.firstName.capitalize()} ${leaseAgreement.landlord.lastName.capitalize()}'),
         ],
       ),
     );
@@ -126,5 +131,11 @@ class JoinScreen extends StatelessWidget {
         Text("$detail"),
       ],
     );
+  }
+}
+
+extension StringExtension on String {
+  String capitalize() {
+    return "${this[0].toUpperCase()}${this.substring(1).toLowerCase()}";
   }
 }

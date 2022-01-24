@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:rentremedy_mobile/models/Fees/due_date_type.dart';
 import 'package:rentremedy_mobile/models/Fees/monthly_fees.dart';
 import 'package:rentremedy_mobile/models/LeaseAgreement/amenity.dart';
 import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
@@ -244,9 +245,10 @@ class TermsScreen extends StatelessWidget {
             Text("Pet Fee: \$${monthlyFees.petFee.petFeeAmount}",
                 style: bodyStyle),
             SizedBox(height: 4.0),
-            Text(
-                "Due Date: ${DateFormat.yMMMMd('en_US').format(monthlyFees.dueDate!)}",
-                style: bodyStyle),
+            dueDateCondition(monthlyFees),
+            // Text(
+            //     "Due Date: ${DateFormat.yMMMMd('en_US').format(monthlyFees.dueDate!)}",
+            //     style: bodyStyle),
             SizedBox(height: 4.0),
             Text("Late Fee: \$${monthlyFees.lateFee}", style: bodyStyle),
             SizedBox(height: 4.0),
@@ -256,6 +258,24 @@ class TermsScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget dueDateCondition(MonthlyFees monthlyFees) {
+    switch (monthlyFees.dueDateType) {
+      case DueDateType.StartOfMonth:
+        return Text("Due Date: ${monthlyFees.dueDateType.value}",
+            style: bodyStyle);
+      case DueDateType.EndOfMonth:
+        return Text("Due Date: ${monthlyFees.dueDateType.value}",
+            style: bodyStyle);
+      case DueDateType.DayOfMonth:
+        // TODO:
+        return Text(
+            "Due Date: ${DateFormat.yMMMMd('en_US').format(monthlyFees.dueDate!)} *or End of Month",
+            style: bodyStyle);
+      default:
+        return Text("Not avaliable.", style: bodyStyle);
+    }
   }
 
   Widget duration(DateTime startDate, DateTime endDate) {

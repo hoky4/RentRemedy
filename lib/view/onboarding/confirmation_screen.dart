@@ -42,6 +42,9 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(height: 200),
+                  Text("Enter the ID from the email.",
+                      style:
+                          TextStyle(fontWeight: FontWeight.w500, fontSize: 20)),
                   statusMessage(),
                   confirmationInput(),
                   submitButton(context),
@@ -72,14 +75,23 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
             setState(() {
               isLoading = false;
             });
-            if (leaseAgreement != null &&
-                leaseAgreement.status == Status.Unassigned) {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => JoinScreen(
-                            leaseAgreement: leaseAgreement,
-                          )));
+
+            if (leaseAgreement != null) {
+              if (leaseAgreement.status == Status.Inactive) {
+                setState(() {
+                  _statusMessage = "Property is not connected.";
+                  _messageColor = Colors.red;
+                  isLoading = false;
+                });
+                return;
+              } else if (leaseAgreement.status == Status.Unassigned) {
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => JoinScreen(
+                              leaseAgreement: leaseAgreement,
+                            )));
+              }
             }
           } on BadRequestException catch (e) {
             setState(() {

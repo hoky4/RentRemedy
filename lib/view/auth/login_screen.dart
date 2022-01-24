@@ -9,8 +9,6 @@ import 'package:rentremedy_mobile/networking/api_service.dart';
 import 'package:rentremedy_mobile/view/auth/signup_screen.dart';
 import 'package:rentremedy_mobile/view/onboarding/terms_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tuple/tuple.dart';
-
 import '../chat/message_screen.dart';
 import '../onboarding/confirmation_screen.dart';
 

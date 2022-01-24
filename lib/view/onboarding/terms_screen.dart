@@ -271,7 +271,7 @@ class TermsScreen extends StatelessWidget {
       case DueDateType.DayOfMonth:
         // TODO:
         return Text(
-            "Due Date: ${DateFormat.yMMMMd('en_US').format(monthlyFees.dueDate!)} *or End of Month",
+            "Due Date: ${DateFormat.yMMMMd('en_US').format(monthlyFees.dueDate!)} *(or end of month)",
             style: bodyStyle);
       default:
         return Text("Not avaliable.", style: bodyStyle);

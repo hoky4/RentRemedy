@@ -4,8 +4,8 @@ import 'dart:io';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
-import 'package:rentremedy_mobile/models/lease_agreement.dart';
-import 'package:rentremedy_mobile/models/user.dart';
+import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
+import 'package:rentremedy_mobile/models/User/user.dart';
 import 'package:rentremedy_mobile/networking/api.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -34,7 +34,8 @@ class ApiService {
     }
   }
 
-  joinLeaseAgreement(id) async {
+  dynamic joinLeaseAgreement(id) async {
+    var responseJson;
     await readFromSecureStorage('myCookie');
 
     final response = await http.post(
@@ -49,12 +50,12 @@ class ApiService {
     if (response.statusCode == 200) {
       return;
     } else {
-      _handleError(response);
+      responseJson = _handleError(response);
     }
+    return responseJson;
   }
 
   Future<LeaseAgreement?> getLeaseAgreement(code) async {
-    print('code: $code');
     await readFromSecureStorage('myCookie');
 
     final response = await http.get(Uri.parse('$LEASEAGREEMENTS?code=$code'),
@@ -64,15 +65,17 @@ class ApiService {
         });
 
     if (response.statusCode == 200) {
-      print('response: ${response.body}');
-      Map<String, dynamic> responseBodyJson = json.decode(response.body);
-      List<dynamic> leaseAgreements = responseBodyJson['leaseAgreements'];
+      print('\nresponse: ${response.body}');
+      Map<String, dynamic> responseMap = jsonDecode(response.body);
+      
+      List<dynamic> leaseAgreements = responseMap['leaseAgreements'];
       if (leaseAgreements.isEmpty) {
         throw NotFoundException("No Results Found");
       }
 
-      LeaseAgreement leaseAgreement = LeaseAgreement.fromJson(responseBodyJson);
-
+      Map<String, dynamic> leaseAgreementMap = responseMap['leaseAgreements'][0];
+      var leaseAgreement = LeaseAgreement.fromJson(leaseAgreementMap);
+      print('la-status: ${leaseAgreement.status}');
       return leaseAgreement;
     } else {
       _handleError(response);
@@ -85,22 +88,22 @@ class ApiService {
     var leaseAgreement = null;
 
     final response = await http.get(
-        Uri.parse('$LEASEAGREEMENTS?tenant=$id&status=1'),
+        Uri.parse('$LEASEAGREEMENTS?tenant=$id&status=AssignedSigned'),
         headers: <String, String>{
           'cookie': cookie,
           'Content-Type': 'application/json; charset=UTF-8',
         });
 
     if (response.statusCode == 200) {
-      Map<String, dynamic> responseBodyJson = json.decode(response.body);
-      List<dynamic> leaseAgreements = responseBodyJson['leaseAgreements'];
+      Map<String, dynamic> responseMap = json.decode(response.body);
+      List<dynamic> leaseAgreements = responseMap['leaseAgreements'];
 
       if (leaseAgreements.isEmpty) {
-        print('No existing lease agreements');
+        print('No existing lease agreements found.');
         return null;
       } else {
         print('Active lease agreement found.');
-        leaseAgreement = LeaseAgreement.fromJson(jsonDecode(response.body));
+        leaseAgreement = LeaseAgreement.fromJson(leaseAgreements[0]);
         return leaseAgreement;
       }
     } else {
@@ -108,7 +111,9 @@ class ApiService {
     }
   }
 
-  Future<void> signup(firstName, lastName, email, password) async {
+  dynamic signup(firstName, lastName, email, password) async {
+    var responseJson;
+
     try {
       final response = await http
           .post(
@@ -130,10 +135,114 @@ class ApiService {
             'The connection has timed out, Please try again!');
       });
 
-      await _returnResponse(response);
+      if (response.statusCode == 201) {
+        Map<String, dynamic> responseMap = jsonDecode(response.body);
+        print('201-response $responseMap');
+        // return responseMap;
+      } else {
+        responseJson = _handleError(response);
+      }
     } on SocketException {
       print('No net');
       throw Exception('No Internet connection');
+    }
+    return responseJson;
+  }
+
+  dynamic logout() async {
+    var responseJson;
+
+    await readFromSecureStorage('myCookie');
+
+    try {
+      final response = await http.post(
+        Uri.parse(LOGOUT),
+        headers: <String, String>{
+          'cookie': cookie,
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{}),
+      );
+
+      if (response.statusCode == 204) {
+        writeToSecureStorage(myKey, '');
+        cookie = '';
+        print('statusCode: 204-response');
+      } else {
+        responseJson = _handleError(response);
+      }
+    } on SocketException {
+      print('No net');
+      throw Exception('No Internet connection');
+    }
+
+    return responseJson;
+  }
+
+  dynamic loggedInUser() async {
+    var responseJson;
+
+    await readFromSecureStorage('myCookie');
+    if (cookie.isEmpty) {
+      print('No existing cookie found.');
+      return null;
+    }
+
+    try {
+      final response =
+          await http.get(Uri.parse(LOGGEDINUSER), headers: <String, String>{
+        'cookie': cookie,
+        'Content-Type': 'application/json; charset=UTF-8',
+      });
+
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseMap = jsonDecode(response.body);
+        User user = User.fromJson(responseMap);
+        return user;
+      } else {
+        responseJson = _handleError(response);
+      }
+
+    } on SocketException {
+      print('No net');
+      throw Exception('No Internet connection');
+    }
+
+    return responseJson;
+  }
+
+  dynamic _handleError(http.Response response) async {
+    Map<String, dynamic> responseBodyJson = {};
+    String message = '';
+    final statusCode = response.statusCode;
+
+    switch (statusCode) {
+      case 400:
+        responseBodyJson = json.decode(response.body);
+        if (responseBodyJson['detail'] != null) {
+          message = responseBodyJson['detail'];
+        } else if (responseBodyJson['errors'] != null) {
+          Map<String, dynamic> responseErrorsJson = responseBodyJson['errors'];
+          responseErrorsJson
+              .forEach((i, value) => message += '\n' + value.toString());
+        }
+
+        throw BadRequestException(message);
+      case 401:
+        responseBodyJson = json.decode(response.body);
+        if (responseBodyJson['detail'] != null) {
+          message = responseBodyJson['detail'];
+        }
+        throw UnauthorizedException(message);
+      case 403:
+        responseBodyJson = json.decode(response.body);
+        if (responseBodyJson['detail'] != null) {
+          message = responseBodyJson['detail'];
+        }
+        throw ForbiddenException(message);
+      default:
+        throw Exception('Error occured while Communication with Server with'
+            'StatusCode: ${response.statusCode}');
     }
   }
 
@@ -158,149 +267,38 @@ class ApiService {
             'The connection has timed out, Please try again!');
       });
 
-      responseJson = _returnResponse(response);
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseMap = jsonDecode(response.body);
+        User user = User.fromJson(responseMap);
+
+        // obtain shared preferences
+        final prefs = await SharedPreferences.getInstance();
+        prefs.setString('name', user.firstName);
+        prefs.setString('id', user.id);
+
+        // store cookie
+        if (response.headers['set-cookie'] != null) {
+          String rawCookie = response.headers['set-cookie']!;
+          writeToSecureStorage(myKey, rawCookie);
+          print('Stored cookie: $rawCookie');
+        }
+
+        // prevent landlord from logging in to the app
+        if (user.roles.toString().contains("1") &&
+            !user.roles.toString().contains("0")) {
+          throw UnauthorizedException("Unable to login");
+        }
+
+        return user;
+      } else {
+        responseJson = _handleError(response);
+      }
     } on SocketException {
       print('No net');
       throw Exception('No Internet connection');
     }
 
     return responseJson;
-  }
-
-  logout() async {
-    await readFromSecureStorage('myCookie');
-
-    try {
-      final response = await http.post(
-        Uri.parse(LOGOUT),
-        headers: <String, String>{
-          'cookie': cookie,
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(<String, dynamic>{}),
-      );
-
-      _returnResponse(response);
-    } on SocketException {
-      print('No net');
-      throw Exception('No Internet connection');
-    }
-  }
-
-  Future<User?> loggedInUser() async {
-    User? user;
-
-    await readFromSecureStorage('myCookie');
-    if (cookie.isEmpty) {
-      return null;
-    }
-
-    try {
-      final response =
-          await http.get(Uri.parse(LOGGEDINUSER), headers: <String, String>{
-        'cookie': cookie,
-        'Content-Type': 'application/json; charset=UTF-8',
-      });
-
-      user = await _returnResponse(response);
-    } on SocketException {
-      print('No net');
-      throw Exception('No Internet connection');
-    }
-
-    return user;
-  }
-
-  void _handleError(http.Response response) async {
-    Map<String, dynamic> responseBodyJson = {};
-    String message = '';
-    final statusCode = response.statusCode;
-
-    switch (statusCode) {
-      case 400:
-        responseBodyJson = json.decode(response.body);
-        if (responseBodyJson['detail'] != null) {
-          message = responseBodyJson['detail'];
-        } else if (responseBodyJson['errors'] != null) {
-          Map<String, dynamic> responseErrorsJson = responseBodyJson['errors'];
-          responseErrorsJson
-              .forEach((i, value) => message += '\n' + value.toString());
-        }
-
-        throw BadRequestException(message);
-      case 401:
-        responseBodyJson = json.decode(response.body);
-        if (responseBodyJson['detail'] != null) {
-          message = responseBodyJson['detail'];
-        }
-        throw UnauthorizedException(message);
-      default:
-        throw Exception('Error occured while Communication with Server with'
-            'StatusCode: ${response.statusCode}');
-    }
-  }
-
-  dynamic _returnResponse(http.Response response) async {
-    Map<String, dynamic> responseBodyJson = {};
-    String message = '';
-
-    switch (response.statusCode) {
-      case 200:
-        responseBodyJson = json.decode(response.body);
-        var name = responseBodyJson['firstName'];
-        var user = null;
-        var id = responseBodyJson['id'];
-
-        // obtain shared preferences
-        final prefs = await SharedPreferences.getInstance();
-        prefs.setString('name', name);
-        prefs.setString('id', id);
-
-        if (response.headers['set-cookie'] != null) {
-          String rawCookie = response.headers['set-cookie']!;
-          writeToSecureStorage(myKey, rawCookie);
-          print('cookie: $rawCookie');
-        }
-
-        if (responseBodyJson['roles'].toString().contains("1") &&
-            !responseBodyJson['roles'].toString().contains("0")) {
-          throw UnauthorizedException("Unable to login");
-        }
-
-        user = User.fromJson(jsonDecode(response.body));
-        print('User: ${user.id}');
-
-        return user;
-      case 201:
-        var responseJson = json.decode(response.body.toString());
-        print('201-response $responseJson');
-        return responseJson;
-      case 204:
-        writeToSecureStorage(myKey, '');
-        cookie = '';
-        print('statusCode: 204-response');
-        return;
-      case 400:
-        responseBodyJson = json.decode(response.body);
-        if (responseBodyJson['detail'] != null) {
-          message = responseBodyJson['detail'];
-        } else if (responseBodyJson['errors'] != null) {
-          Map<String, dynamic> responseErrorsJson = responseBodyJson['errors'];
-          responseErrorsJson
-              .forEach((i, value) => message += '\n' + value.toString());
-        }
-
-        throw BadRequestException(message);
-      case 401:
-        responseBodyJson = json.decode(response.body);
-        if (responseBodyJson['detail'] != null) {
-          message = responseBodyJson['detail'];
-        }
-        throw UnauthorizedException(message);
-      default:
-        throw Exception('Error occured while Communication with Server with'
-            'StatusCode: ${response.statusCode}');
-    }
   }
 
   Future writeToSecureStorage(myKey, rawCookie) async {
@@ -311,3 +309,4 @@ class ApiService {
     cookie = (await storage.read(key: myKey))!;
   }
 }
+

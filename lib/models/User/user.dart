@@ -4,12 +4,7 @@ part 'user.g.dart';
 
 @JsonSerializable()
 class User {
-  User(
-    this.id,
-    this.firstName,
-    this.lastName,
-    this.email,
-    this.roles);
+  User(this.id, this.firstName, this.lastName, this.email, this.roles);
 
   String id;
   String firstName;
@@ -21,3 +16,6 @@ class User {
 
   Map<String, dynamic> toJson() => _$UserToJson(this);
 }
+
+final dummy = User(
+    "aaaabbbbccccddddeeee", "firstName", "lastName", "email", [Role.Tenant]);

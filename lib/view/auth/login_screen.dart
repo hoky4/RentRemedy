@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
+import 'package:rentremedy_mobile/models/User/user.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
 import 'package:rentremedy_mobile/view/auth/signup_screen.dart';
@@ -167,10 +168,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 setState(() {
                   isLoading = true;
                 });
-                await apiService.login(txtEmail.text, txtPassword.text);
+                User? user =
+                    await apiService.login(txtEmail.text, txtPassword.text);
                 LeaseAgreement? leaseAgreement =
                     await _findLeaseAgreementById();
                 bool hasLeaseAgreement = leaseAgreement != null ? true : false;
+
+                // await apiService.connectToWebSocket(user!);
+                // print('Connected to socket');
 
                 setState(() {
                   _statusMessage = 'Login Success';
@@ -183,7 +188,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Navigator.pushReplacement(
                         context,
                         new MaterialPageRoute(
-                            builder: (context) => MessageScreen()));
+                            builder: (context) => MessageScreen(user: user!)));
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                         content: Text("Lease Agreement not signed yet.")));

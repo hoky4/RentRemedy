@@ -10,6 +10,7 @@ import 'package:rentremedy_mobile/models/LeaseAgreement/maintenance.dart';
 import 'package:rentremedy_mobile/models/LeaseAgreement/one_time_security_deposit.dart';
 import 'package:rentremedy_mobile/models/LeaseAgreement/utility.dart';
 import 'package:rentremedy_mobile/models/Property/property.dart';
+import 'package:rentremedy_mobile/models/User/user.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
 import 'package:rentremedy_mobile/view/chat/message_screen.dart';
 
@@ -312,7 +313,9 @@ class TermsScreen extends StatelessWidget {
       onPressed: () async {
         await apiService.signLeaseAgreement('$leaseAgreemenId');
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => MessageScreen()));
+            context,
+            MaterialPageRoute(
+                builder: (context) => MessageScreen(user: dummy)));
       },
       child:
           Text('Accept', style: TextStyle(fontSize: 18, color: Colors.white)),

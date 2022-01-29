@@ -1,11 +1,21 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:rentremedy_mobile/models/chat_message.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:rentremedy_mobile/models/Message/model.dart';
+import 'package:rentremedy_mobile/models/User/user.dart';
+import 'package:rentremedy_mobile/models/Message/chat_message.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:web_socket_channel/io.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:rentremedy_mobile/models/Message/messages.dart';
 
 import '../auth/login_screen.dart';
 
 class MessageScreen extends StatefulWidget {
-  const MessageScreen({Key? key}) : super(key: key);
+  User user;
+  MessageScreen({Key? key, required this.user}) : super(key: key);
 
   @override
   _MessageScreenState createState() => _MessageScreenState();
@@ -15,6 +25,11 @@ class _MessageScreenState extends State<MessageScreen> {
   late final TextEditingController txtMessage;
   bool isButtonActive = false;
   ApiService apiService = ApiService();
+  // WebSocketChannel channel = WebSocketChannel.connect(
+  //   Uri.parse('wss://10.0.2.2:5001/api/ws/connect'),
+  // );
+  var channel;
+  var isLoading = false;
 
   @override
   void initState() {
@@ -25,10 +40,50 @@ class _MessageScreenState extends State<MessageScreen> {
       final isButtonActive = txtMessage.text.isNotEmpty;
       setState(() => this.isButtonActive = isButtonActive);
     });
+
+    // apiService.connectToWebSocket();
+    setupConnection();
+    // channel = apiService.channel;
+  }
+
+  Future<void> setupConnection() async {
+    var cookie = await readFromSecureStorage();
+    channel = IOWebSocketChannel.connect(
+      'wss://10.0.2.2:5001/api/ws/connect',
+      headers: <String, dynamic>{
+        'Content-Type': 'application/json',
+        "Cookie": cookie
+      },
+    );
+
+    // final landlordId = await getLandlordId();
+    // print('landlord-id: $landlordId');
+
+    // await WebSocket.connect(
+    //   "wss://10.0.2.2:5001/api/ws/connect",
+    //   headers: <String, dynamic>{
+    //     'Content-Type': 'application/json',
+    //     "Cookie": cookie
+    //   },
+    // ).then((ws) {
+    //   // create the stream channel
+    //   channel = IOWebSocketChannel(ws);
+    //   final message = Messages(
+    //       "61f31932f702f1788e19aac0", "Hey landlord", "2", Model.Message);
+
+    //   channel.sink.add(message.toJson());
+    // });
+
+    setState(() {
+      print('isloading done');
+      isLoading = true;
+    });
   }
 
   @override
   void dispose() {
+    print('closed channel');
+    channel.sink.close();
     txtMessage.dispose();
     super.dispose();
   }
@@ -45,8 +100,10 @@ class _MessageScreenState extends State<MessageScreen> {
                 onPressed: () async {
                   await apiService.logout();
 
-                  Navigator.push(context,
-                      new MaterialPageRoute(builder: (context) => LoginScreen()));
+                  Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                          builder: (context) => LoginScreen()));
                 },
               ),
               Text("General")
@@ -72,6 +129,15 @@ class _MessageScreenState extends State<MessageScreen> {
                       )),
             ),
           ),
+          // isLoading
+          //     ? StreamBuilder(
+          //         stream: channel.stream,
+          //         builder: (context, snapshot) {
+          //           return Text(snapshot.hasData ? '${snapshot.data}' : '');
+          //         },
+          //       )
+          //     : Text("Loading"),
+          Text('Hi'),
           MessageInputField(),
         ]));
   }
@@ -100,7 +166,8 @@ class _MessageScreenState extends State<MessageScreen> {
           IconButton(
             icon: Icon(Icons.send),
             onPressed: isButtonActive
-                ? () {
+                ? () async {
+                    await sendMessage();
                     setState(() {
                       final userInput =
                           ChatMessage(text: txtMessage.text, isSender: true);
@@ -114,6 +181,40 @@ class _MessageScreenState extends State<MessageScreen> {
         ],
       ),
     );
+  }
+
+  Future<String> getLandlordId() async {
+    final prefs = await SharedPreferences.getInstance();
+    final id = (prefs.getString('landlordId') ?? '');
+
+    return id;
+  }
+
+  sendMessage() async {
+    final landlordId = await getLandlordId();
+    print('landlord-id: $landlordId');
+    final message = Messages(
+        "61f31932f702f1788e19aac0", "Hey landlord", "2", Model.Message);
+    print('message-str: ${message.toString()}');
+    print('msg-json: ${message.toJson()}');
+
+    final msgJson = message.toJson();
+    for (final mapEntry in msgJson.entries) {
+      final key = mapEntry.key;
+      final value = mapEntry.value;
+      print('$key: $value');
+    }
+
+    channel.sink.add(message.toJson());
+    // channel.sink.add(
+    // '{ "recipient":"61f31932f702f1788e19aac0", "messageText":"Hello, landlord", "messageTempId":"2", "model": 1 }');
+  }
+
+  Future<String> readFromSecureStorage() async {
+    final storage = FlutterSecureStorage();
+    var cookie = (await storage.read(key: "myCookie"))!;
+    print('read cookie: $cookie');
+    return cookie;
   }
 }
 

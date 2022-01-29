@@ -9,14 +9,25 @@ import 'package:rentremedy_mobile/models/User/user.dart';
 import 'package:rentremedy_mobile/networking/api.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:web_socket_channel/io.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class ApiService {
   final storage = FlutterSecureStorage();
   final myKey = 'myCookie';
   var cookie = '';
+  var channel;
 
-  signLeaseAgreement(id) async {
+  connectToWebSocket() {
+    channel = IOWebSocketChannel.connect(
+      Uri.parse('ws://10.0.2.2:5001/api/ws/connect'),
+      headers: <String, dynamic>{"Cookie": cookie},
+    );
+  }
+
+  dynamic signLeaseAgreement(id) async {
     await readFromSecureStorage('myCookie');
+    var responseJson;
 
     final response = await http.post(
       Uri.parse('$LEASEAGREEMENTS/$id/signatures'),
@@ -28,10 +39,22 @@ class ApiService {
     );
 
     if (response.statusCode == 200) {
-      return;
+      print('\nresponse: ${response.body}');
+      Map<String, dynamic> responseMap = jsonDecode(response.body);
+
+      // Map<String, dynamic> leaseAgreementMap = responseMap['leaseAgreements'];
+      var leaseAgreement = LeaseAgreement.fromJson(responseMap);
+
+      // obtain shared preferences
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString('landlordId', leaseAgreement.landlord.id);
+
+      return leaseAgreement;
     } else {
-      _handleError(response);
+      responseJson = _handleError(response);
     }
+
+    return responseJson;
   }
 
   dynamic joinLeaseAgreement(id) async {
@@ -67,13 +90,14 @@ class ApiService {
     if (response.statusCode == 200) {
       print('\nresponse: ${response.body}');
       Map<String, dynamic> responseMap = jsonDecode(response.body);
-      
+
       List<dynamic> leaseAgreements = responseMap['leaseAgreements'];
       if (leaseAgreements.isEmpty) {
         throw NotFoundException("No Results Found");
       }
 
-      Map<String, dynamic> leaseAgreementMap = responseMap['leaseAgreements'][0];
+      Map<String, dynamic> leaseAgreementMap =
+          responseMap['leaseAgreements'][0];
       var leaseAgreement = LeaseAgreement.fromJson(leaseAgreementMap);
       print('la-status: ${leaseAgreement.status}');
       return leaseAgreement;
@@ -130,7 +154,7 @@ class ApiService {
           'roles': [0]
         }),
       )
-          .timeout(Duration(seconds: 7), onTimeout: () {
+          .timeout(Duration(seconds: 10), onTimeout: () {
         throw TimeoutException(
             'The connection has timed out, Please try again!');
       });
@@ -202,7 +226,6 @@ class ApiService {
       } else {
         responseJson = _handleError(response);
       }
-
     } on SocketException {
       print('No net');
       throw Exception('No Internet connection');
@@ -262,7 +285,7 @@ class ApiService {
           'password': password,
         }),
       )
-          .timeout(Duration(seconds: 7), onTimeout: () {
+          .timeout(Duration(seconds: 200), onTimeout: () {
         throw TimeoutException(
             'The connection has timed out, Please try again!');
       });
@@ -308,5 +331,10 @@ class ApiService {
   Future<void> readFromSecureStorage(myKey) async {
     cookie = (await storage.read(key: myKey))!;
   }
-}
 
+  Future<String> _getUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    final id = (prefs.getString('id') ?? '');
+    return id;
+  }
+}

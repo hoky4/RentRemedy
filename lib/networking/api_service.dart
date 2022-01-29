@@ -5,6 +5,8 @@ import 'dart:io';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
+import 'package:rentremedy_mobile/models/Message/messages.dart';
+import 'package:rentremedy_mobile/models/Message/model.dart';
 import 'package:rentremedy_mobile/models/User/user.dart';
 import 'package:rentremedy_mobile/networking/api.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
@@ -17,12 +19,29 @@ class ApiService {
   final myKey = 'myCookie';
   var cookie = '';
   var channel;
+  var landlordId = '';
 
   connectToWebSocket() {
     channel = IOWebSocketChannel.connect(
-      Uri.parse('ws://10.0.2.2:5001/api/ws/connect'),
-      headers: <String, dynamic>{"Cookie": cookie},
+      'wss://10.0.2.2:5001/api/ws/connect',
+      headers: <String, dynamic>{
+        'Content-Type': 'application/json',
+        "Cookie": cookie
+      },
     );
+  }
+
+  sendMessage({required String input}) async {
+    if (landlordId.isEmpty) {
+      landlordId = await getLandlordId();
+    }
+    final message = Messages(landlordId, input, "2", Model.Message);
+
+    channel.sink.add(jsonEncode(message.toJson()));
+  }
+
+  closeSocket() {
+    channel.sink.close();
   }
 
   dynamic signLeaseAgreement(id) async {
@@ -335,6 +354,13 @@ class ApiService {
   Future<String> _getUserId() async {
     final prefs = await SharedPreferences.getInstance();
     final id = (prefs.getString('id') ?? '');
+    return id;
+  }
+
+  Future<String> getLandlordId() async {
+    final prefs = await SharedPreferences.getInstance();
+    final id = (prefs.getString('landlordId') ?? '');
+
     return id;
   }
 }

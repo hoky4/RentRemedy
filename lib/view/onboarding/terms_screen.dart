@@ -299,7 +299,7 @@ class TermsScreen extends StatelessWidget {
   }
 
   Widget acceptButton(BuildContext context, String leaseAgreemenId) {
-    ApiService apiService = Provider.of<ApiService>(context);
+    ApiService apiService = Provider.of<ApiService>(context, listen: false);
 
     return ElevatedButton(
       style: ButtonStyle(

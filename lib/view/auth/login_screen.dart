@@ -180,10 +180,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     await _findLeaseAgreementById();
                 bool hasLeaseAgreement = leaseAgreement != null ? true : false;
 
-                // await apiService.connectToWebSocket(user!);
-                // print('Connected to socket');
-                print('cookie1: ${apiService.cookie}');
-
                 setState(() {
                   _statusMessage = 'Login Success';
                   _messageColor = Colors.green;
@@ -211,6 +207,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       new MaterialPageRoute(
                           builder: (context) => ConfirmationScreen()));
                 }
+
+                apiService.connectToWebSocket();
+                print('Connected to websocket.');
               } on BadRequestException catch (e) {
                 setState(() {
                   _statusMessage = e.toString();

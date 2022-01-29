@@ -47,7 +47,7 @@ class JoinScreen extends StatelessWidget {
   }
 
   Widget yesButton(BuildContext context) {
-    ApiService apiService = Provider.of<ApiService>(context);
+    ApiService apiService = Provider.of<ApiService>(context, listen: false);
 
     return TextButton(
       onPressed: () async {

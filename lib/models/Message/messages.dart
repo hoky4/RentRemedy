@@ -25,7 +25,6 @@ class Messages {
   //     };
   @override
   String toString() {
-    // TODO: implement toString
     return '{recipient: ${this.recipient}, messageText: ${this.messageText}, messageTextId: ${this.messageTempId}, model: ${this.model}}}';
   }
 }

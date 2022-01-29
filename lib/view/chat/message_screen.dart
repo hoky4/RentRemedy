@@ -1,17 +1,8 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
-import 'package:rentremedy_mobile/models/Message/model.dart';
 import 'package:rentremedy_mobile/models/User/user.dart';
 import 'package:rentremedy_mobile/models/Message/chat_message.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:web_socket_channel/io.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:rentremedy_mobile/models/Message/messages.dart';
 import '../auth/login_screen.dart';
 
 class MessageScreen extends StatefulWidget {
@@ -25,47 +16,18 @@ class MessageScreen extends StatefulWidget {
 class _MessageScreenState extends State<MessageScreen> {
   late final TextEditingController txtMessage;
   var apiService;
-  var channel;
   bool isButtonActive = false;
-  var isLoading = false;
 
   @override
   void initState() {
     super.initState();
     apiService = Provider.of<ApiService>(context, listen: false);
-    print('cookie2: ${apiService.cookie}');
 
     txtMessage = TextEditingController();
     txtMessage.addListener(() {
       final isButtonActive = txtMessage.text.isNotEmpty;
       setState(() => this.isButtonActive = isButtonActive);
     });
-
-    setupConnection();
-  }
-
-  Future<void> setupConnection() async {
-    var cookie = await readFromSecureStorage();
-    channel = IOWebSocketChannel.connect(
-      'wss://10.0.2.2:5001/api/ws/connect',
-      headers: <String, dynamic>{
-        'Content-Type': 'application/json',
-        "Cookie": cookie
-      },
-    );
-
-    setState(() {
-      print('isloading done');
-      isLoading = true;
-    });
-  }
-
-  @override
-  void dispose() {
-    print('closed channel');
-    channel.sink.close();
-    txtMessage.dispose();
-    super.dispose();
   }
 
   @override
@@ -79,6 +41,7 @@ class _MessageScreenState extends State<MessageScreen> {
                 icon: Icon(Icons.logout),
                 onPressed: () async {
                   await apiService.logout();
+                  apiService.closeSocket();
 
                   Navigator.push(
                       context,
@@ -109,14 +72,12 @@ class _MessageScreenState extends State<MessageScreen> {
                       )),
             ),
           ),
-          isLoading
-              ? StreamBuilder(
-                  stream: channel.stream,
-                  builder: (context, snapshot) {
-                    return Text(snapshot.hasData ? '${snapshot.data}' : '');
-                  },
-                )
-              : Text("Loading"),
+          StreamBuilder(
+            stream: apiService.channel.stream,
+            builder: (context, snapshot) {
+              return Text(snapshot.hasData ? '${snapshot.data}' : '');
+            },
+          ),
           // Text('Hi'),
           MessageInputField(),
         ]));
@@ -147,7 +108,8 @@ class _MessageScreenState extends State<MessageScreen> {
             icon: Icon(Icons.send),
             onPressed: isButtonActive
                 ? () async {
-                    await sendMessage();
+                    await apiService.sendMessage(input: txtMessage.text);
+                    // await sendMessage();
                     setState(() {
                       final userInput =
                           ChatMessage(text: txtMessage.text, isSender: true);
@@ -163,25 +125,10 @@ class _MessageScreenState extends State<MessageScreen> {
     );
   }
 
-  Future<String> getLandlordId() async {
-    final prefs = await SharedPreferences.getInstance();
-    final id = (prefs.getString('landlordId') ?? '');
-
-    return id;
-  }
-
-  sendMessage() async {
-    final landlordId = await getLandlordId();
-    final message = Messages(landlordId, txtMessage.text, "2", Model.Message);
-
-    channel.sink.add(jsonEncode(message.toJson()));
-  }
-
-  Future<String> readFromSecureStorage() async {
-    final storage = FlutterSecureStorage();
-    var cookie = (await storage.read(key: "myCookie"))!;
-    print('read cookie: $cookie');
-    return cookie;
+  @override
+  void dispose() {
+    txtMessage.dispose();
+    super.dispose();
   }
 }
 

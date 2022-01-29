@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
 import 'package:rentremedy_mobile/models/LeaseAgreement/status.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
@@ -15,14 +16,16 @@ class ConfirmationScreen extends StatefulWidget {
 
 class _ConfirmationScreenState extends State<ConfirmationScreen> {
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController txtCode = TextEditingController();
+  var apiService;
+
   String _statusMessage = '';
   late Color _messageColor = Colors.black;
-  ApiService apiService = ApiService();
   bool isLoading = false;
-  final TextEditingController txtCode = TextEditingController();
 
   @override
   void initState() {
+    apiService = Provider.of<ApiService>(context, listen: false);
     super.initState();
   }
 
@@ -133,5 +136,11 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
       style: TextStyle(
           fontSize: 16, color: _messageColor, fontWeight: FontWeight.bold),
     );
+  }
+
+  @override
+  void dispose() {
+    txtCode.dispose();
+    super.dispose();
   }
 }

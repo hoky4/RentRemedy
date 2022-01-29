@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
@@ -9,12 +10,11 @@ import 'confirmation_screen.dart';
 
 class JoinScreen extends StatelessWidget {
   late LeaseAgreement leaseAgreement;
+
   JoinScreen({Key? key, required this.leaseAgreement}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    ApiService apiService = ApiService();
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Join Property'),
@@ -38,7 +38,7 @@ class JoinScreen extends StatelessWidget {
                     children: [
                       noButton(context),
                       SizedBox(width: 8),
-                      yesButton(apiService, context),
+                      yesButton(context),
                     ],
                   )
                 ],
@@ -46,7 +46,9 @@ class JoinScreen extends StatelessWidget {
     );
   }
 
-  Widget yesButton(ApiService apiService, BuildContext context) {
+  Widget yesButton(BuildContext context) {
+    ApiService apiService = Provider.of<ApiService>(context);
+
     return TextButton(
       onPressed: () async {
         try {

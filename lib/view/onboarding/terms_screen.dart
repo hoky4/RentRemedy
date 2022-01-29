@@ -1,7 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/models/Fees/due_date_type.dart';
 import 'package:rentremedy_mobile/models/Fees/monthly_fees.dart';
 import 'package:rentremedy_mobile/models/LeaseAgreement/amenity.dart';
@@ -299,7 +299,7 @@ class TermsScreen extends StatelessWidget {
   }
 
   Widget acceptButton(BuildContext context, String leaseAgreemenId) {
-    ApiService apiService = ApiService();
+    ApiService apiService = Provider.of<ApiService>(context);
 
     return ElevatedButton(
       style: ButtonStyle(

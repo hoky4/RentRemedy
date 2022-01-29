@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
 
@@ -22,8 +23,14 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController txtLastName = TextEditingController();
   final TextEditingController txtEmail = TextEditingController();
   final TextEditingController txtPassword = TextEditingController();
-  ApiService apiService = ApiService();
+  var apiService;
   bool isLoading = false;
+
+  @override
+  void initState() {
+    apiService = Provider.of<ApiService>(context, listen: false);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -157,8 +164,10 @@ class _SignupScreenState extends State<SignupScreen> {
                       _messageColor = Colors.green;
                       isLoading = false;
                     });
-                    Navigator.push(context,
-                        new MaterialPageRoute(builder: (context) => LoginScreen()));
+                    Navigator.push(
+                        context,
+                        new MaterialPageRoute(
+                            builder: (context) => LoginScreen()));
                   } on BadRequestException catch (e) {
                     setState(() {
                       _statusMessage = e.toString();
@@ -198,5 +207,14 @@ class _SignupScreenState extends State<SignupScreen> {
             ),
           ),
         ]));
+  }
+
+  @override
+  void dispose() {
+    txtFirstName.dispose();
+    txtLastName.dispose();
+    txtEmail.dispose();
+    txtPassword.dispose();
+    super.dispose();
   }
 }

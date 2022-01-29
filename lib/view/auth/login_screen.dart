@@ -1,8 +1,7 @@
 import 'dart:async';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
 import 'package:rentremedy_mobile/models/User/user.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
@@ -26,9 +25,16 @@ class _LoginScreenState extends State<LoginScreen> {
   late Color _messageColor = Colors.black;
   final TextEditingController txtEmail = TextEditingController();
   final TextEditingController txtPassword = TextEditingController();
-  ApiService apiService = ApiService();
+
   bool isLoading = false;
   var hasLeaseAgreement = false;
+  late ApiService apiService;
+
+  @override
+  void initState() {
+    apiService = Provider.of<ApiService>(context, listen: false);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -176,6 +182,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 // await apiService.connectToWebSocket(user!);
                 // print('Connected to socket');
+                print('cookie1: ${apiService.cookie}');
 
                 setState(() {
                   _statusMessage = 'Login Success';
@@ -270,5 +277,12 @@ class _LoginScreenState extends State<LoginScreen> {
     print("Existing Lease Agreement Signed.");
 
     return true;
+  }
+
+  @override
+  void dispose() {
+    txtEmail.dispose();
+    txtPassword.dispose();
+    super.dispose();
   }
 }

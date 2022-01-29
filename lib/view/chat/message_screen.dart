@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/models/Message/model.dart';
 import 'package:rentremedy_mobile/models/User/user.dart';
 import 'package:rentremedy_mobile/models/Message/chat_message.dart';
@@ -10,7 +12,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:rentremedy_mobile/models/Message/messages.dart';
-
 import '../auth/login_screen.dart';
 
 class MessageScreen extends StatefulWidget {
@@ -23,17 +24,16 @@ class MessageScreen extends StatefulWidget {
 
 class _MessageScreenState extends State<MessageScreen> {
   late final TextEditingController txtMessage;
-  bool isButtonActive = false;
-  ApiService apiService = ApiService();
-  // WebSocketChannel channel = WebSocketChannel.connect(
-  //   Uri.parse('wss://10.0.2.2:5001/api/ws/connect'),
-  // );
+  var apiService;
   var channel;
+  bool isButtonActive = false;
   var isLoading = false;
 
   @override
   void initState() {
     super.initState();
+    apiService = Provider.of<ApiService>(context, listen: false);
+    print('cookie2: ${apiService.cookie}');
 
     txtMessage = TextEditingController();
     txtMessage.addListener(() {
@@ -41,9 +41,7 @@ class _MessageScreenState extends State<MessageScreen> {
       setState(() => this.isButtonActive = isButtonActive);
     });
 
-    // apiService.connectToWebSocket();
     setupConnection();
-    // channel = apiService.channel;
   }
 
   Future<void> setupConnection() async {
@@ -55,24 +53,6 @@ class _MessageScreenState extends State<MessageScreen> {
         "Cookie": cookie
       },
     );
-
-    // final landlordId = await getLandlordId();
-    // print('landlord-id: $landlordId');
-
-    // await WebSocket.connect(
-    //   "wss://10.0.2.2:5001/api/ws/connect",
-    //   headers: <String, dynamic>{
-    //     'Content-Type': 'application/json',
-    //     "Cookie": cookie
-    //   },
-    // ).then((ws) {
-    //   // create the stream channel
-    //   channel = IOWebSocketChannel(ws);
-    //   final message = Messages(
-    //       "61f31932f702f1788e19aac0", "Hey landlord", "2", Model.Message);
-
-    //   channel.sink.add(message.toJson());
-    // });
 
     setState(() {
       print('isloading done');
@@ -129,15 +109,15 @@ class _MessageScreenState extends State<MessageScreen> {
                       )),
             ),
           ),
-          // isLoading
-          //     ? StreamBuilder(
-          //         stream: channel.stream,
-          //         builder: (context, snapshot) {
-          //           return Text(snapshot.hasData ? '${snapshot.data}' : '');
-          //         },
-          //       )
-          //     : Text("Loading"),
-          Text('Hi'),
+          isLoading
+              ? StreamBuilder(
+                  stream: channel.stream,
+                  builder: (context, snapshot) {
+                    return Text(snapshot.hasData ? '${snapshot.data}' : '');
+                  },
+                )
+              : Text("Loading"),
+          // Text('Hi'),
           MessageInputField(),
         ]));
   }
@@ -192,22 +172,9 @@ class _MessageScreenState extends State<MessageScreen> {
 
   sendMessage() async {
     final landlordId = await getLandlordId();
-    print('landlord-id: $landlordId');
-    final message = Messages(
-        "61f31932f702f1788e19aac0", "Hey landlord", "2", Model.Message);
-    print('message-str: ${message.toString()}');
-    print('msg-json: ${message.toJson()}');
+    final message = Messages(landlordId, txtMessage.text, "2", Model.Message);
 
-    final msgJson = message.toJson();
-    for (final mapEntry in msgJson.entries) {
-      final key = mapEntry.key;
-      final value = mapEntry.value;
-      print('$key: $value');
-    }
-
-    channel.sink.add(message.toJson());
-    // channel.sink.add(
-    // '{ "recipient":"61f31932f702f1788e19aac0", "messageText":"Hello, landlord", "messageTempId":"2", "model": 1 }');
+    channel.sink.add(jsonEncode(message.toJson()));
   }
 
   Future<String> readFromSecureStorage() async {

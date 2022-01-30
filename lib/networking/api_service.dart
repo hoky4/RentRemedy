@@ -5,7 +5,9 @@ import 'dart:io';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
+import 'package:rentremedy_mobile/models/Message/message.dart';
 import 'package:rentremedy_mobile/models/Message/messages.dart';
+import 'package:rentremedy_mobile/models/Message/websocket_message.dart';
 import 'package:rentremedy_mobile/models/Message/model.dart';
 import 'package:rentremedy_mobile/models/User/user.dart';
 import 'package:rentremedy_mobile/networking/api.dart';
@@ -35,13 +37,46 @@ class ApiService {
     if (landlordId.isEmpty) {
       landlordId = await getLandlordId();
     }
-    final message = Messages(landlordId, input, "2", Model.Message);
+    final message = WebSocketMessage(landlordId, input, "2", Model.Message);
 
     channel.sink.add(jsonEncode(message.toJson()));
   }
 
   closeSocket() {
     channel.sink.close();
+  }
+
+  dynamic getConversation() async {
+    var result;
+    if (landlordId.isEmpty) {
+      landlordId = await getLandlordId();
+    }
+
+    if (cookie.isEmpty) {
+      print('\ncookie is empty');
+      await readFromSecureStorage('myCookie');
+    }
+
+    final response = await http.get(
+      Uri.parse('$CONVERSATION/$landlordId'),
+      headers: <String, String>{
+        'cookie': cookie,
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseMap = jsonDecode(response.body);
+
+      List<dynamic> conversationListDynamic = responseMap['conversation'];
+
+      List<Message> conversationList = List<Message>.from(
+          conversationListDynamic.map((i) => Message.fromJson(i)));
+    } else {
+      result = _handleError(response);
+    }
+
+    return result;
   }
 
   dynamic signLeaseAgreement(id) async {

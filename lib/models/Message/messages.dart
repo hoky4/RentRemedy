@@ -1,30 +1,16 @@
 import 'package:json_annotation/json_annotation.dart';
 
-import 'model.dart';
+import 'message.dart';
+
 part 'messages.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class Messages {
-  Messages(this.recipient, this.messageText, this.messageTempId, this.model);
+  Messages(this.messages);
 
-  String recipient;
-  String messageText;
-  String messageTempId;
-  Model model;
+  List<Message> messages;
 
   factory Messages.fromJson(Map<String, dynamic> json) =>
       _$MessagesFromJson(json);
-
   Map<String, dynamic> toJson() => _$MessagesToJson(this);
-
-  // Map<String, dynamic> _$MessagesToJson(Messages instance) => <String, dynamic>{
-  //       'recipient': instance.recipient,
-  //       'messageText': instance.messageText,
-  //       'messageTempId': instance.messageTempId,
-  //       'Model': instance.model,
-  //     };
-  @override
-  String toString() {
-    return '{recipient: ${this.recipient}, messageText: ${this.messageText}, messageTextId: ${this.messageTempId}, model: ${this.model}}}';
-  }
 }

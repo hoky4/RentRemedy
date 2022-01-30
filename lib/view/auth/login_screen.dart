@@ -207,7 +207,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       new MaterialPageRoute(
                           builder: (context) => ConfirmationScreen()));
                 }
-
+                apiService.getConversation();
                 apiService.connectToWebSocket();
                 print('Connected to websocket.');
               } on BadRequestException catch (e) {

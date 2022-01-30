@@ -67,7 +67,7 @@ class _MessageScreenState extends State<MessageScreen> {
               padding: const EdgeInsets.all(8.0),
               child: ListView.builder(
                   itemCount: demoChatMessage.length,
-                  itemBuilder: (context, index) => Message(
+                  itemBuilder: (context, index) => MessageBox(
                         message: demoChatMessage[index],
                       )),
             ),
@@ -75,6 +75,7 @@ class _MessageScreenState extends State<MessageScreen> {
           StreamBuilder(
             stream: apiService.channel.stream,
             builder: (context, snapshot) {
+              print('hello');
               return Text(snapshot.hasData ? '${snapshot.data}' : '');
             },
           ),
@@ -127,14 +128,15 @@ class _MessageScreenState extends State<MessageScreen> {
 
   @override
   void dispose() {
+    apiService.channel.sink.close();
     txtMessage.dispose();
     super.dispose();
   }
 }
 
-class Message extends StatelessWidget {
+class MessageBox extends StatelessWidget {
   final ChatMessage message;
-  const Message({Key? key, required this.message}) : super(key: key);
+  const MessageBox({Key? key, required this.message}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

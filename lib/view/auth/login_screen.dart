@@ -188,6 +188,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 if (hasLeaseAgreement) {
                   if (isSigned(leaseAgreement)) {
+                    await apiService.getConversation();
+
                     Navigator.pushReplacement(
                         context,
                         new MaterialPageRoute(
@@ -207,7 +209,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       new MaterialPageRoute(
                           builder: (context) => ConfirmationScreen()));
                 }
-                apiService.getConversation();
                 apiService.connectToWebSocket();
                 print('Connected to websocket.');
               } on BadRequestException catch (e) {

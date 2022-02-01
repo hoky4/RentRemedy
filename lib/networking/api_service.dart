@@ -1,12 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
 import 'package:rentremedy_mobile/models/Message/message.dart';
-import 'package:rentremedy_mobile/models/Message/messages.dart';
+
 import 'package:rentremedy_mobile/models/Message/websocket_message.dart';
 import 'package:rentremedy_mobile/models/Message/model.dart';
 import 'package:rentremedy_mobile/models/User/user.dart';
@@ -22,6 +21,7 @@ class ApiService {
   var cookie = '';
   var channel;
   var landlordId = '';
+  List<Message> conversation = [];
 
   connectToWebSocket() {
     channel = IOWebSocketChannel.connect(
@@ -40,6 +40,12 @@ class ApiService {
     final message = WebSocketMessage(landlordId, input, "2", Model.Message);
 
     channel.sink.add(jsonEncode(message.toJson()));
+  }
+
+  Message parseInboundMessageFromSocket(String inboundMessage) {
+    Map<String, dynamic> responseMap = jsonDecode(inboundMessage);
+    Message message = Message.fromJson(responseMap);
+    return message;
   }
 
   closeSocket() {
@@ -66,12 +72,15 @@ class ApiService {
     );
 
     if (response.statusCode == 200) {
+      print('resp-convo: ${response.body}');
       Map<String, dynamic> responseMap = jsonDecode(response.body);
 
       List<dynamic> conversationListDynamic = responseMap['conversation'];
 
       List<Message> conversationList = List<Message>.from(
           conversationListDynamic.map((i) => Message.fromJson(i)));
+      conversation = conversationList;
+      return conversationList;
     } else {
       result = _handleError(response);
     }
@@ -96,7 +105,6 @@ class ApiService {
       print('\nresponse: ${response.body}');
       Map<String, dynamic> responseMap = jsonDecode(response.body);
 
-      // Map<String, dynamic> leaseAgreementMap = responseMap['leaseAgreements'];
       var leaseAgreement = LeaseAgreement.fromJson(responseMap);
 
       // obtain shared preferences
@@ -292,6 +300,7 @@ class ApiService {
     Map<String, dynamic> responseBodyJson = {};
     String message = '';
     final statusCode = response.statusCode;
+    print('statusCode: $statusCode');
 
     switch (statusCode) {
       case 400:
@@ -345,6 +354,7 @@ class ApiService {
       });
 
       if (response.statusCode == 200) {
+        print('login-resp: ${response.body}');
         Map<String, dynamic> responseMap = jsonDecode(response.body);
         User user = User.fromJson(responseMap);
 
@@ -386,7 +396,7 @@ class ApiService {
     cookie = (await storage.read(key: myKey))!;
   }
 
-  Future<String> _getUserId() async {
+  Future<String> getUserId() async {
     final prefs = await SharedPreferences.getInstance();
     final id = (prefs.getString('id') ?? '');
     return id;

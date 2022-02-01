@@ -116,7 +116,7 @@ class JoinScreen extends StatelessWidget {
           propertyDetailLine('Description: ', '${leaseAgreement.description}'),
           SizedBox(height: 8),
           propertyDetailLine(
-              '\Address: ', '\n${leaseAgreement.property.toString()}'),
+              'Address: ', '${leaseAgreement.property.toString()}'),
           SizedBox(height: 8),
           propertyDetailLine('Landlord: ',
               '${leaseAgreement.landlord.firstName.capitalize()} ${leaseAgreement.landlord.lastName.capitalize()}'),
@@ -127,10 +127,13 @@ class JoinScreen extends StatelessWidget {
 
   Widget propertyDetailLine(String title, String detail) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.baseline,
+      textBaseline: TextBaseline.alphabetic,
       children: [
         Text("$title",
             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
-        Text("$detail"),
+        Flexible(child: Text("$detail")),
       ],
     );
   }

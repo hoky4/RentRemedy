@@ -14,7 +14,7 @@ Message _$MessageFromJson(Map<String, dynamic> json) => Message(
       json['sentFromSystem'] as bool,
       DateTime.parse(json['creationDate'] as String),
       json['messageText'] as String,
-      json['messageTempId'] as String,
+      json['messageTempId'] as String?,
       json['readDate'] == null
           ? null
           : DateTime.parse(json['readDate'] as String),

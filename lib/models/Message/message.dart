@@ -17,6 +17,14 @@ class Message {
       this.readDate,
       this.actionId);
 
+  Message.withoutArguments(this.sender, this.recipient, this.messageText,
+      this.messageTempId, this.creationDate,
+      [this.id = '',
+      this.type = MessageType.Text,
+      this.sentFromSystem = false,
+      this.readDate,
+      this.actionId]);
+
   String id;
   MessageType type;
   String sender;
@@ -24,7 +32,7 @@ class Message {
   bool sentFromSystem;
   DateTime creationDate;
   String messageText;
-  String messageTempId;
+  String? messageTempId;
   DateTime? readDate;
   String? actionId;
 

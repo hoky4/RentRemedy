@@ -17,7 +17,7 @@ class Message {
       this.readDate,
       this.actionId);
 
-  Message.withoutArguments(this.sender, this.recipient, this.messageText,
+  Message.lessArguments(this.sender, this.recipient, this.messageText,
       this.messageTempId, this.creationDate,
       [this.id = '',
       this.type = MessageType.Text,

@@ -313,9 +313,7 @@ class TermsScreen extends StatelessWidget {
       onPressed: () async {
         await apiService.signLeaseAgreement('$leaseAgreemenId');
         Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => MessageScreen(user: dummy)));
+            context, MaterialPageRoute(builder: (context) => MessageScreen()));
       },
       child:
           Text('Accept', style: TextStyle(fontSize: 18, color: Colors.white)),

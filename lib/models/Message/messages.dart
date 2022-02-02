@@ -1,16 +1,12 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:flutter/material.dart';
 
 import 'message.dart';
 
-part 'messages.g.dart';
+class MessageModel extends ChangeNotifier {
+  late List<Message> messages;
 
-@JsonSerializable(explicitToJson: true)
-class Messages {
-  Messages(this.messages);
-
-  List<Message> messages;
-
-  factory Messages.fromJson(Map<String, dynamic> json) =>
-      _$MessagesFromJson(json);
-  Map<String, dynamic> toJson() => _$MessagesToJson(this);
+  void add(Message message) {
+    messages.add(message);
+    notifyListeners();
+  }
 }

@@ -54,7 +54,7 @@ class _AcceptScreenState extends State<AcceptScreen> {
                     Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => MessageScreen(user: dummy)));
+                            builder: (context) => MessageScreen()));
                   },
                   child: Text('Accept',
                       style: TextStyle(fontSize: 18, color: Colors.white)),

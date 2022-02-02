@@ -5,6 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
 import 'package:rentremedy_mobile/models/Message/message.dart';
+import 'package:rentremedy_mobile/models/Message/messages.dart';
 
 import 'package:rentremedy_mobile/models/Message/websocket_message.dart';
 import 'package:rentremedy_mobile/models/Message/model.dart';
@@ -22,6 +23,7 @@ class ApiService {
   var channel;
   var landlordId = '';
   List<Message> conversation = [];
+  MessageModel messageModel = MessageModel();
 
   connectToWebSocket() {
     channel = IOWebSocketChannel.connect(
@@ -58,6 +60,7 @@ class ApiService {
       landlordId = await getLandlordId();
     }
 
+    print('landlord-id: $landlordId');
     if (cookie.isEmpty) {
       print('\ncookie is empty');
       await readFromSecureStorage('myCookie');
@@ -79,6 +82,7 @@ class ApiService {
 
       List<Message> conversationList = List<Message>.from(
           conversationListDynamic.map((i) => Message.fromJson(i)));
+      messageModel.messages = conversationList;
       conversation = conversationList;
       return conversationList;
     } else {
@@ -110,6 +114,7 @@ class ApiService {
       // obtain shared preferences
       final prefs = await SharedPreferences.getInstance();
       prefs.setString('landlordId', leaseAgreement.landlord.id);
+      print('Saved landlordId: ${leaseAgreement.landlord.id}');
 
       return leaseAgreement;
     } else {

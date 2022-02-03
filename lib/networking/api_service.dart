@@ -116,6 +116,7 @@ class ApiService {
       final prefs = await SharedPreferences.getInstance();
       prefs.setString('landlordId', leaseAgreement.landlord.id);
       print('Saved landlordId: ${leaseAgreement.landlord.id}');
+      landlordId = leaseAgreement.landlord.id;
 
       return leaseAgreement;
     } else {

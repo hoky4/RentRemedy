@@ -86,7 +86,7 @@ class _MessageScreenState extends State<MessageScreen> {
                     final id = responseMap['messageTempId'];
                     print('resp-id: $id');
                     final int index1 = conversation
-                        .indexWhere(((msg) => msg.messageTempId == '59'));
+                        .indexWhere(((msg) => msg.messageTempId == '60'));
                     if (index1 != -1) {
                       print('Index: $index1');
                       conversation[index1].updateDelivered();
@@ -106,7 +106,8 @@ class _MessageScreenState extends State<MessageScreen> {
                       itemCount: conversation.length,
                       itemBuilder: (context, index) => ChangeNotifierProvider(
                             create: (context) => conversation[index],
-                            child: MessageBox(message: conversation[index]),
+                            // child: MessageBox(message: conversation[index]),
+                            child: MessageBox(),
                           )),
                 ),
               );
@@ -114,7 +115,7 @@ class _MessageScreenState extends State<MessageScreen> {
           ),
           MessageInputContainer(
             conversation: conversation,
-            tempId: '59',
+            tempId: '60',
           ),
         ]));
   }

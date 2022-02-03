@@ -23,7 +23,7 @@ class ApiService {
   var channel;
   var landlordId = '';
   List<Message> conversation = [];
-  MessageModel messageModel = MessageModel();
+  // MessageModel messageModel = MessageModel();
 
   connectToWebSocket() {
     channel = IOWebSocketChannel.connect(
@@ -47,6 +47,8 @@ class ApiService {
   Message parseInboundMessageFromSocket(String inboundMessage) {
     Map<String, dynamic> responseMap = jsonDecode(inboundMessage);
     Message message = Message.fromJson(responseMap);
+    print('sender: ${message.sender}');
+    print('Recvr: ${message.recipient}');
     return message;
   }
 
@@ -82,7 +84,7 @@ class ApiService {
 
       List<Message> conversationList = List<Message>.from(
           conversationListDynamic.map((i) => Message.fromJson(i)));
-      messageModel.messages = conversationList;
+      // messageModel.messages = conversationList;
       conversation = conversationList;
       return conversationList;
     } else {
@@ -114,6 +116,7 @@ class ApiService {
       // obtain shared preferences
       final prefs = await SharedPreferences.getInstance();
       prefs.setString('landlordId', leaseAgreement.landlord.id);
+      landlordId = leaseAgreement.landlord.id;
       print('Saved landlordId: ${leaseAgreement.landlord.id}');
 
       return leaseAgreement;

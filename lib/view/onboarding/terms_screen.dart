@@ -12,6 +12,7 @@ import 'package:rentremedy_mobile/models/LeaseAgreement/utility.dart';
 import 'package:rentremedy_mobile/models/Property/property.dart';
 import 'package:rentremedy_mobile/models/User/user.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
+import 'package:rentremedy_mobile/view/chat/Old/message_screen2.dart';
 import 'package:rentremedy_mobile/view/chat/message_screen.dart';
 
 class TermsScreen extends StatelessWidget {

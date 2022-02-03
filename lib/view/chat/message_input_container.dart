@@ -5,19 +5,19 @@ import 'package:rentremedy_mobile/networking/api_service.dart';
 
 import 'message_textbox.dart';
 
-class MessageInputUI extends StatefulWidget {
+class MessageInputContainer extends StatefulWidget {
   List<Message> conversation;
 
-  MessageInputUI({
+  MessageInputContainer({
     Key? key,
     required this.conversation,
   }) : super(key: key);
 
   @override
-  _MessageInputUIState createState() => _MessageInputUIState();
+  _MessageInputContainerState createState() => _MessageInputContainerState();
 }
 
-class _MessageInputUIState extends State<MessageInputUI> {
+class _MessageInputContainerState extends State<MessageInputContainer> {
   var apiService;
   late String landlordId;
   late String userId;
@@ -43,9 +43,12 @@ class _MessageInputUIState extends State<MessageInputUI> {
 
   @override
   Widget build(BuildContext context) {
-    return MessageTextBoxState(
+    print('called MIC build');
+
+    return MessageTextBox(
         onPressed: (String text) async {
           await apiService.sendMessage(input: text);
+
           setState(() {
             widget.conversation.add(Message.lessArguments(
                 userId, landlordId, text, '$tempId', DateTime.now()));

@@ -1,26 +1,24 @@
-import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'message_type.dart';
 
 part 'message.g.dart';
 
 @JsonSerializable(explicitToJson: true)
-class Message with ChangeNotifier {
+class Message {
   Message(
-      {required this.id,
-      required this.type,
-      required this.sender,
-      required this.recipient,
-      required this.sentFromSystem,
-      required this.creationDate,
-      required this.messageText,
+      this.id,
+      this.type,
+      this.sender,
+      this.recipient,
+      this.sentFromSystem,
+      this.creationDate,
+      this.messageText,
       this.messageTempId,
       this.readDate,
-      this.actionId,
-      this.delivered = true});
+      this.actionId);
 
   Message.lessArguments(this.sender, this.recipient, this.messageText,
-      this.messageTempId, this.creationDate, this.delivered,
+      this.messageTempId, this.creationDate,
       [this.id = '',
       this.type = MessageType.Text,
       this.sentFromSystem = false,
@@ -37,28 +35,8 @@ class Message with ChangeNotifier {
   String? messageTempId;
   DateTime? readDate;
   String? actionId;
-  bool delivered;
-  bool _disposed = false;
-
-  void updateDelivered() {
-    delivered = true;
-    notifyListeners();
-  }
 
   factory Message.fromJson(Map<String, dynamic> json) =>
       _$MessageFromJson(json);
   Map<String, dynamic> toJson() => _$MessageToJson(this);
-
-  @override
-  void dispose() {
-    _disposed = true;
-    super.dispose();
-  }
-
-  @override
-  void notifyListeners() {
-    if (!_disposed) {
-      super.notifyListeners();
-    }
-  }
 }

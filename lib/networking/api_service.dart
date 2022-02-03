@@ -35,12 +35,11 @@ class ApiService {
     );
   }
 
-  sendMessage({required String input, required String tempId}) async {
+  sendMessage({required String input}) async {
     if (landlordId.isEmpty) {
       landlordId = await getLandlordId();
     }
-    final message =
-        WebSocketMessage(landlordId, input, tempId.toString(), Model.Message);
+    final message = WebSocketMessage(landlordId, input, "2", Model.Message);
 
     channel.sink.add(jsonEncode(message.toJson()));
   }

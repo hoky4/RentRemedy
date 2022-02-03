@@ -3,23 +3,19 @@ import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/models/Message/message.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
 
-class MessageTextField extends StatefulWidget {
-  Future<void> Function(String text, String tempId) onPressed;
+class MessageTextBoxState extends StatefulWidget {
+  Future<void> Function(String text) onPressed;
   bool isButtonActive;
-  String tempId;
 
-  MessageTextField(
-      {Key? key,
-      required this.onPressed,
-      required this.isButtonActive,
-      required this.tempId})
+  MessageTextBoxState(
+      {Key? key, required this.onPressed, required this.isButtonActive})
       : super(key: key);
 
   @override
-  _MessageTextFieldState createState() => _MessageTextFieldState();
+  _MessageTextBox createState() => _MessageTextBox();
 }
 
-class _MessageTextFieldState extends State<MessageTextField> {
+class _MessageTextBox extends State<MessageTextBoxState> {
   late final TextEditingController txtMessage;
   @override
   void initState() {
@@ -58,7 +54,7 @@ class _MessageTextFieldState extends State<MessageTextField> {
             icon: Icon(Icons.send),
             onPressed: widget.isButtonActive
                 ? () {
-                    widget.onPressed(txtMessage.text, widget.tempId);
+                    widget.onPressed(txtMessage.text);
                     txtMessage.clear();
                   }
                 : null,

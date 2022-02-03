@@ -5,7 +5,7 @@ import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
 import 'package:rentremedy_mobile/view/onboarding/terms_screen.dart';
 
-import 'old/accept_screen.dart';
+import 'accept_screen.dart';
 import 'confirmation_screen.dart';
 
 class JoinScreen extends StatelessWidget {

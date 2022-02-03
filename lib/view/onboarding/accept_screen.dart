@@ -3,7 +3,7 @@ import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
 import 'package:rentremedy_mobile/models/User/user.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
 
-import '../../chat/Old/message_screen2.dart';
+import '../chat/message_screen.dart';
 
 class AcceptScreen extends StatefulWidget {
   late LeaseAgreement leaseAgreement;
@@ -54,7 +54,7 @@ class _AcceptScreenState extends State<AcceptScreen> {
                     Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => MessageScreen2()));
+                            builder: (context) => MessageScreen()));
                   },
                   child: Text('Accept',
                       style: TextStyle(fontSize: 18, color: Colors.white)),

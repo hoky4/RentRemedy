@@ -7,19 +7,18 @@ part of 'message.dart';
 // **************************************************************************
 
 Message _$MessageFromJson(Map<String, dynamic> json) => Message(
-      id: json['id'] as String,
-      type: $enumDecode(_$MessageTypeEnumMap, json['type']),
-      sender: json['sender'] as String,
-      recipient: json['recipient'] as String,
-      sentFromSystem: json['sentFromSystem'] as bool,
-      creationDate: DateTime.parse(json['creationDate'] as String),
-      messageText: json['messageText'] as String,
-      messageTempId: json['messageTempId'] as String?,
-      readDate: json['readDate'] == null
+      json['id'] as String,
+      $enumDecode(_$MessageTypeEnumMap, json['type']),
+      json['sender'] as String,
+      json['recipient'] as String,
+      json['sentFromSystem'] as bool,
+      DateTime.parse(json['creationDate'] as String),
+      json['messageText'] as String,
+      json['messageTempId'] as String?,
+      json['readDate'] == null
           ? null
           : DateTime.parse(json['readDate'] as String),
-      actionId: json['actionId'] as String?,
-      delivered: json['delivered'] as bool? ?? true,
+      json['actionId'] as String?,
     );
 
 Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
@@ -33,7 +32,6 @@ Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
       'messageTempId': instance.messageTempId,
       'readDate': instance.readDate?.toIso8601String(),
       'actionId': instance.actionId,
-      'delivered': instance.delivered,
     };
 
 const _$MessageTypeEnumMap = {

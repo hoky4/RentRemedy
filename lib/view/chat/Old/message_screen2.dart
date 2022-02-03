@@ -3,34 +3,48 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/models/Message/message.dart';
+import 'package:rentremedy_mobile/models/User/user.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
-import 'package:rentremedy_mobile/view/auth/login_screen.dart';
+import '../../auth/login_screen.dart';
+import '../message_box.dart';
+import '../message_textfield.dart';
 
-import 'message_box.dart';
-import 'message_input_ui.dart';
-
-class MessageUI extends StatefulWidget {
-  const MessageUI({Key? key}) : super(key: key);
+class MessageScreen2 extends StatefulWidget {
+  // User user;
+  MessageScreen2({Key? key}) : super(key: key);
 
   @override
-  _MessageUIState createState() => _MessageUIState();
+  _MessageScreen2State createState() => _MessageScreen2State();
 }
 
-class _MessageUIState extends State<MessageUI> {
+class _MessageScreen2State extends State<MessageScreen2> {
   var apiService;
-  late List<Message> conversation;
+  var conversation;
+  late String landlordId;
+  late String userId;
+  String tempId = '0';
+  bool isButtonActive = false;
 
   @override
   void initState() {
     super.initState();
-
     apiService = Provider.of<ApiService>(context, listen: false);
     conversation = apiService.conversation;
+    loadId();
+  }
+
+  loadId() async {
+    await apiService.getLandlordId().then((String id) {
+      landlordId = id;
+    });
+    await apiService.getUserId().then((String id) {
+      userId = id;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    print('called MUI build');
+    print('called-build');
     return Scaffold(
         appBar: AppBar(
           title: Row(
@@ -64,10 +78,7 @@ class _MessageUIState extends State<MessageUI> {
           StreamBuilder(
             stream: apiService.channel.stream,
             builder: (context, snapshot) {
-              // TODO: check for messages not sent
-              print('called MUI stream builder');
-              print('hasData: ${snapshot.hasData}');
-              print('Data: ${snapshot.data}');
+              print('called-stream builder');
 
               if (snapshot.connectionState == ConnectionState.active) {
                 Map<String, dynamic> responseMap;
@@ -78,11 +89,11 @@ class _MessageUIState extends State<MessageUI> {
 
                     Message message;
                     if (responseMap['sender'] != null) {
+                      print('recv inb-msg');
                       message = apiService
                           .parseInboundMessageFromSocket(inboundMessage);
                       conversation.add(message);
                     }
-                    // TODO: check for response messsages or throw error
                   }
                 }
               }
@@ -92,14 +103,33 @@ class _MessageUIState extends State<MessageUI> {
                   padding: const EdgeInsets.all(8.0),
                   child: ListView.builder(
                       itemCount: conversation.length,
-                      itemBuilder: (context, index) => MessageBox(
-                            message: conversation[index],
-                          )),
+                      itemBuilder: (context, index) =>
+                          MessageBox(message: conversation[index])),
                 ),
               );
             },
           ),
-          MessageInputUI(conversation: conversation),
+          MessageTextField(
+            onPressed: (String text, String tempId) async {
+              await apiService.sendMessage(input: text);
+              setState(() {
+                print('called setState');
+                print('messageTempId: $tempId');
+                conversation.add(Message.lessArguments(userId, landlordId, text,
+                    '$tempId', DateTime.now(), false));
+                isButtonActive = false;
+              });
+              // tempId += 1;
+            },
+            isButtonActive: isButtonActive,
+            tempId: tempId,
+          ),
         ]));
+  }
+
+  @override
+  void dispose() {
+    apiService.channel.sink.close();
+    super.dispose();
   }
 }

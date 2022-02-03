@@ -3,15 +3,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/models/Message/message.dart';
-import 'package:rentremedy_mobile/models/User/user.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
-import '../auth/login_screen.dart';
+import 'package:rentremedy_mobile/view/auth/login_screen.dart';
+
 import 'message_box.dart';
-import 'message_textbox.dart';
+import 'message_input_container.dart';
 
 class MessageScreen extends StatefulWidget {
-  // User user;
-  MessageScreen({Key? key}) : super(key: key);
+  const MessageScreen({Key? key}) : super(key: key);
 
   @override
   _MessageScreenState createState() => _MessageScreenState();
@@ -19,32 +18,20 @@ class MessageScreen extends StatefulWidget {
 
 class _MessageScreenState extends State<MessageScreen> {
   var apiService;
-  var conversation;
-  late String landlordId;
-  late String userId;
+  late List<Message> conversation;
   var tempId = 0;
-  bool isButtonActive = false;
 
   @override
   void initState() {
     super.initState();
+
     apiService = Provider.of<ApiService>(context, listen: false);
     conversation = apiService.conversation;
-    loadId();
-  }
-
-  loadId() async {
-    await apiService.getLandlordId().then((String id) {
-      landlordId = id;
-    });
-    await apiService.getUserId().then((String id) {
-      userId = id;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    print('called-build');
+    print('called MUI build');
     return Scaffold(
         appBar: AppBar(
           title: Row(
@@ -78,23 +65,37 @@ class _MessageScreenState extends State<MessageScreen> {
           StreamBuilder(
             stream: apiService.channel.stream,
             builder: (context, snapshot) {
-              print('called-stream builder');
+              // TODO: check for messages not sent
+              print('called MUI stream builder');
+              print('hasData: ${snapshot.hasData}');
+              print('Data: ${snapshot.data}');
 
-              if (snapshot.connectionState == ConnectionState.active) {
-                Map<String, dynamic> responseMap;
-                String inboundMessage = snapshot.data.toString();
-                if (snapshot.hasData) {
-                  if (snapshot.data != null) {
-                    responseMap = jsonDecode(inboundMessage);
+              Map<String, dynamic> responseMap;
+              String inboundMessage = snapshot.data.toString();
+              if (snapshot.hasData) {
+                if (snapshot.data != null) {
+                  responseMap = jsonDecode(inboundMessage);
 
-                    Message message;
-                    if (responseMap['sender'] != null) {
-                      print('recv inb-msg');
-                      message = apiService
-                          .parseInboundMessageFromSocket(inboundMessage);
-                      conversation.add(message);
+                  Message message;
+                  if (responseMap['sender'] != null) {
+                    message = apiService
+                        .parseInboundMessageFromSocket(inboundMessage);
+                    conversation.add(message);
+                  } else if (responseMap['messageTempId'] != null) {
+                    print('recv response');
+                    final id = responseMap['messageTempId'];
+                    print('resp-id: $id');
+                    final int index1 = conversation
+                        .indexWhere(((msg) => msg.messageTempId == '59'));
+                    if (index1 != -1) {
+                      print('Index: $index1');
+                      conversation[index1].updateDelivered();
+                      // conversation[index1].delivered = true;
+                      print('tempid: ${conversation[index1].messageTempId}');
+                      print('msgtxt: ${conversation[index1].messageText}');
                     }
                   }
+                  // TODO: check for response messsages or throw error
                 }
               }
 
@@ -103,31 +104,18 @@ class _MessageScreenState extends State<MessageScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: ListView.builder(
                       itemCount: conversation.length,
-                      itemBuilder: (context, index) => MessageBox(
-                            message: conversation[index],
+                      itemBuilder: (context, index) => ChangeNotifierProvider(
+                            create: (context) => conversation[index],
+                            child: MessageBox(message: conversation[index]),
                           )),
                 ),
               );
             },
           ),
-          MessageTextBoxState(
-              onPressed: (String text) async {
-                await apiService.sendMessage(input: text);
-                setState(() {
-                  print('called setState');
-                  conversation.add(Message.lessArguments(
-                      userId, landlordId, text, '$tempId', DateTime.now()));
-                  isButtonActive = false;
-                });
-                tempId += 1;
-              },
-              isButtonActive: isButtonActive),
+          MessageInputContainer(
+            conversation: conversation,
+            tempId: '59',
+          ),
         ]));
-  }
-
-  @override
-  void dispose() {
-    apiService.channel.sink.close();
-    super.dispose();
   }
 }

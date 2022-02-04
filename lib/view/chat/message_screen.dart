@@ -10,7 +10,8 @@ import 'message_box.dart';
 import 'message_input_container.dart';
 
 class MessageScreen extends StatefulWidget {
-  const MessageScreen({Key? key}) : super(key: key);
+  List<Message> allMessages;
+  MessageScreen({Key? key, required this.allMessages}) : super(key: key);
 
   @override
   _MessageScreenState createState() => _MessageScreenState();
@@ -18,14 +19,14 @@ class MessageScreen extends StatefulWidget {
 
 class _MessageScreenState extends State<MessageScreen> {
   var apiService;
-  late List<Message> conversation;
+  // late List<Message> conversation;
 
   @override
   void initState() {
     super.initState();
 
     apiService = Provider.of<ApiService>(context, listen: false);
-    conversation = apiService.conversation;
+    // conversation = apiService.conversation;
   }
 
   @override
@@ -61,45 +62,17 @@ class _MessageScreenState extends State<MessageScreen> {
           ],
         ),
         body: Column(children: [
-          StreamBuilder(
-            stream: apiService.channel.stream,
-            builder: (context, snapshot) {
-              // TODO: check for messages not sent
-              print('called MS stream builder');
-              print('hasData: ${snapshot.hasData}');
-              print('Data: ${snapshot.data}');
-
-              // if (snapshot.connectionState == ConnectionState.active) {
-              Map<String, dynamic> responseMap;
-              String inboundMessage = snapshot.data.toString();
-              if (snapshot.hasData) {
-                if (snapshot.data != null) {
-                  responseMap = jsonDecode(inboundMessage);
-
-                  Message message;
-                  if (responseMap['sender'] != null) {
-                    message = apiService
-                        .parseInboundMessageFromSocket(inboundMessage);
-                    conversation.add(message);
-                  }
-                  // TODO: check for response messsages or throw error
-                }
-              }
-              // }
-
-              return Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ListView.builder(
-                      itemCount: conversation.length,
-                      itemBuilder: (context, index) => MessageBox(
-                            message: conversation[index],
-                          )),
-                ),
-              );
-            },
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ListView.builder(
+                  itemCount: widget.allMessages.length,
+                  itemBuilder: (context, index) => MessageBox(
+                        message: widget.allMessages[index],
+                      )),
+            ),
           ),
-          MessageInputContainer(conversation: conversation),
+          MessageInputContainer(allMessages: widget.allMessages),
         ]));
   }
 }

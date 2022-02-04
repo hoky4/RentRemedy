@@ -5,7 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
 import 'package:rentremedy_mobile/models/Message/message.dart';
-import 'package:rentremedy_mobile/models/Message/messages.dart';
+import 'package:rentremedy_mobile/models/Message/message_model.dart';
 
 import 'package:rentremedy_mobile/models/Message/websocket_message.dart';
 import 'package:rentremedy_mobile/models/Message/model.dart';
@@ -23,7 +23,6 @@ class ApiService {
   var channel;
   var landlordId = '';
   List<Message> conversation = [];
-  // MessageModel messageModel = MessageModel();
 
   connectToWebSocket() {
     channel = IOWebSocketChannel.connect(
@@ -35,14 +34,14 @@ class ApiService {
     );
   }
 
-  sendMessage({required String input}) async {
-    if (landlordId.isEmpty) {
-      landlordId = await getLandlordId();
-    }
-    final message = WebSocketMessage(landlordId, input, "2", Model.Message);
+  // sendMessage({required String input}) async {
+  //   if (landlordId.isEmpty) {
+  //     landlordId = await getLandlordId();
+  //   }
+  //   final message = WebSocketMessage(landlordId, input, "2", Model.Message);
 
-    channel.sink.add(jsonEncode(message.toJson()));
-  }
+  //   channel.sink.add(jsonEncode(message.toJson()));
+  // }
 
   Message parseInboundMessageFromSocket(String inboundMessage) {
     Map<String, dynamic> responseMap = jsonDecode(inboundMessage);
@@ -56,7 +55,7 @@ class ApiService {
     channel.sink.close();
   }
 
-  dynamic getConversation() async {
+  Future<List<Message>> getConversation() async {
     var result;
     if (landlordId.isEmpty) {
       landlordId = await getLandlordId();

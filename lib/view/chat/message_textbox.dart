@@ -22,10 +22,10 @@ class _MessageTextBox extends State<MessageTextBox> {
     super.initState();
 
     txtMessage = TextEditingController();
-    txtMessage.addListener(() {
-      final isButtonActive = txtMessage.text.isNotEmpty;
-      setState(() => widget.isButtonActive = isButtonActive);
-    });
+    // txtMessage.addListener(() {
+    //   final isButtonActive = txtMessage.text.isNotEmpty;
+    //   setState(() => widget.isButtonActive = isButtonActive);
+    // });
   }
 
   @override
@@ -54,13 +54,18 @@ class _MessageTextBox extends State<MessageTextBox> {
           ),
           IconButton(
             icon: Icon(Icons.send),
-            onPressed: widget.isButtonActive
-                ? () {
-                    print('Send btn pressed');
-                    widget.onPressed(txtMessage.text);
-                    txtMessage.clear();
-                  }
-                : null,
+            onPressed: () {
+              print('Send btn pressed');
+              widget.onPressed(txtMessage.text);
+              txtMessage.clear();
+            },
+            // onPressed: widget.isButtonActive
+            //     ? () {
+            //         print('Send btn pressed');
+            //         widget.onPressed(txtMessage.text);
+            //         txtMessage.clear();
+            //       }
+            //     : null,
           )
         ],
       ),

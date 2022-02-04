@@ -8,6 +8,7 @@ import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
 import 'package:rentremedy_mobile/view/auth/signup_screen.dart';
 import 'package:rentremedy_mobile/view/chat/message_screen.dart';
+import 'package:rentremedy_mobile/view/chat/set_message_model.dart';
 import 'package:rentremedy_mobile/view/onboarding/terms_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../chat/Old/message_screen2.dart';
@@ -196,7 +197,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         new MaterialPageRoute(
                             // builder: (context) => MessageScreen(user: user!)));
 
-                            builder: (context) => MessageScreen()));
+                            builder: (context) => SetMessageModel()));
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                         content: Text("Lease Agreement not signed yet.")));
@@ -212,8 +213,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       new MaterialPageRoute(
                           builder: (context) => ConfirmationScreen()));
                 }
-                apiService.connectToWebSocket();
-                print('Connected to websocket.');
+                // apiService.connectToWebSocket();
+                // print('Connected to websocket.');
               } on BadRequestException catch (e) {
                 setState(() {
                   _statusMessage = e.toString();

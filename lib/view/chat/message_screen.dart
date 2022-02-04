@@ -104,11 +104,14 @@ class _MessageScreenState extends State<MessageScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: ListView.builder(
                       itemCount: conversation.length,
-                      itemBuilder: (context, index) => ChangeNotifierProvider(
-                            create: (context) => conversation[index],
-                            // child: MessageBox(message: conversation[index]),
-                            child: MessageBox(),
-                          )),
+                      itemBuilder: (context, index) =>
+                          MessageBox(message: conversation[index])),
+                  // itemCount: conversation.length,
+                  // itemBuilder: (context, index) => ChangeNotifierProvider(
+                  //       create: (context) => conversation[index],
+                  //       child: MessageBox(message: conversation[index]),
+                  //       // child: MessageBox(),
+                  //     )),
                 ),
               );
             },

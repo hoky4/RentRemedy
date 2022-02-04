@@ -104,8 +104,8 @@ class _MessageScreen2State extends State<MessageScreen2> {
                   child: ListView.builder(
                       itemCount: conversation.length,
                       itemBuilder: (context, index) =>
-                          // MessageBox(message: conversation[index])),
-                          MessageBox()),
+                          MessageBox(message: conversation[index])),
+                  // MessageBox()),
                 ),
               );
             },

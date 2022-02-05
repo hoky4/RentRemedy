@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/models/Payments/payment.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
+import 'package:rentremedy_mobile/view/payment/payment_success_screen.dart';
 
 class PaymentScreen extends StatelessWidget {
   Payment payment;
@@ -88,8 +89,10 @@ class PaymentScreen extends StatelessWidget {
         onPressed: () async {
           try {
             await apiService.makePaymentIntent('${payment.id}');
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => Text("Success")));
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => PaymentSuccessScreen()));
           } on Exception catch (e) {
             print("Exception while making payment intent.");
           }

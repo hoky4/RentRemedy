@@ -31,6 +31,8 @@ class Payment {
   DateTime dueDate;
   DateTime? paymentDate;
 
+  double get getDollarAmount => chargeAmount / 100;
+
   factory Payment.fromJson(Map<String, dynamic> json) =>
       _$PaymentFromJson(json);
   Map<String, dynamic> toJson() => _$PaymentToJson(this);

@@ -10,6 +10,7 @@ import 'package:rentremedy_mobile/models/Message/messages.dart';
 import 'package:rentremedy_mobile/models/Message/websocket_message.dart';
 import 'package:rentremedy_mobile/models/Message/model.dart';
 import 'package:rentremedy_mobile/models/Payments/payment.dart';
+import 'package:rentremedy_mobile/models/Payments/payment_intent_response.dart';
 import 'package:rentremedy_mobile/models/User/user.dart';
 import 'package:rentremedy_mobile/networking/api.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
@@ -25,6 +26,33 @@ class ApiService {
   var landlordId = '';
   List<Message> conversation = [];
   MessageModel messageModel = MessageModel();
+
+  dynamic makePaymentIntent(String id) async {
+    var result;
+
+    final response = await http.post(Uri.parse('$PAYMENT/payment-intent'),
+        headers: <String, String>{
+          'cookie': cookie,
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'paymentId': id,
+        }));
+
+    if (response.statusCode == 200) {
+      print('resp-paid-balance: ${response.body}');
+
+      Map<String, dynamic> responseMap = jsonDecode(response.body);
+      PaymentIntentResponse payment =
+          PaymentIntentResponse.fromJson(responseMap);
+      print('payment-intent-payment-paid-date: ${payment.payment.paymentDate}');
+      print('payment-intent-payment-status: ${payment.status}');
+      return payment;
+    } else {
+      result = _handleError(response);
+    }
+    return result;
+  }
 
   dynamic getPaymentById(String id) async {
     var result;

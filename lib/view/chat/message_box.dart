@@ -54,20 +54,14 @@ class MessageBox extends StatelessWidget {
                       ),
                     ),
                     onPressed: () async {
-                      try {
-                        Payment payment = await apiService
-                            .getPaymentById('${message.actionId}') as Payment;
-                        print('payment-id: ${payment.id}');
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => PaymentScreen()));
-                      } on ForbiddenException catch (e) {
-                        print('User already paid');
-
-                        // Navigator.pushReplacement(context,
-                        //   MaterialPageRoute(builder: (context) => SuccessScreen()));
-                      }
+                      Payment payment = await apiService
+                          .getPaymentById('${message.actionId}') as Payment;
+                      print('payment-id: ${payment.id}');
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  PaymentScreen(payment: payment)));
                     },
                     child: Text('Pay Now',
                         style: TextStyle(fontSize: 18, color: Colors.white)),

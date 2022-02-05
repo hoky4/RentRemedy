@@ -9,6 +9,7 @@ import 'package:rentremedy_mobile/models/Message/messages.dart';
 
 import 'package:rentremedy_mobile/models/Message/websocket_message.dart';
 import 'package:rentremedy_mobile/models/Message/model.dart';
+import 'package:rentremedy_mobile/models/Payments/payment.dart';
 import 'package:rentremedy_mobile/models/User/user.dart';
 import 'package:rentremedy_mobile/networking/api.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
@@ -24,6 +25,29 @@ class ApiService {
   var landlordId = '';
   List<Message> conversation = [];
   MessageModel messageModel = MessageModel();
+
+  dynamic getPaymentById(String id) async {
+    var result;
+
+    final response = await http.get(
+      Uri.parse('$PAYMENT/payments/$id'),
+      headers: <String, String>{
+        'cookie': cookie,
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print('resp-payment: ${response.body}');
+
+      Map<String, dynamic> responseMap = jsonDecode(response.body);
+      Payment payment = Payment.fromJson(responseMap);
+      return payment;
+    } else {
+      result = _handleError(response);
+    }
+    return result;
+  }
 
   connectToWebSocket() {
     channel = IOWebSocketChannel.connect(
@@ -48,6 +72,7 @@ class ApiService {
   Message parseInboundMessageFromSocket(String inboundMessage) {
     Map<String, dynamic> responseMap = jsonDecode(inboundMessage);
     Message message = Message.fromJson(responseMap);
+    print('message-id: ${message.actionId}');
     return message;
   }
 
@@ -361,7 +386,6 @@ class ApiService {
       });
 
       if (response.statusCode == 200) {
-        print('login-resp: ${response.body}');
         Map<String, dynamic> responseMap = jsonDecode(response.body);
         User user = User.fromJson(responseMap);
 

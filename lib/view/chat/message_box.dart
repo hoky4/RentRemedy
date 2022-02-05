@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/models/Message/message.dart';
+import 'package:rentremedy_mobile/models/Payments/payment.dart';
+import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
+import 'package:rentremedy_mobile/view/payment/payment_screen.dart';
 
 class MessageBox extends StatelessWidget {
   final Message message;
@@ -11,6 +14,7 @@ class MessageBox extends StatelessWidget {
   Widget build(BuildContext context) {
     String landlordId =
         Provider.of<ApiService>(context, listen: false).landlordId;
+    ApiService apiService = Provider.of<ApiService>(context, listen: false);
 
     return Padding(
       padding: const EdgeInsets.only(top: 4.0),
@@ -29,15 +33,49 @@ class MessageBox extends StatelessWidget {
                   .withOpacity(message.sender != landlordId ? 1 : 0.08),
               borderRadius: BorderRadius.circular(30),
             ),
-            child: Text(
-              message.messageText,
-              style: TextStyle(
-                  color: message.sender != landlordId
-                      ? Colors.white
-                      : Theme.of(context).textTheme.bodyText1!.color),
+            child: Column(
+              children: [
+                Text(
+                  message.messageText,
+                  style: TextStyle(
+                      color: message.sender != landlordId
+                          ? Colors.white
+                          : Theme.of(context).textTheme.bodyText1!.color),
+                ),
+                if (message.actionId != null) ...[
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(Colors.orangeAccent),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24.0),
+                        ),
+                      ),
+                    ),
+                    onPressed: () async {
+                      try {
+                        Payment payment = await apiService
+                            .getPaymentById('${message.actionId}') as Payment;
+                        print('payment-id: ${payment.id}');
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PaymentScreen()));
+                      } on ForbiddenException catch (e) {
+                        print('User already paid');
+
+                        // Navigator.pushReplacement(context,
+                        //   MaterialPageRoute(builder: (context) => SuccessScreen()));
+                      }
+                    },
+                    child: Text('Pay Now',
+                        style: TextStyle(fontSize: 18, color: Colors.white)),
+                  )
+                ]
+              ],
             ),
           ),
-          if (message.delivered == false) ...[CircularProgressIndicator()]
         ],
       ),
     );

@@ -80,7 +80,7 @@ class MessageBox extends StatelessWidget {
                                   builder: (context) =>
                                       PaymentSuccessScreen()));
                         }
-                      } else if (message.type == MessageType.PaymentReceived) {
+                      } else if (message.type == MessageType.PaymentSuccessful) {
                         Navigator.push(
                             context,
                             MaterialPageRoute(

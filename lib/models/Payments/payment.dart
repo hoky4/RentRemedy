@@ -1,4 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
+import 'package:rentremedy_mobile/models/User/user.dart';
 
 part 'payment.g.dart';
 
@@ -8,7 +10,7 @@ class Payment {
       this.id,
       // this.paymentIntentId,
       this.leaseAgreement,
-      // this.user,
+      this.payer,
       this.chargeAmount,
       this.paidAmount,
       this.isLate,
@@ -20,8 +22,8 @@ class Payment {
 
   String id;
   // String paymentIntentId;
-  String leaseAgreement;
-  // String user;
+  LeaseAgreement leaseAgreement;
+  User payer;
   int chargeAmount;
   int paidAmount;
   bool isLate;

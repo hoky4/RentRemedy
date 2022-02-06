@@ -8,7 +8,8 @@ part of 'payment.dart';
 
 Payment _$PaymentFromJson(Map<String, dynamic> json) => Payment(
       json['id'] as String,
-      json['leaseAgreement'] as String,
+      LeaseAgreement.fromJson(json['leaseAgreement'] as Map<String, dynamic>),
+      User.fromJson(json['payer'] as Map<String, dynamic>),
       json['chargeAmount'] as int,
       json['paidAmount'] as int,
       json['isLate'] as bool,
@@ -23,6 +24,7 @@ Payment _$PaymentFromJson(Map<String, dynamic> json) => Payment(
 Map<String, dynamic> _$PaymentToJson(Payment instance) => <String, dynamic>{
       'id': instance.id,
       'leaseAgreement': instance.leaseAgreement,
+      'payer': instance.payer,
       'chargeAmount': instance.chargeAmount,
       'paidAmount': instance.paidAmount,
       'isLate': instance.isLate,

@@ -56,4 +56,8 @@ class MessageModel extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  void clearRecentMessages() {
+    _recentMessages.clear();
+  }
 }

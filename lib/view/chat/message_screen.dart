@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/models/Message/message.dart';
+import 'package:rentremedy_mobile/models/Message/message_model.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
 import 'package:rentremedy_mobile/view/auth/login_screen.dart';
 
@@ -37,6 +38,8 @@ class _MessageScreenState extends State<MessageScreen> {
                 icon: Icon(Icons.logout),
                 onPressed: () async {
                   await apiService.logout();
+                  var messageModel = context.read<MessageModel>();
+                  messageModel.clearRecentMessages();
 
                   Navigator.push(
                       context,

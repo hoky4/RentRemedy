@@ -75,6 +75,7 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler> {
       Map<String, dynamic> responseMap = jsonDecode(m);
 
       if (responseMap['model'] == Model.Message.index) {
+        print('recv msg');
         Message message = apiService.parseInboundMessageFromSocket(m);
         messageModel.messageReceived(message);
       } else if (responseMap['model'] == Model.MessageDelivered.index) {
@@ -105,6 +106,7 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler> {
 
   void dipose() {
     channel.sink.close();
+    print('closing socket.');
     super.dispose();
   }
 

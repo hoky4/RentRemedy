@@ -6,5 +6,6 @@ const String LOGGEDINUSER = '$ROOT/api/loggedinuser';
 const String LEASEAGREEMENTS = '$ROOT/api/lease-agreements';
 const String CONVERSATION = '$ROOT/api/messages/conversation';
 const String WEBSOCKET = 'wss://10.0.2.2:5001/api/ws/connect';
+const String PAYMENT = '$ROOT/api/payments';
 
 // api/lease-agreements?tenant=aaaabbbbccccddddeeeeffff&status=2

@@ -6,10 +6,10 @@ import 'package:http/http.dart' as http;
 import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
 import 'package:rentremedy_mobile/models/LeaseAgreement/status.dart';
 import 'package:rentremedy_mobile/models/Message/message.dart';
-import 'package:rentremedy_mobile/models/Message/message_model.dart';
-
 import 'package:rentremedy_mobile/models/Message/websocket_message.dart';
 import 'package:rentremedy_mobile/models/Message/model.dart';
+import 'package:rentremedy_mobile/models/Payments/payment.dart';
+import 'package:rentremedy_mobile/models/Payments/payment_intent_response.dart';
 import 'package:rentremedy_mobile/models/User/user.dart';
 import 'package:rentremedy_mobile/networking/api.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
@@ -25,29 +25,59 @@ class ApiService {
   var landlordId = '';
   List<Message> conversation = [];
 
-  // connectToWebSocket() {
-  //   channel = IOWebSocketChannel.connect(
-  //     'wss://10.0.2.2:5001/api/ws/connect',
-  //     headers: <String, dynamic>{
-  //       'Content-Type': 'application/json',
-  //       "Cookie": cookie
-  //     },
-  //   );
-  // }
+  dynamic makePaymentIntent(String id) async {
+    var result;
 
-  // sendMessage({required String input}) async {
-  //   if (landlordId.isEmpty) {
-  //     landlordId = await getLandlordId();
-  //   }
-  //   final message = WebSocketMessage(landlordId, input, "2", Model.Message);
+    final response = await http.post(Uri.parse('$PAYMENT/payment-intent'),
+        headers: <String, String>{
+          'cookie': cookie,
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'paymentId': id,
+        }));
 
-  //   channel.sink.add(jsonEncode(message.toJson()));
-  // }
+    if (response.statusCode == 200) {
+      print('resp-paid-balance: ${response.body}');
+
+      Map<String, dynamic> responseMap = jsonDecode(response.body);
+      PaymentIntentResponse payment =
+          PaymentIntentResponse.fromJson(responseMap);
+      print('payment-intent-payment-paid-date: ${payment.payment.paymentDate}');
+      print('payment-intent-payment-status: ${payment.status}');
+      return payment;
+    } else {
+      result = _handleError(response);
+    }
+    return result;
+  }
+
+  dynamic getPaymentById(String id) async {
+    var result;
+
+    final response = await http.get(
+      Uri.parse('$PAYMENT/$id'),
+      headers: <String, String>{
+        'cookie': cookie,
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print('resp-payment: ${response.body}');
+
+      Map<String, dynamic> responseMap = jsonDecode(response.body);
+      Payment payment = Payment.fromJson(responseMap);
+      return payment;
+    } else {
+      result = _handleError(response);
+    }
+    return result;
+  }
 
   Message parseInboundMessageFromSocket(String inboundMessage) {
     Map<String, dynamic> responseMap = jsonDecode(inboundMessage);
     Message message = Message.fromJson(responseMap);
-
     return message;
   }
 
@@ -117,6 +147,7 @@ class ApiService {
       prefs.setString('landlordId', leaseAgreement.landlord.id);
       landlordId = leaseAgreement.landlord.id;
       print('Saved landlordId: ${leaseAgreement.landlord.id}');
+      landlordId = leaseAgreement.landlord.id;
 
       return leaseAgreement;
     } else {
@@ -371,7 +402,6 @@ class ApiService {
       });
 
       if (response.statusCode == 200) {
-        print('login-resp: ${response.body}');
         Map<String, dynamic> responseMap = jsonDecode(response.body);
         User user = User.fromJson(responseMap);
 

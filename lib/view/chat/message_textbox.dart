@@ -30,7 +30,7 @@ class _MessageTextBox extends State<MessageTextBox> {
 
   @override
   Widget build(BuildContext context) {
-    print('called MTB build');
+    // print('called MTB build');
 
     return Padding(
       padding: const EdgeInsets.all(8.0),

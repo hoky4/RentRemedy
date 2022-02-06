@@ -8,7 +8,8 @@ import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
 import 'package:rentremedy_mobile/view/auth/signup_screen.dart';
 import 'package:rentremedy_mobile/view/chat/message_screen.dart';
-import 'package:rentremedy_mobile/view/chat/set_message_model.dart';
+import 'package:rentremedy_mobile/view/chat/message_socket_handler.dart';
+
 import 'package:rentremedy_mobile/view/onboarding/terms_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../chat/Old/message_screen2.dart';
@@ -197,7 +198,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         new MaterialPageRoute(
                             // builder: (context) => MessageScreen(user: user!)));
 
-                            builder: (context) => SetMessageModel()));
+                            builder: (context) => MessageSocketHandler()));
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                         content: Text("Lease Agreement not signed yet.")));

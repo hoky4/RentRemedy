@@ -24,15 +24,15 @@ class ApiService {
   var landlordId = '';
   List<Message> conversation = [];
 
-  connectToWebSocket() {
-    channel = IOWebSocketChannel.connect(
-      'wss://10.0.2.2:5001/api/ws/connect',
-      headers: <String, dynamic>{
-        'Content-Type': 'application/json',
-        "Cookie": cookie
-      },
-    );
-  }
+  // connectToWebSocket() {
+  //   channel = IOWebSocketChannel.connect(
+  //     'wss://10.0.2.2:5001/api/ws/connect',
+  //     headers: <String, dynamic>{
+  //       'Content-Type': 'application/json',
+  //       "Cookie": cookie
+  //     },
+  //   );
+  // }
 
   // sendMessage({required String input}) async {
   //   if (landlordId.isEmpty) {
@@ -46,8 +46,7 @@ class ApiService {
   Message parseInboundMessageFromSocket(String inboundMessage) {
     Map<String, dynamic> responseMap = jsonDecode(inboundMessage);
     Message message = Message.fromJson(responseMap);
-    print('sender: ${message.sender}');
-    print('Recvr: ${message.recipient}');
+
     return message;
   }
 

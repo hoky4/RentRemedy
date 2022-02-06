@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/models/Message/message.dart';
@@ -43,13 +45,14 @@ class _MessageInputContainerState extends State<MessageInputContainer> {
 
   @override
   Widget build(BuildContext context) {
-    print('called MIC build');
+    // print('called MIC build');
 
     return MessageTextBox(
         onPressed: (String text) async {
           // await apiService.sendMessage(input: text);
+          final random = Random().nextInt(100000).toString();
           final message =
-              WebSocketMessage(landlordId, text, "2", Model.Message);
+              WebSocketMessage(landlordId, text, random, Model.Message);
           var messageModel = context.read<MessageModel>();
 
           messageModel.sendMessage(message);

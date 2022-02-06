@@ -23,7 +23,7 @@ Map<String, dynamic> _$WebSocketMessageToJson(WebSocketMessage instance) =>
     };
 
 const _$ModelEnumMap = {
-  Model.Message: 1,
-  Model.MessageDelivered: 2,
-  Model.MessageRead: 3,
+  Model.Message: 0,
+  Model.MessageDelivered: 1,
+  Model.MessageRead: 2,
 };

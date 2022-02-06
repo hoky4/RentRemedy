@@ -31,7 +31,7 @@ class _MessageScreenState extends State<MessageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('called MS build');
+    // print('called MS build');
     return Scaffold(
         appBar: AppBar(
           title: Row(
@@ -41,7 +41,6 @@ class _MessageScreenState extends State<MessageScreen> {
                 icon: Icon(Icons.logout),
                 onPressed: () async {
                   await apiService.logout();
-                  apiService.closeSocket();
 
                   Navigator.push(
                       context,

@@ -28,6 +28,8 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler> {
 
   @override
   void initState() {
+    super.initState();
+
     apiService = Provider.of<ApiService>(context, listen: false);
     cookie = apiService.cookie;
     conversation = apiService.conversation;
@@ -39,11 +41,20 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler> {
         "Cookie": cookie
       },
     );
+
     fetchUserAndLandlordId();
 
-    // fetchConversation();
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      setupChannel();
+    });
+  }
 
-    super.initState();
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      checkForNewMessages();
+    });
   }
 
   fetchUserAndLandlordId() async {
@@ -55,81 +66,54 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler> {
     });
   }
 
-  // Future<void> fetchConversation() async {
-  //   await apiService.getConversation().then((List<Message> messages) {
-  //     conversation = messages;
-  //   });
-  // }
+  void setupChannel() {
+    var messageModel = context.read<MessageModel>();
 
-  @override
-  Widget build(BuildContext context) {
-    List<Message> recentMessages;
-    List<Message> messageSortedByDate;
-    // List<Message> conversation;
-    return Consumer<MessageModel>(builder: (context, cart, child) {
-      recentMessages = cart.recentMessages;
-      // conversation.addAll(recentMessages);
-      List<Message> allMessages = recentMessages + conversation;
-      var messageModel = context.watch<MessageModel>();
+    channel.stream.listen((m) {
+      Map<String, dynamic> responseMap = jsonDecode(m);
 
-      if (messageModel.sendQueue.length > 0) {
-        print('There are messages ready to send.');
-        WebSocketMessage outboundMsg = messageModel.sendQueue.removeAt(0);
-        print(
-            'Outbound msg: ${outboundMsg.messageText} to ${outboundMsg.recipient}');
-        channel.sink.add(jsonEncode(outboundMsg));
-        messageModel.pendingQueue.add(outboundMsg);
-        print('Outbound msg sent.');
+      if (responseMap['model'] == Model.Message.index) {
+        Message message = apiService.parseInboundMessageFromSocket(m);
+        messageModel.messageReceived(message);
+      } else if (responseMap['model'] == Model.MessageDelivered.index) {
+        DateTime deliveredDate =
+            DateTime.parse(responseMap['messageDeliveredDate']);
+        messageModel.movePendingMessageToRecent(
+            responseMap['messageTempId'], deliveredDate, userId);
       }
-
-      return StreamBuilder(
-        stream: channel.stream,
-        builder: (context, snapshot) {
-          Map<String, dynamic> responseMap;
-          String inboundMessage = snapshot.data.toString();
-          if (snapshot.hasData) {
-            if (snapshot.data != null) {
-              responseMap = jsonDecode(inboundMessage);
-
-              Message message;
-              if (responseMap['sender'] != null) {
-                message =
-                    apiService.parseInboundMessageFromSocket(inboundMessage);
-                print(
-                    'message: ${message.messageText}; sender: ${message.sender}');
-                // messageModel.messageReceived(message); //Throws error
-              } else if (responseMap['messageId'] != null &&
-                  responseMap['messageTempId'] != null) {
-                print('Message delivered response.');
-                List<WebSocketMessage> pendingQueue = messageModel.pendingQueue;
-                String deliveredTempId = responseMap['messageTempId'];
-                final int index = pendingQueue.indexWhere(
-                    ((msg) => msg.messageTempId == deliveredTempId));
-                if (index != -1) {
-                  print('Found matching tempId from pendingQueue');
-                  WebSocketMessage deliveredMessage =
-                      pendingQueue.removeAt(index);
-                  Message wsMsgToMsg = Message.lessArguments(
-                      userId,
-                      deliveredMessage.recipient,
-                      deliveredMessage.messageText,
-                      deliveredMessage.messageTempId,
-                      DateTime.now());
-                  messageModel.messageReceived(wsMsgToMsg);
-                }
-              }
-            }
-          }
-
-          return MessageScreen(allMessages: allMessages);
-        },
-      );
     });
   }
 
-  sendMessage({required String input}) async {
-    final message = WebSocketMessage(landlordId, input, "2", Model.Message);
+  void checkForNewMessages() {
+    var messageModel = context.read<MessageModel>();
 
-    channel.sink.add(jsonEncode(message.toJson()));
+    if (messageModel.sendQueue.isNotEmpty) {
+      WebSocketMessage outboundMsg = messageModel.sendQueue[0];
+      channel.sink.add(jsonEncode({
+        'recipient': outboundMsg.recipient,
+        'messageText': outboundMsg.messageText,
+        'messageTempId': outboundMsg.messageTempId,
+        'model': 1
+      }));
+
+      messageModel.moveFirstMessageFromSendToPending();
+    }
+  }
+
+  void dipose() {
+    channel.sink.close();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var messageModel = context.watch<MessageModel>();
+
+    List<Message> recentMessages = messageModel.recentMessages;
+    List<Message> allMessages = (recentMessages + conversation);
+
+    allMessages.sort((a, b) => a.creationDate.compareTo(b.creationDate));
+
+    return MessageScreen(allMessages: allMessages);
   }
 }

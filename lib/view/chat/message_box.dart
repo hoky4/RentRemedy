@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/models/Message/message.dart';
+import 'package:rentremedy_mobile/models/Message/message_type.dart';
 import 'package:rentremedy_mobile/models/Payments/payment.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
 import 'package:rentremedy_mobile/view/payment/payment_screen.dart';
+import 'package:rentremedy_mobile/view/payment/payment_success_screen.dart';
+import 'package:rentremedy_mobile/view/payment/view_payment_screen.dart';
 
 class MessageBox extends StatelessWidget {
   final Message message;
@@ -15,9 +18,14 @@ class MessageBox extends StatelessWidget {
     String landlordId =
         Provider.of<ApiService>(context, listen: false).landlordId;
     ApiService apiService = Provider.of<ApiService>(context, listen: false);
+    String messageBtnText =
+        message.type == MessageType.PaymentDue ? 'Pay Now' : 'View Payment';
+    Color? messageBtnColor = message.type == MessageType.PaymentDue
+        ? Colors.orangeAccent
+        : Colors.grey[400];
 
     return Padding(
-      padding: const EdgeInsets.only(top: 4.0),
+      padding: const EdgeInsets.only(top: 2.0),
       child: Row(
         mainAxisAlignment: message.sender == landlordId
             ? MainAxisAlignment.start
@@ -46,7 +54,7 @@ class MessageBox extends StatelessWidget {
                   ElevatedButton(
                     style: ButtonStyle(
                       backgroundColor:
-                          MaterialStateProperty.all(Colors.orangeAccent),
+                          MaterialStateProperty.all(messageBtnColor),
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(24.0),
@@ -57,13 +65,30 @@ class MessageBox extends StatelessWidget {
                       Payment payment = await apiService
                           .getPaymentById('${message.actionId}') as Payment;
                       print('payment-id: ${payment.id}');
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  PaymentScreen(payment: payment)));
+
+                      if (message.type == MessageType.PaymentDue) {
+                        if (payment.paymentDate == null) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      PaymentScreen(payment: payment)));
+                        } else {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      PaymentSuccessScreen()));
+                        }
+                      } else if (message.type == MessageType.PaymentReceived) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    ViewPaymentScreen(payment: payment)));
+                      }
                     },
-                    child: Text('Pay Now',
+                    child: Text(messageBtnText,
                         style: TextStyle(fontSize: 18, color: Colors.white)),
                   )
                 ]

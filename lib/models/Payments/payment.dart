@@ -32,6 +32,7 @@ class Payment {
   DateTime? paymentDate;
 
   double get getDollarAmount => chargeAmount / 100;
+  // double get getLateFeeDollarAmount => lateFee / 100;
 
   factory Payment.fromJson(Map<String, dynamic> json) =>
       _$PaymentFromJson(json);

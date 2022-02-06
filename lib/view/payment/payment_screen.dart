@@ -15,7 +15,7 @@ class PaymentScreen extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Terms"),
+          title: Text("Pay Balance"),
           centerTitle: true,
         ),
         body: Column(

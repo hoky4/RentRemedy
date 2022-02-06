@@ -31,15 +31,6 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
                     fixedSize: const Size(125, 50),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(50))),
-
-                // ButtonStyle(
-                //   backgroundColor: MaterialStateProperty.all(Colors.green),
-                //   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                //     RoundedRectangleBorder(
-                //       borderRadius: BorderRadius.circular(24.0),
-                //     ),
-                //   ),
-                // ),
                 onPressed: () {
                   Navigator.pushReplacement(
                       context,

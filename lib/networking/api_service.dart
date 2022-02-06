@@ -10,6 +10,7 @@ import 'package:rentremedy_mobile/models/Message/websocket_message.dart';
 import 'package:rentremedy_mobile/models/Message/model.dart';
 import 'package:rentremedy_mobile/models/Payments/payment.dart';
 import 'package:rentremedy_mobile/models/Payments/payment_intent_response.dart';
+import 'package:rentremedy_mobile/models/Payments/setup_intent_response.dart';
 import 'package:rentremedy_mobile/models/User/user.dart';
 import 'package:rentremedy_mobile/networking/api.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
@@ -38,14 +39,44 @@ class ApiService {
         }));
 
     if (response.statusCode == 200) {
-      print('resp-paid-balance: ${response.body}');
+      // print('resp-paid-balance: ${response.body}');
 
       Map<String, dynamic> responseMap = jsonDecode(response.body);
       PaymentIntentResponse payment =
           PaymentIntentResponse.fromJson(responseMap);
-      print('payment-intent-payment-paid-date: ${payment.payment.paymentDate}');
-      print('payment-intent-payment-status: ${payment.status}');
+      // print('payment-intent-payment-paid-date: ${payment.payment.paymentDate}');
+      // print('payment-intent-payment-status: ${payment.status}');
       return payment;
+    } else {
+      result = _handleError(response);
+    }
+    return result;
+  }
+
+  dynamic makeSetupIntent() async {
+    var result;
+
+    final response = await http.post(Uri.parse('$PAYMENT/setup-intent'),
+        headers: <String, String>{
+          'cookie': cookie,
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          "type": "card",
+          "number": "4242424242424242",
+          "expMonth": 7,
+          "expYear": 2025,
+          "cvc": "333"
+        }));
+
+    if (response.statusCode == 200) {
+      // print('resp-setup-intent: ${response.body}');
+
+      Map<String, dynamic> responseMap = jsonDecode(response.body);
+      SetupIntentResponse setupIntentResponse =
+          SetupIntentResponse.fromJson(responseMap);
+      // print('setup-intent-status: ${setupIntentResponse.status}');
+      return setupIntentResponse;
     } else {
       result = _handleError(response);
     }
@@ -64,7 +95,7 @@ class ApiService {
     );
 
     if (response.statusCode == 200) {
-      print('resp-payment: ${response.body}');
+      // print('resp-payment: ${response.body}');
 
       Map<String, dynamic> responseMap = jsonDecode(response.body);
       Payment payment = Payment.fromJson(responseMap);
@@ -188,7 +219,7 @@ class ApiService {
         });
 
     if (response.statusCode == 200) {
-      print('\nresponse: ${response.body}');
+      print('\nget-la-response: ${response.body}');
       Map<String, dynamic> responseMap = jsonDecode(response.body);
 
       List<dynamic> leaseAgreements = responseMap['leaseAgreements'];

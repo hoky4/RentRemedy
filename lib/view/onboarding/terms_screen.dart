@@ -313,9 +313,17 @@ class TermsScreen extends StatelessWidget {
         ),
       ),
       onPressed: () async {
-        await apiService.signLeaseAgreement('$leaseAgreemenId');
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => MessageSocketHandler()));
+        try {
+          await apiService.signLeaseAgreement('$leaseAgreemenId');
+          print('lease agreement signed');
+          await apiService.makeSetupIntent();
+          print('setup intent made.');
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => MessageSocketHandler()));
+        } on Exception catch (e) {
+          print(
+              "Error signing leaseAgreement or setting up card payment: ${e.toString()}");
+        }
       },
       child:
           Text('Accept', style: TextStyle(fontSize: 18, color: Colors.white)),

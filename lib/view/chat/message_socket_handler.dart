@@ -6,6 +6,7 @@ import 'package:rentremedy_mobile/models/Message/message.dart';
 import 'package:rentremedy_mobile/models/Message/message_model.dart';
 import 'package:rentremedy_mobile/models/Message/model.dart';
 import 'package:rentremedy_mobile/models/Message/websocket_message.dart';
+import 'package:rentremedy_mobile/networking/api.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
 import 'package:web_socket_channel/io.dart';
 
@@ -35,7 +36,7 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler> {
     conversation = apiService.conversation;
 
     channel = IOWebSocketChannel.connect(
-      'wss://10.0.2.2:5001/api/ws/connect',
+      '$WEBSOCKET',
       headers: <String, dynamic>{
         'Content-Type': 'application/json',
         "Cookie": cookie
@@ -66,6 +67,7 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler> {
     });
   }
 
+  /// listener and handler for inbound messages
   void setupChannel() {
     var messageModel = context.read<MessageModel>();
 
@@ -84,6 +86,7 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler> {
     });
   }
 
+  /// hanlder for outbound messages
   void checkForNewMessages() {
     var messageModel = context.read<MessageModel>();
 

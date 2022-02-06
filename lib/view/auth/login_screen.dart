@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
+import 'package:rentremedy_mobile/models/LeaseAgreement/status.dart';
 import 'package:rentremedy_mobile/models/User/user.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
@@ -183,12 +184,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     await _findLeaseAgreementById();
                 bool hasLeaseAgreement = leaseAgreement != null ? true : false;
 
-                setState(() {
-                  _statusMessage = 'Login Success';
-                  _messageColor = Colors.green;
-                  isLoading = false;
-                });
-
                 if (hasLeaseAgreement) {
                   if (isSigned(leaseAgreement)) {
                     await apiService.getConversation();
@@ -196,8 +191,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     Navigator.pushReplacement(
                         context,
                         new MaterialPageRoute(
-                            // builder: (context) => MessageScreen(user: user!)));
-
                             builder: (context) => MessageSocketHandler()));
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -214,8 +207,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       new MaterialPageRoute(
                           builder: (context) => ConfirmationScreen()));
                 }
-                // apiService.connectToWebSocket();
-                // print('Connected to websocket.');
+
+                setState(() {
+                  _statusMessage = 'Login Success';
+                  _messageColor = Colors.green;
+                  isLoading = false;
+                });
               } on BadRequestException catch (e) {
                 setState(() {
                   _statusMessage = e.toString();
@@ -270,13 +267,12 @@ class _LoginScreenState extends State<LoginScreen> {
     final prefs = await SharedPreferences.getInstance();
     final id = (prefs.getString('id') ?? '');
     var leaseAgreement = await apiService.findExistingLeaseAgreements(id);
-    // return leaseAgreement != null ? Tuple2<bool, LeaseAgreement>(true, leaseAgreement) : const Tuple2<bool, LeaseAgreement?>(false, null);
     return leaseAgreement;
   }
 
   bool isSigned(LeaseAgreement leaseAgreement) {
     if (leaseAgreement.signatures.isEmpty) {
-      print("Existing Lease Agreement Not signed.");
+      print("Existing Lease Agreement NOT signed.");
       return false;
     }
     print("Existing Lease Agreement Signed.");

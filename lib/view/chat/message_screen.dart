@@ -19,19 +19,15 @@ class MessageScreen extends StatefulWidget {
 
 class _MessageScreenState extends State<MessageScreen> {
   var apiService;
-  // late List<Message> conversation;
 
   @override
   void initState() {
     super.initState();
-
     apiService = Provider.of<ApiService>(context, listen: false);
-    // conversation = apiService.conversation;
   }
 
   @override
   Widget build(BuildContext context) {
-    // print('called MS build');
     return Scaffold(
         appBar: AppBar(
           title: Row(

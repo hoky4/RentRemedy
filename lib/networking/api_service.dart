@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
+import 'package:rentremedy_mobile/models/LeaseAgreement/status.dart';
 import 'package:rentremedy_mobile/models/Message/message.dart';
 import 'package:rentremedy_mobile/models/Message/message_model.dart';
 
@@ -180,7 +181,8 @@ class ApiService {
     var leaseAgreement = null;
 
     final response = await http.get(
-        Uri.parse('$LEASEAGREEMENTS?tenant=$id&status=AssignedSigned'),
+        // Uri.parse('$LEASEAGREEMENTS?tenant=$id&status=AssignedSigned'),
+        Uri.parse('$LEASEAGREEMENTS?tenant=$id'),
         headers: <String, String>{
           'cookie': cookie,
           'Content-Type': 'application/json; charset=UTF-8',
@@ -195,7 +197,16 @@ class ApiService {
         return null;
       } else {
         print('Active lease agreement found.');
-        leaseAgreement = LeaseAgreement.fromJson(leaseAgreements[0]);
+
+        List<LeaseAgreement> leaseAgreementList = List<LeaseAgreement>.from(
+            leaseAgreements.map((i) => LeaseAgreement.fromJson(i)));
+
+        List<LeaseAgreement> signedLeaseAgreements = leaseAgreementList
+            .where((i) => (i.status == Status.AssignedUnsigned ||
+                i.status == Status.AssignedSigned))
+            .toList();
+        // leaseAgreement = LeaseAgreement.fromJson(leaseAgreements[0]);
+        leaseAgreement = signedLeaseAgreements.first;
         return leaseAgreement;
       }
     } else {
@@ -354,7 +365,7 @@ class ApiService {
           'password': password,
         }),
       )
-          .timeout(Duration(seconds: 200), onTimeout: () {
+          .timeout(Duration(seconds: 15), onTimeout: () {
         throw TimeoutException(
             'The connection has timed out, Please try again!');
       });

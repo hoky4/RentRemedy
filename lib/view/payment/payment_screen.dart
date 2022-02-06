@@ -113,5 +113,5 @@ TextStyle categoryStyle = GoogleFonts.montserrat(
 TextStyle bodyStyle = GoogleFonts.montserrat(
     fontWeight: FontWeight.normal, fontSize: 16, color: Colors.black);
 
-// TextStyle bodyStyle2 = GoogleFonts.montserrat(
-//     fontWeight: FontWeight.w300, fontSize: 16, color: Colors.black);
+TextStyle amountStyle = GoogleFonts.montserrat(
+    fontWeight: FontWeight.normal, fontSize: 48, color: Colors.black);

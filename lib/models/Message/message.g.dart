@@ -37,5 +37,7 @@ Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
 const _$MessageTypeEnumMap = {
   MessageType.Text: 0,
   MessageType.PaymentDue: 1,
-  MessageType.PaymentReceived: 2,
+  MessageType.PaymentSuccessful: 2,
+  MessageType.PaymentProcessing: 3,
+  MessageType.WelcomeMessage: 4
 };

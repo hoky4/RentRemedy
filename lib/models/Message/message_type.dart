@@ -6,7 +6,11 @@ enum MessageType {
   @JsonValue(1)
   PaymentDue,
   @JsonValue(2)
-  PaymentReceived
+  PaymentSuccessful,
+  @JsonValue(1)
+  PaymentProcessing,
+  @JsonValue(2)
+  WelcomeMessage
 }
 
 extension MessageTypeExtension on MessageType {
@@ -16,8 +20,12 @@ extension MessageTypeExtension on MessageType {
         return "Text";
       case MessageType.PaymentDue:
         return "Payment Due";
-      case MessageType.PaymentReceived:
-        return "Payment Received";
+      case MessageType.PaymentSuccessful:
+        return "Payment Successful";
+      case MessageType.PaymentProcessing:
+        return "Payment Processing";
+      case MessageType.WelcomeMessage:
+        return "Welcome";
       default:
         return "";
     }

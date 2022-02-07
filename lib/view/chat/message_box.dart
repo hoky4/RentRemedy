@@ -50,7 +50,8 @@ class MessageBox extends StatelessWidget {
                           ? Colors.white
                           : Theme.of(context).textTheme.bodyText1!.color),
                 ),
-                if (message.actionId != null) ...[
+                if (message.type == MessageType.PaymentDue ||
+                    message.type == MessageType.PaymentSuccessful) ...[
                   ElevatedButton(
                     style: ButtonStyle(
                       backgroundColor:
@@ -80,7 +81,8 @@ class MessageBox extends StatelessWidget {
                                   builder: (context) =>
                                       PaymentSuccessScreen()));
                         }
-                      } else if (message.type == MessageType.PaymentSuccessful) {
+                      } else if (message.type ==
+                          MessageType.PaymentSuccessful) {
                         Navigator.push(
                             context,
                             MaterialPageRoute(

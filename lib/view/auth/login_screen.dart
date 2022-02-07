@@ -186,7 +186,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 if (hasLeaseAgreement) {
                   if (isSigned(leaseAgreement)) {
-                    await apiService.getConversation();
+                    // await apiService.getConversation();
 
                     Navigator.pushReplacement(
                         context,

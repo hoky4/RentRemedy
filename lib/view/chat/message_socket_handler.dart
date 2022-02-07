@@ -33,8 +33,8 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler> {
 
     apiService = Provider.of<ApiService>(context, listen: false);
     cookie = apiService.cookie;
-    // conversation = [];
-    conversation = apiService.conversation;
+    conversation = [];
+    // conversation = apiService.conversation;
 
     channel = IOWebSocketChannel.connect(
       '$WEBSOCKET',
@@ -45,7 +45,7 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler> {
     );
 
     fetchUserAndLandlordId();
-    // fetchConversation();
+    fetchConversation();
 
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       setupChannel();
@@ -61,7 +61,10 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler> {
   }
 
   fetchConversation() async {
-    conversation = await apiService.getConversation();
+    List<Message> convo = await apiService.getConversation();
+    setState(() {
+      conversation = convo;
+    });
   }
 
   fetchUserAndLandlordId() async {

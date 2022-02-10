@@ -32,10 +32,11 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(50))),
                 onPressed: () {
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => MessageSocketHandler()));
+                  Navigator.pop(context);
+                  // Navigator.pushReplacement(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //         builder: (context) => MessageSocketHandler()));
                 },
                 child: Text('Done', style: bodyStyle),
               )

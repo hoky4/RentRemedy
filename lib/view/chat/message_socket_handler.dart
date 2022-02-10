@@ -98,6 +98,7 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler> {
 
   /// hanlder for outbound messages
   void checkForNewMessages() {
+    print('recv inbound message');
     var messageModel = context.read<MessageModel>();
 
     if (messageModel.sendQueue.isNotEmpty) {

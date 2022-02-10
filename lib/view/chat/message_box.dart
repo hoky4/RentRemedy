@@ -75,7 +75,7 @@ class MessageBox extends StatelessWidget {
                                   builder: (context) =>
                                       PaymentScreen(payment: payment)));
                         } else {
-                          Navigator.pushReplacement(
+                          Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>

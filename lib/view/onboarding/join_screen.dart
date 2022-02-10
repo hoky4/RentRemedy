@@ -86,6 +86,7 @@ class JoinScreen extends StatelessWidget {
   Widget noButton(BuildContext context) {
     return TextButton(
       onPressed: () {
+        // Navigator.pop(context);
         Navigator.pushReplacement(context,
             new MaterialPageRoute(builder: (context) => ConfirmationScreen()));
       },

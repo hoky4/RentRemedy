@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
 import 'package:rentremedy_mobile/view/auth/success_screen.dart';
+import 'package:rentremedy_mobile/view/chat/message_socket_handler.dart';
 
 import 'login_screen.dart';
 
@@ -12,20 +14,27 @@ class RoutePage extends StatefulWidget {
 }
 
 class _RoutePageState extends State<RoutePage> {
-  final ApiService apiService = ApiService();
+  late ApiService apiService;
+
   bool isLoggedIn = false;
   bool isLoading = false;
-  // bool hasLeaseAgreement = false;
 
   @override
   initState() {
     super.initState();
 
+    apiService = Provider.of<ApiService>(context, listen: false);
+
     setState(() {
       isLoading = true;
     });
 
-    apiService.loggedInUser().then((value) {
+    fetchLoggedInUser();
+    print("done getting logged in user");
+  }
+
+  void fetchLoggedInUser() async {
+    await apiService.loggedInUser().then((value) {
       if (value == null) {
         setState(() {
           isLoggedIn = false;
@@ -36,22 +45,19 @@ class _RoutePageState extends State<RoutePage> {
           isLoggedIn = true;
           isLoading = false;
         });
-      } else {
-        setState(() {
-          isLoggedIn = false;
-          isLoading = false;
-        });
       }
     }).catchError((e) {
       print('Unable to autologin, msg: $e');
     });
+    print("fetchLoggedInUser method finished");
   }
 
   @override
   Widget build(BuildContext context) {
+    print('builder called');
     return Stack(
       children: [
-        isLoggedIn ? SuccessScreen() : LoginScreen(),
+        isLoggedIn ? MessageSocketHandler() : LoginScreen(),
         Visibility(
             maintainSize: true,
             maintainAnimation: true,

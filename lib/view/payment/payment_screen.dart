@@ -89,6 +89,7 @@ class PaymentScreen extends StatelessWidget {
         onPressed: () async {
           try {
             await apiService.makePaymentIntent('${payment.id}');
+            // Navigator.pop(context);
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(

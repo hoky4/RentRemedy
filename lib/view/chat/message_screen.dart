@@ -6,6 +6,7 @@ import 'package:rentremedy_mobile/models/Message/message.dart';
 import 'package:rentremedy_mobile/models/Message/message_model.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
 import 'package:rentremedy_mobile/view/auth/login_screen.dart';
+import 'package:rentremedy_mobile/view/onboarding/add_card_screen.dart';
 
 import 'message_box.dart';
 import 'message_input_container.dart';
@@ -57,7 +58,11 @@ class _MessageScreenState extends State<MessageScreen> {
           actions: [
             IconButton(icon: Icon(Icons.comment_rounded), onPressed: () {}),
             IconButton(
-                icon: Icon(Icons.attach_money_outlined), onPressed: () {}),
+                icon: Icon(Icons.attach_money_outlined),
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => AddCardScreen()));
+                }),
             IconButton(
                 icon: Icon(Icons.build_circle_outlined), onPressed: () {}),
           ],

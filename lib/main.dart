@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/models/Message/message_model.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
@@ -9,8 +10,9 @@ import 'package:rentremedy_mobile/view/auth/login_screen.dart';
 import 'package:rentremedy_mobile/view/auth/route_page.dart';
 import 'package:rentremedy_mobile/view/onboarding/terms_screen.dart';
 
-void main() {
+void main() async {
   HttpOverrides.global = MyHttpOverrides();
+
   runApp(const MyApp());
 }
 

@@ -188,23 +188,23 @@ class _LoginScreenState extends State<LoginScreen> {
                   if (isSigned(leaseAgreement)) {
                     // await apiService.getConversation();
 
-                    Navigator.pushReplacement(
+                    Navigator.push(
                         context,
-                        new MaterialPageRoute(
+                        MaterialPageRoute(
                             builder: (context) => MessageSocketHandler()));
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                         content: Text("Lease Agreement not signed yet.")));
                     Navigator.pushReplacement(
                         context,
-                        new MaterialPageRoute(
+                        MaterialPageRoute(
                             builder: (context) =>
                                 TermsScreen(leaseAgreement: leaseAgreement)));
                   }
                 } else {
                   Navigator.pushReplacement(
                       context,
-                      new MaterialPageRoute(
+                      MaterialPageRoute(
                           builder: (context) => ConfirmationScreen()));
                 }
 

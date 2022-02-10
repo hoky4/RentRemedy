@@ -40,11 +40,10 @@ class _MessageScreenState extends State<MessageScreen> {
                   await apiService.logout();
                   var messageModel = context.read<MessageModel>();
                   messageModel.clearRecentMessages();
+                  Navigator.pop(context);
 
-                  Navigator.push(
-                      context,
-                      new MaterialPageRoute(
-                          builder: (context) => LoginScreen()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => LoginScreen()));
                 },
               ),
               Text("General")

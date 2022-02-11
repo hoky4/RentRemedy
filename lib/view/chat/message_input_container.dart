@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/models/Message/message.dart';
-import 'package:rentremedy_mobile/models/Message/message_model.dart';
+import 'package:rentremedy_mobile/providers/message_model_provider.dart';
 import 'package:rentremedy_mobile/models/Message/model.dart';
 import 'package:rentremedy_mobile/models/Message/websocket_message.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
@@ -51,7 +51,7 @@ class _MessageInputContainerState extends State<MessageInputContainer> {
           final random = Random().nextInt(100000).toString();
           final message =
               WebSocketMessage(landlordId, text, random, Model.Message);
-          var messageModel = context.read<MessageModel>();
+          var messageModel = context.read<MessageModelProvider>();
           messageModel.sendMessage(message);
         },
         isButtonActive: isButtonActive);

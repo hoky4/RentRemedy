@@ -1,18 +1,13 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
-import 'package:rentremedy_mobile/models/Message/message_model.dart';
-import 'package:rentremedy_mobile/networking/api_service.dart';
-import 'package:rentremedy_mobile/route_generator.dart';
-import 'package:rentremedy_mobile/view/auth/login_screen.dart';
-import 'package:rentremedy_mobile/view/auth/route_page.dart';
-import 'package:rentremedy_mobile/view/onboarding/terms_screen.dart';
+import 'package:rentremedy_mobile/providers/api_service_provider.dart';
+import 'package:rentremedy_mobile/providers/auth_model_provider.dart';
+import 'package:rentremedy_mobile/providers/message_model_provider.dart';
+import 'package:rentremedy_mobile/routing/route_page.dart';
 
 void main() async {
   HttpOverrides.global = MyHttpOverrides();
-
   runApp(const MyApp());
 }
 
@@ -24,19 +19,22 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        Provider(create: (context) => ApiService()),
-        ChangeNotifierProvider<MessageModel>(
-            create: (context) => MessageModel())
-      ],
-      child: MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
+        ChangeNotifierProvider<AuthModelProvider>(
+          create: (context) => AuthModelProvider()
         ),
-        // home: const LoginScreen(),
-        initialRoute: '/',
-        onGenerateRoute: RouteGenerator.generateRoute,
-      ),
+        ProxyProvider<AuthModelProvider, ApiServiceProvider>(
+          create: (context) => ApiServiceProvider(),
+          update: (context, authModel, apiService) {
+            if (apiService == null) throw ArgumentError.notNull('apiService');
+            apiService.authModelProvider = authModel;
+            return apiService;
+          },
+        ),
+        ChangeNotifierProvider<MessageModelProvider>(
+            create: (context) => MessageModelProvider()
+          )
+      ],
+      child: const RoutePage(),
     );
   }
 }

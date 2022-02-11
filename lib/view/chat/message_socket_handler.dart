@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/models/Message/message.dart';
-import 'package:rentremedy_mobile/models/Message/message_model.dart';
+import 'package:rentremedy_mobile/providers/message_model_provider.dart';
 import 'package:rentremedy_mobile/models/Message/model.dart';
 import 'package:rentremedy_mobile/models/Message/websocket_message.dart';
 import 'package:rentremedy_mobile/networking/api.dart';
@@ -78,7 +78,7 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler> {
 
   /// listener and handler for inbound messages
   void setupChannel() {
-    var messageModel = context.read<MessageModel>();
+    var messageModel = context.read<MessageModelProvider>();
 
     channel.stream.listen((m) {
       Map<String, dynamic> responseMap = jsonDecode(m);
@@ -99,7 +99,7 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler> {
   /// hanlder for outbound messages
   void checkForNewMessages() {
     print('recv inbound message');
-    var messageModel = context.read<MessageModel>();
+    var messageModel = context.read<MessageModelProvider>();
 
     if (messageModel.sendQueue.isNotEmpty) {
       WebSocketMessage outboundMsg = messageModel.sendQueue[0];
@@ -122,7 +122,7 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler> {
 
   @override
   Widget build(BuildContext context) {
-    var messageModel = context.watch<MessageModel>();
+    var messageModel = context.watch<MessageModelProvider>();
 
     List<Message> recentMessages = messageModel.recentMessages;
     List<Message> allMessages = (recentMessages + conversation);

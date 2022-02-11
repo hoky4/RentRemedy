@@ -19,13 +19,6 @@ import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class ApiService {
-  final storage = FlutterSecureStorage();
-  final myKey = 'myCookie';
-  var cookie = '';
-  var channel;
-  var landlordId = '';
-  List<Message> conversation = [];
-
   dynamic makePaymentIntent(String id) async {
     var result;
 
@@ -112,10 +105,6 @@ class ApiService {
     return message;
   }
 
-  closeSocket() {
-    channel.sink.close();
-  }
-
   Future<List<Message>> getConversation() async {
     var result;
     if (landlordId.isEmpty) {
@@ -145,7 +134,6 @@ class ApiService {
       List<Message> conversationList = List<Message>.from(
           conversationListDynamic.map((i) => Message.fromJson(i)));
       // messageModel.messages = conversationList;
-      conversation = conversationList;
       return conversationList;
     } else {
       result = _handleError(response);
@@ -345,8 +333,6 @@ class ApiService {
   }
 
   dynamic loggedInUser() async {
-    var responseJson;
-
     await readFromSecureStorage('myCookie');
     if (cookie.isEmpty) {
       print('No existing cookie found.');
@@ -365,14 +351,12 @@ class ApiService {
         User user = User.fromJson(responseMap);
         return user;
       } else {
-        responseJson = _handleError(response);
+        return _handleError(response);
       }
     } on SocketException {
       print('No net');
       throw Exception('No Internet connection');
     }
-
-    return responseJson;
   }
 
   dynamic _handleError(http.Response response) async {

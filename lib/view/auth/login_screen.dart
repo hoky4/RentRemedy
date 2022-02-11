@@ -2,11 +2,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:rentremedy_mobile/models/Auth/logged_in_user.dart';
 import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
 import 'package:rentremedy_mobile/models/LeaseAgreement/status.dart';
 import 'package:rentremedy_mobile/models/User/user.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
+import 'package:rentremedy_mobile/providers/api_service_provider.dart';
 import 'package:rentremedy_mobile/view/auth/signup_screen.dart';
 import 'package:rentremedy_mobile/view/chat/message_screen.dart';
 import 'package:rentremedy_mobile/view/chat/message_socket_handler.dart';
@@ -32,11 +34,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool isLoading = false;
   var hasLeaseAgreement = false;
-  late ApiService apiService;
+  late ApiServiceProvider apiService;
 
   @override
   void initState() {
-    apiService = Provider.of<ApiService>(context, listen: false);
+    apiService = Provider.of<ApiServiceProvider>(context, listen: false);
     super.initState();
   }
 
@@ -178,8 +180,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 setState(() {
                   isLoading = true;
                 });
-                User? user =
+                LoggedInUser? user =
                     await apiService.login(txtEmail.text, txtPassword.text);
+
+                
+                // authProvider.loginUser(user)
+
                 LeaseAgreement? leaseAgreement =
                     await _findLeaseAgreementById();
                 bool hasLeaseAgreement = leaseAgreement != null ? true : false;

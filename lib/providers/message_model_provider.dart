@@ -3,9 +3,9 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:rentremedy_mobile/models/Message/websocket_message.dart';
 
-import 'message.dart';
+import '../models/Message/message.dart';
 
-class MessageModel extends ChangeNotifier {
+class MessageModelProvider extends ChangeNotifier {
   List<Message> _recentMessages = [];
   List<WebSocketMessage> _sendQueue = [];
   List<WebSocketMessage> _pendingQueue = [];

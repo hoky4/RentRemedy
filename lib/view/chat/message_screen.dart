@@ -3,7 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/models/Message/message.dart';
-import 'package:rentremedy_mobile/models/Message/message_model.dart';
+import 'package:rentremedy_mobile/providers/auth_model_provider.dart';
+import 'package:rentremedy_mobile/providers/message_model_provider.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
 import 'package:rentremedy_mobile/view/auth/login_screen.dart';
 import 'package:rentremedy_mobile/view/onboarding/add_card_screen.dart';
@@ -30,6 +31,8 @@ class _MessageScreenState extends State<MessageScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var authModel = context.read<AuthModelProvider>();
+
     return Scaffold(
         appBar: AppBar(
           title: Row(
@@ -37,18 +40,8 @@ class _MessageScreenState extends State<MessageScreen> {
               // IconButton(icon: Icon(Icons.menu), onPressed: () {}),
               IconButton(
                 icon: Icon(Icons.logout),
-                onPressed: () async {
-                  await apiService.logout();
-                  var messageModel = context.read<MessageModel>();
-                  messageModel.clearRecentMessages();
-                  // Navigator.pop(context);
-
-                  // Navigator.push(context,
-                  //     MaterialPageRoute(builder: (context) => LoginScreen()));
-
-                  // Navigator.of(context).popAndPushNamed('/');
-                  Navigator.of(context).pushReplacementNamed('/login');
-                  // Navigator.of(context).pushNamedAndRemoveUntil(newRouteName, (route) => false)
+                onPressed: () {
+                  authModel.logoutUser();
                 },
               ),
               Text("General")

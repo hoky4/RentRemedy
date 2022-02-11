@@ -16,6 +16,3 @@ class User {
 
   Map<String, dynamic> toJson() => _$UserToJson(this);
 }
-
-final dummy = User(
-    "aaaabbbbccccddddeeee", "firstName", "lastName", "email", [Role.Tenant]);

@@ -3,8 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/models/Message/message.dart';
 import 'package:rentremedy_mobile/models/Message/message_type.dart';
 import 'package:rentremedy_mobile/models/Payments/payment.dart';
-import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
+import 'package:rentremedy_mobile/providers/api_service_provider.dart';
+import 'package:rentremedy_mobile/providers/auth_model_provider.dart';
 import 'package:rentremedy_mobile/view/payment/payment_screen.dart';
 import 'package:rentremedy_mobile/view/payment/payment_success_screen.dart';
 import 'package:rentremedy_mobile/view/payment/view_payment_screen.dart';
@@ -16,8 +17,9 @@ class MessageBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String landlordId =
-        Provider.of<ApiService>(context, listen: false).landlordId;
-    ApiService apiService = Provider.of<ApiService>(context, listen: false);
+        Provider.of<AuthModelProvider>(context, listen: false).user!.landlordId;
+
+    ApiServiceProvider apiService = Provider.of<ApiServiceProvider>(context, listen: false);
     String messageBtnText =
         message.type == MessageType.PaymentDue ? 'Pay Now' : 'View Payment';
     Color? messageBtnColor = message.type == MessageType.PaymentDue

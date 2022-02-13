@@ -7,6 +7,7 @@ import 'package:rentremedy_mobile/models/LeaseAgreement/status.dart';
 import 'package:rentremedy_mobile/models/Message/message.dart';
 import 'package:rentremedy_mobile/models/Payments/payment.dart';
 import 'package:rentremedy_mobile/models/Payments/payment_intent_response.dart';
+import 'package:rentremedy_mobile/models/Payments/setup_intent_request.dart';
 import 'package:rentremedy_mobile/models/Payments/setup_intent_response.dart';
 import 'package:rentremedy_mobile/networking/api.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
@@ -42,19 +43,31 @@ class ApiServiceProvider {
     }
   }
 
-  dynamic makeSetupIntent() async {
+  dynamic makeSetupIntent(
+      String number, String expiryDate, String cvv, String cardHolder) async {
+    String cardNumber = number.replaceAll(' ', '');
+    List<String> expiryDateArr = expiryDate.split('/');
+    int expiryMonth = int.parse(expiryDateArr[0]);
+    int expiryYear = int.parse('20' + expiryDateArr[1]);
+
+    SetupIntentRequest request =
+        SetupIntentRequest('card', cardNumber, expiryMonth, expiryYear, cvv);
+
     final response = await http.post(Uri.parse('$PAYMENT/setup-intent'),
         headers: <String, String>{
           'cookie': _authModelProvider.cookie!,
-          'Content-Type': 'application/json; charset=UTF-8',
+          'Content-Type': 'application/json',
         },
-        body: jsonEncode(<String, dynamic>{
-          "type": "card",
-          "number": "4242424242424242",
-          "expMonth": 7,
-          "expYear": 2025,
-          "cvc": "333"
-        }));
+        body: jsonEncode(request.toJson())
+
+        // body: jsonEncode(<String, dynamic>{
+        //   "type": "card",
+        //   "number": "4242424242424242",
+        //   "expMonth": 7,
+        //   "expYear": 2025,
+        //   "cvc": "333"
+        // })
+        );
 
     if (response.statusCode == 200) {
       Map<String, dynamic> responseMap = jsonDecode(response.body);
@@ -346,6 +359,7 @@ class ApiServiceProvider {
     Map<String, dynamic> responseBodyJson = {};
     String message = '';
     final statusCode = response.statusCode;
+    print('status Code: $statusCode');
     switch (statusCode) {
       case 400:
         responseBodyJson = json.decode(response.body);

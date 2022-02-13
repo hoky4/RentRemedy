@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
 import 'package:rentremedy_mobile/models/LeaseAgreement/status.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
-import 'package:rentremedy_mobile/networking/api_service.dart';
+import 'package:rentremedy_mobile/providers/api_service_provider.dart';
 
 import 'join_screen.dart';
 
@@ -17,7 +17,7 @@ class ConfirmationScreen extends StatefulWidget {
 class _ConfirmationScreenState extends State<ConfirmationScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController txtCode = TextEditingController();
-  var apiService;
+  late ApiServiceProvider apiService;
 
   String _statusMessage = '';
   late Color _messageColor = Colors.black;
@@ -25,7 +25,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
 
   @override
   void initState() {
-    apiService = Provider.of<ApiService>(context, listen: false);
+    apiService = Provider.of<ApiServiceProvider>(context, listen: false);
     super.initState();
   }
 
@@ -33,19 +33,19 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Confirmation'),
+        title: const Text('Confirmation'),
         automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
         child: Container(
-            padding: EdgeInsets.all(36),
+            padding: const EdgeInsets.all(36),
             child: Form(
               key: _formKey,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(height: 200),
-                  Text("Enter the ID from the email.",
+                  const SizedBox(height: 200),
+                  const Text("Enter the ID from the email.",
                       style:
                           TextStyle(fontWeight: FontWeight.w500, fontSize: 20)),
                   statusMessage(),
@@ -56,7 +56,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                       maintainAnimation: true,
                       maintainState: true,
                       visible: isLoading,
-                      child: CircularProgressIndicator()),
+                      child: const CircularProgressIndicator()),
                 ],
               ),
             )),
@@ -117,7 +117,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
           }
         }
       },
-      child: Text('Submit'),
+      child: const Text('Submit'),
     );
   }
 
@@ -125,7 +125,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
     return TextFormField(
         controller: txtCode,
         keyboardType: TextInputType.text,
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
             hintText: 'Enter Confirmation Code', icon: Icon(Icons.lock)),
         validator: (text) => text!.isEmpty ? 'Code is required' : null);
   }

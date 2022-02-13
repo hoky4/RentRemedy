@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/models/Message/message.dart';
 import 'package:rentremedy_mobile/models/Message/message_type.dart';
 import 'package:rentremedy_mobile/models/Payments/payment.dart';
-import 'package:rentremedy_mobile/networking/api_service.dart';
 import 'package:rentremedy_mobile/providers/api_service_provider.dart';
 import 'package:rentremedy_mobile/providers/auth_model_provider.dart';
 import 'package:rentremedy_mobile/view/payment/payment_screen.dart';
@@ -16,10 +15,10 @@ class MessageBox extends StatelessWidget {
   const MessageBox({Key? key, required this.message}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    String landlordId =
-        Provider.of<AuthModelProvider>(context, listen: false).user!.landlordId;
+    String? landlordId = context.read<AuthModelProvider>().landlordId;
 
-    ApiServiceProvider apiService = Provider.of<ApiServiceProvider>(context, listen: false);
+    ApiServiceProvider apiService =
+        Provider.of<ApiServiceProvider>(context, listen: false);
     String messageBtnText =
         message.type == MessageType.PaymentDue ? 'Pay Now' : 'View Payment';
     Color? messageBtnColor = message.type == MessageType.PaymentDue
@@ -33,11 +32,11 @@ class MessageBox extends StatelessWidget {
             ? MainAxisAlignment.start
             : MainAxisAlignment.end,
         children: [
-          if (message.sender == landlordId) ...[Icon(Icons.person_pin)],
+          if (message.sender == landlordId) ...[const Icon(Icons.person_pin)],
           Container(
             constraints: BoxConstraints(
                 maxWidth: MediaQuery.of(context).size.width * .6),
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
               color: Colors.blue
                   .withOpacity(message.sender != landlordId ? 1 : 0.08),
@@ -81,7 +80,7 @@ class MessageBox extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      PaymentSuccessScreen()));
+                                      const PaymentSuccessScreen()));
                         }
                       } else if (message.type ==
                           MessageType.PaymentSuccessful) {
@@ -93,7 +92,8 @@ class MessageBox extends StatelessWidget {
                       }
                     },
                     child: Text(messageBtnText,
-                        style: TextStyle(fontSize: 18, color: Colors.white)),
+                        style:
+                            const TextStyle(fontSize: 18, color: Colors.white)),
                   )
                 ]
               ],

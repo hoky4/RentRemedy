@@ -1,12 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/models/Message/message.dart';
+import 'package:rentremedy_mobile/providers/api_service_provider.dart';
 import 'package:rentremedy_mobile/providers/auth_model_provider.dart';
-import 'package:rentremedy_mobile/providers/message_model_provider.dart';
-import 'package:rentremedy_mobile/networking/api_service.dart';
-import 'package:rentremedy_mobile/view/auth/login_screen.dart';
 import 'package:rentremedy_mobile/view/onboarding/add_card_screen.dart';
 
 import 'message_box.dart';
@@ -21,12 +17,12 @@ class MessageScreen extends StatefulWidget {
 }
 
 class _MessageScreenState extends State<MessageScreen> {
-  var apiService;
+  late ApiServiceProvider apiService;
 
   @override
   void initState() {
     super.initState();
-    apiService = Provider.of<ApiService>(context, listen: false);
+    apiService = Provider.of<ApiServiceProvider>(context, listen: false);
   }
 
   @override
@@ -39,25 +35,28 @@ class _MessageScreenState extends State<MessageScreen> {
             children: [
               // IconButton(icon: Icon(Icons.menu), onPressed: () {}),
               IconButton(
-                icon: Icon(Icons.logout),
+                icon: const Icon(Icons.logout),
                 onPressed: () {
+                  // Navigator.pushReplacementNamed(context, '/login');
                   authModel.logoutUser();
                 },
               ),
-              Text("General")
+              const Text("General")
             ],
           ),
           automaticallyImplyLeading: false,
           actions: [
-            IconButton(icon: Icon(Icons.comment_rounded), onPressed: () {}),
             IconButton(
-                icon: Icon(Icons.attach_money_outlined),
+                icon: const Icon(Icons.comment_rounded), onPressed: () {}),
+            IconButton(
+                icon: const Icon(Icons.attach_money_outlined),
                 onPressed: () {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => AddCardScreen()));
                 }),
             IconButton(
-                icon: Icon(Icons.build_circle_outlined), onPressed: () {}),
+                icon: const Icon(Icons.build_circle_outlined),
+                onPressed: () {}),
           ],
         ),
         body: Column(children: [

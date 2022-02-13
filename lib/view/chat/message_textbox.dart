@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:rentremedy_mobile/models/Message/message.dart';
-import 'package:rentremedy_mobile/networking/api_service.dart';
 
 class MessageTextBox extends StatefulWidget {
   Future<void> Function(String text) onPressed;
@@ -34,7 +31,7 @@ class _MessageTextBox extends State<MessageTextBox> {
       padding: const EdgeInsets.all(8.0),
       child: Row(
         children: <Widget>[
-          IconButton(icon: Icon(Icons.add), onPressed: () {}),
+          IconButton(icon: const Icon(Icons.add), onPressed: () {}),
           Expanded(
             child: TextField(
               controller: txtMessage,
@@ -43,18 +40,17 @@ class _MessageTextBox extends State<MessageTextBox> {
                 hintText: 'Enter message',
                 enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide(color: Colors.grey)),
+                    borderSide: const BorderSide(color: Colors.grey)),
                 focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide(color: Colors.blue)),
+                    borderSide: const BorderSide(color: Colors.blue)),
               ),
             ),
           ),
           IconButton(
-            icon: Icon(Icons.send),
+            icon: const Icon(Icons.send),
             onPressed: widget.isButtonActive
                 ? () {
-                    print('Send btn pressed');
                     widget.onPressed(txtMessage.text);
                     txtMessage.clear();
                   }

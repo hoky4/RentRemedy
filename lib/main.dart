@@ -20,8 +20,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<AuthModelProvider>(
-          create: (context) => AuthModelProvider()
-        ),
+            create: (context) => AuthModelProvider()),
         ProxyProvider<AuthModelProvider, ApiServiceProvider>(
           create: (context) => ApiServiceProvider(),
           update: (context, authModel, apiService) {
@@ -31,10 +30,14 @@ class MyApp extends StatelessWidget {
           },
         ),
         ChangeNotifierProvider<MessageModelProvider>(
-            create: (context) => MessageModelProvider()
-          )
+            create: (context) => MessageModelProvider())
       ],
       child: const RoutePage(),
+      // child: const MaterialApp(
+      //   // Initially display FirstPage
+      //   initialRoute: '/',
+      //   onGenerateRoute: RouteGenerator.generateRoute,
+      // ),
     );
   }
 }

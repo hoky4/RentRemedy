@@ -34,10 +34,10 @@ class AddCardScreen extends StatelessWidget {
             onPressed: () async {
               // create payment method
               final paymentMethod = await Stripe.instance
-                  .createPaymentMethod(PaymentMethodParams.card());
-              print('payment metthod: ${paymentMethod}');
+                  .createPaymentMethod(const PaymentMethodParams.card());
+              print('payment metthod: $paymentMethod');
             },
-            child: Text('pay'),
+            child: const Text('pay'),
           )
         ],
       ),

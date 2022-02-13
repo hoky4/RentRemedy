@@ -19,6 +19,7 @@ import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class ApiService {
+  /*
   dynamic makePaymentIntent(String id) async {
     var result;
 
@@ -44,8 +45,9 @@ class ApiService {
       result = _handleError(response);
     }
     return result;
-  }
+  }*/
 
+  /*
   dynamic makeSetupIntent() async {
     var result;
 
@@ -74,8 +76,9 @@ class ApiService {
       result = _handleError(response);
     }
     return result;
-  }
+  }*/
 
+  /*
   dynamic getPaymentById(String id) async {
     var result;
 
@@ -97,14 +100,16 @@ class ApiService {
       result = _handleError(response);
     }
     return result;
-  }
+  }*/
 
+  /*
   Message parseInboundMessageFromSocket(String inboundMessage) {
     Map<String, dynamic> responseMap = jsonDecode(inboundMessage);
     Message message = Message.fromJson(responseMap);
     return message;
-  }
+  }*/
 
+  /*
   Future<List<Message>> getConversation() async {
     var result;
     if (landlordId.isEmpty) {
@@ -140,8 +145,9 @@ class ApiService {
     }
 
     return result;
-  }
+  }*/
 
+  /*
   dynamic signLeaseAgreement(id) async {
     await readFromSecureStorage('myCookie');
     var responseJson;
@@ -174,8 +180,9 @@ class ApiService {
     }
 
     return responseJson;
-  }
+  }*/
 
+  /*
   dynamic joinLeaseAgreement(id) async {
     var responseJson;
     await readFromSecureStorage('myCookie');
@@ -195,12 +202,13 @@ class ApiService {
       responseJson = _handleError(response);
     }
     return responseJson;
-  }
+  }*/
 
-  Future<LeaseAgreement?> getLeaseAgreement(code) async {
+  /*
+  Future<LeaseAgreement?> getLeaseAgreement(shortId) async {
     await readFromSecureStorage('myCookie');
 
-    final response = await http.get(Uri.parse('$LEASEAGREEMENTS?code=$code'),
+    final response = await http.get(Uri.parse('$LEASEAGREEMENTS?code=$shortId'),
         headers: <String, String>{
           'cookie': cookie,
           'Content-Type': 'application/json; charset=UTF-8',
@@ -224,8 +232,9 @@ class ApiService {
       _handleError(response);
     }
     return null;
-  }
+  }*/
 
+  /*
   dynamic findExistingLeaseAgreements(id) async {
     await readFromSecureStorage('myCookie');
     var leaseAgreement = null;
@@ -262,8 +271,9 @@ class ApiService {
     } else {
       _handleError(response);
     }
-  }
+  }*/
 
+  /*
   dynamic signup(firstName, lastName, email, password) async {
     var responseJson;
 
@@ -300,8 +310,9 @@ class ApiService {
       throw Exception('No Internet connection');
     }
     return responseJson;
-  }
+  }*/
 
+  /*
   dynamic logout() async {
     var responseJson;
 
@@ -331,7 +342,9 @@ class ApiService {
 
     return responseJson;
   }
+  */
 
+  /*
   dynamic loggedInUser() async {
     await readFromSecureStorage('myCookie');
     if (cookie.isEmpty) {
@@ -357,8 +370,9 @@ class ApiService {
       print('No net');
       throw Exception('No Internet connection');
     }
-  }
+  }*/
 
+  /*
   dynamic _handleError(http.Response response) async {
     Map<String, dynamic> responseBodyJson = {};
     String message = '';
@@ -393,8 +407,9 @@ class ApiService {
         throw Exception('Error occured while Communication with Server with'
             'StatusCode: ${response.statusCode}');
     }
-  }
+  }*/
 
+  /*
   dynamic login(email, password) async {
     var responseJson;
 
@@ -448,26 +463,26 @@ class ApiService {
     }
 
     return responseJson;
-  }
+  }*/
 
-  Future writeToSecureStorage(myKey, rawCookie) async {
-    await storage.write(key: myKey, value: rawCookie);
-  }
+  // Future writeToSecureStorage(myKey, rawCookie) async {
+  //   await storage.write(key: myKey, value: rawCookie);
+  // }
 
-  Future<void> readFromSecureStorage(myKey) async {
-    cookie = (await storage.read(key: myKey))!;
-  }
+  // Future<void> readFromSecureStorage(myKey) async {
+  //   cookie = (await storage.read(key: myKey))!;
+  // }
 
-  Future<String> getUserId() async {
-    final prefs = await SharedPreferences.getInstance();
-    final id = (prefs.getString('id') ?? '');
-    return id;
-  }
+  // Future<String> getUserId() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final id = (prefs.getString('id') ?? '');
+  //   return id;
+  // }
 
-  Future<String> getLandlordId() async {
-    final prefs = await SharedPreferences.getInstance();
-    final id = (prefs.getString('landlordId') ?? '');
+  // Future<String> getLandlordId() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final id = (prefs.getString('landlordId') ?? '');
 
-    return id;
-  }
+  //   return id;
+  // }
 }

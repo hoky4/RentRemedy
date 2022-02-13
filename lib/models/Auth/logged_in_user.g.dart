@@ -14,8 +14,11 @@ LoggedInUser _$LoggedInUserFromJson(Map<String, dynamic> json) => LoggedInUser(
       (json['roles'] as List<dynamic>)
           .map((e) => $enumDecode(_$RoleEnumMap, e))
           .toList(),
-      json['landlordId'] as String,
-      json['cookie'] as String,
+      json['cookie'] as String?,
+      json['leaseAgreement'] == null
+          ? null
+          : LeaseAgreement.fromJson(
+              json['leaseAgreement'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$LoggedInUserToJson(LoggedInUser instance) =>
@@ -25,8 +28,8 @@ Map<String, dynamic> _$LoggedInUserToJson(LoggedInUser instance) =>
       'lastName': instance.lastName,
       'email': instance.email,
       'roles': instance.roles.map((e) => _$RoleEnumMap[e]).toList(),
-      'landlordId': instance.landlordId,
       'cookie': instance.cookie,
+      'leaseAgreement': instance.leaseAgreement?.toJson(),
     };
 
 const _$RoleEnumMap = {

@@ -2,6 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:rentremedy_mobile/models/Auth/logged_in_user.dart';
+import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
+import 'package:rentremedy_mobile/models/LeaseAgreement/status.dart';
+import 'package:rentremedy_mobile/models/Message/message.dart';
+import 'package:rentremedy_mobile/models/Payments/payment.dart';
+import 'package:rentremedy_mobile/models/Payments/payment_intent_response.dart';
+import 'package:rentremedy_mobile/models/Payments/setup_intent_response.dart';
 import 'package:rentremedy_mobile/networking/api.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:rentremedy_mobile/providers/auth_model_provider.dart';
@@ -14,6 +20,231 @@ class ApiServiceProvider {
 
   set authModelProvider(AuthModelProvider authModelProvider) {
     _authModelProvider = authModelProvider;
+  }
+
+  dynamic makePaymentIntent(String id) async {
+    final response = await http.post(Uri.parse('$PAYMENT/payment-intent'),
+        headers: <String, String>{
+          'cookie': _authModelProvider.cookie!,
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'paymentId': id,
+        }));
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseMap = jsonDecode(response.body);
+      PaymentIntentResponse payment =
+          PaymentIntentResponse.fromJson(responseMap);
+      return payment;
+    } else {
+      return _handleError(response);
+    }
+  }
+
+  dynamic makeSetupIntent() async {
+    final response = await http.post(Uri.parse('$PAYMENT/setup-intent'),
+        headers: <String, String>{
+          'cookie': _authModelProvider.cookie!,
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          "type": "card",
+          "number": "4242424242424242",
+          "expMonth": 7,
+          "expYear": 2025,
+          "cvc": "333"
+        }));
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseMap = jsonDecode(response.body);
+      SetupIntentResponse setupIntentResponse =
+          SetupIntentResponse.fromJson(responseMap);
+      return setupIntentResponse;
+    } else {
+      return _handleError(response);
+    }
+  }
+
+  dynamic getPaymentById(String id) async {
+    final response = await http.get(
+      Uri.parse('$PAYMENT/$id'),
+      headers: <String, String>{
+        'cookie': _authModelProvider.cookie!,
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseMap = jsonDecode(response.body);
+      Payment payment = Payment.fromJson(responseMap);
+      return payment;
+    } else {
+      return _handleError(response);
+    }
+  }
+
+  Message parseInboundMessageFromSocket(String inboundMessage) {
+    Map<String, dynamic> responseMap = jsonDecode(inboundMessage);
+    Message message = Message.fromJson(responseMap);
+    return message;
+  }
+
+  Future<List<Message>> getConversation() async {
+    String? landlordId = _authModelProvider.landlordId;
+
+    if (landlordId != null) {
+      final response = await http.get(
+        Uri.parse('$CONVERSATION/$landlordId'),
+        headers: <String, String>{
+          'cookie': _authModelProvider.cookie!,
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseMap = jsonDecode(response.body);
+        List<dynamic> conversationListDynamic = responseMap['conversation'];
+        List<Message> conversationList = List<Message>.from(
+            conversationListDynamic.map((i) => Message.fromJson(i)));
+        return conversationList;
+      } else {
+        return _handleError(response);
+      }
+    }
+    return [];
+  }
+
+  dynamic signLeaseAgreement(id) async {
+    final response = await http.post(
+      Uri.parse('$LEASEAGREEMENTS/$id/signatures'),
+      headers: <String, String>{
+        'cookie': _authModelProvider.cookie!,
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{}),
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseMap = jsonDecode(response.body);
+      LeaseAgreement leaseAgreement = LeaseAgreement.fromJson(responseMap);
+
+      return leaseAgreement;
+    } else {
+      return _handleError(response);
+    }
+  }
+
+  dynamic joinLeaseAgreement(id) async {
+    final response = await http.post(
+      Uri.parse('$LEASEAGREEMENTS/$id/join'),
+      headers: <String, String>{
+        'cookie': _authModelProvider.cookie!,
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{}),
+    );
+
+    if (response.statusCode == 200) {
+      print("Joined LA: $id");
+      return;
+    } else {
+      return _handleError(response);
+    }
+  }
+
+  Future<LeaseAgreement?> getLeaseAgreement(shortId) async {
+    final response = await http.get(Uri.parse('$LEASEAGREEMENTS?code=$shortId'),
+        headers: <String, String>{
+          'cookie': _authModelProvider.cookie!,
+          'Content-Type': 'application/json; charset=UTF-8',
+        });
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseMap = jsonDecode(response.body);
+
+      List<dynamic> leaseAgreements = responseMap['leaseAgreements'];
+      if (leaseAgreements.isEmpty) {
+        throw NotFoundException("No Results Found");
+      }
+
+      Map<String, dynamic> leaseAgreementMap =
+          responseMap['leaseAgreements'][0];
+      LeaseAgreement leaseAgreement =
+          LeaseAgreement.fromJson(leaseAgreementMap);
+      return leaseAgreement;
+    } else {
+      return _handleError(response);
+    }
+  }
+
+  Future<LeaseAgreement?> findExistingLeaseAgreements(LoggedInUser user) async {
+    LeaseAgreement leaseAgreement;
+
+    final response = await http.get(
+        Uri.parse('$LEASEAGREEMENTS?tenant=${user.id}'),
+        headers: <String, String>{
+          'cookie': user.cookie!,
+          'Content-Type': 'application/json; charset=UTF-8',
+        });
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseMap = json.decode(response.body);
+      List<dynamic> leaseAgreements = responseMap['leaseAgreements'];
+
+      if (leaseAgreements.isEmpty) {
+        print('No existing lease agreements found.');
+        return null;
+      } else {
+        print('Active lease agreement found.');
+
+        List<LeaseAgreement> leaseAgreementList = List<LeaseAgreement>.from(
+            leaseAgreements.map((i) => LeaseAgreement.fromJson(i)));
+        List<LeaseAgreement> signedLeaseAgreements = leaseAgreementList
+            .where((i) => (i.status == Status.AssignedUnsigned ||
+                i.status == Status.AssignedSigned))
+            .toList();
+        leaseAgreement = signedLeaseAgreements.first;
+        return leaseAgreement;
+      }
+    } else {
+      return _handleError(response);
+    }
+  }
+
+  dynamic signup(firstName, lastName, email, password) async {
+    // User user = User(firstName, lastName, email, password, [Role.Tenant]);
+    try {
+      final response = await http
+          .post(
+        Uri.parse(REGISTRATION),
+        headers: <String, String>{
+          'accept': 'application/json',
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        // body: jsonEncode(user.toJson()),
+        body: jsonEncode(<String, dynamic>{
+          'firstName': firstName,
+          'lastName': lastName,
+          'email': email,
+          'password': password,
+          'roles': [0]
+        }),
+      )
+          .timeout(const Duration(seconds: 10), onTimeout: () {
+        throw TimeoutException(
+            'The connection has timed out, Please try again!');
+      });
+
+      if (response.statusCode == 201) {
+        print('User Successfully Signed Up');
+      } else {
+        return _handleError(response);
+      }
+    } on SocketException {
+      print('No net');
+      throw Exception('No Internet connection');
+    }
   }
 
   dynamic login(email, password) async {
@@ -30,7 +261,7 @@ class ApiServiceProvider {
           'password': password,
         }),
       )
-          .timeout(Duration(seconds: 15), onTimeout: () {
+          .timeout(const Duration(seconds: 15), onTimeout: () {
         throw TimeoutException(
             'The connection has timed out, Please try again!');
       });
@@ -45,7 +276,7 @@ class ApiServiceProvider {
           throw UnauthorizedException("Unable to login");
         }
 
-        // store cookie
+        // set cookie
         if (response.headers['set-cookie'] != null) {
           user.cookie = response.headers['set-cookie']!;
         }
@@ -58,10 +289,9 @@ class ApiServiceProvider {
       throw Exception('No Internet connection');
     }
   }
-  
 
   dynamic getLoggedInUser() async {
-    if (_authModelProvider.cookie != null) {
+    if (_authModelProvider.cookie == null) {
       return null;
     }
 
@@ -76,7 +306,7 @@ class ApiServiceProvider {
         Map<String, dynamic> responseMap = jsonDecode(response.body);
         LoggedInUser user = LoggedInUser.fromJson(responseMap);
 
-        // store cookie
+        // set cookie
         if (response.headers['set-cookie'] != null) {
           user.cookie = response.headers['set-cookie']!;
         }
@@ -86,6 +316,28 @@ class ApiServiceProvider {
         return _handleError(response);
       }
     } on SocketException {
+      throw Exception('No Internet connection');
+    }
+  }
+
+  dynamic logout() async {
+    try {
+      final response = await http.post(
+        Uri.parse(LOGOUT),
+        headers: <String, String>{
+          'cookie': _authModelProvider.cookie!,
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{}),
+      );
+
+      if (response.statusCode == 204) {
+        print('User has successfully logged out');
+      } else {
+        return _handleError(response);
+      }
+    } on SocketException {
+      print('No net');
       throw Exception('No Internet connection');
     }
   }
@@ -104,7 +356,6 @@ class ApiServiceProvider {
           responseErrorsJson
               .forEach((i, value) => message += '\n' + value.toString());
         }
-
         throw BadRequestException(message);
       case 401:
         responseBodyJson = json.decode(response.body);

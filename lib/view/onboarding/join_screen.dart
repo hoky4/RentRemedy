@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
-import 'package:rentremedy_mobile/networking/api_service.dart';
+import 'package:rentremedy_mobile/providers/api_service_provider.dart';
 import 'package:rentremedy_mobile/view/onboarding/terms_screen.dart';
 import 'confirmation_screen.dart';
 
@@ -15,19 +15,19 @@ class JoinScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Join Property'),
+        title: const Text('Join Property'),
         automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
           child: Container(
-              padding: EdgeInsets.all(36),
+              padding: const EdgeInsets.all(36),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     height: 150,
                   ),
-                  Text("Is this the right property?",
+                  const Text("Is this the right property?",
                       style:
                           TextStyle(fontWeight: FontWeight.w500, fontSize: 20)),
                   propertyDetail(),
@@ -35,7 +35,7 @@ class JoinScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       noButton(context),
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       yesButton(context),
                     ],
                   )
@@ -45,30 +45,31 @@ class JoinScreen extends StatelessWidget {
   }
 
   Widget yesButton(BuildContext context) {
-    ApiService apiService = Provider.of<ApiService>(context, listen: false);
+    ApiServiceProvider apiService =
+        Provider.of<ApiServiceProvider>(context, listen: false);
 
     return TextButton(
       onPressed: () async {
         try {
-          await apiService.joinLeaseAgreement('${leaseAgreement.id}');
+          await apiService.joinLeaseAgreement(leaseAgreement.id);
           if (leaseAgreement.property != null) {
             Navigator.pushReplacement(
                 context,
-                new MaterialPageRoute(
+                MaterialPageRoute(
                     builder: (context) => TermsScreen(
                           leaseAgreement: leaseAgreement,
                         )));
           }
         } on ForbiddenException catch (e) {
           ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text("${e.toString()}")));
+              .showSnackBar(SnackBar(content: Text(e.toString())));
           Navigator.pushReplacement(
               context,
-              new MaterialPageRoute(
-                  builder: (context) => ConfirmationScreen()));
+              MaterialPageRoute(
+                  builder: (context) => const ConfirmationScreen()));
         }
       },
-      child: Text(
+      child: const Text(
         'Yes',
         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
       ),
@@ -87,10 +88,12 @@ class JoinScreen extends StatelessWidget {
     return TextButton(
       onPressed: () {
         // Navigator.pop(context);
-        Navigator.pushReplacement(context,
-            new MaterialPageRoute(builder: (context) => ConfirmationScreen()));
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const ConfirmationScreen()));
       },
-      child: Text(
+      child: const Text(
         'No',
         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
       ),
@@ -112,11 +115,10 @@ class JoinScreen extends StatelessWidget {
       decoration: BoxDecoration(border: Border.all(color: Colors.black)),
       child: Column(
         children: [
-          propertyDetailLine('Description: ', '${leaseAgreement.description}'),
-          SizedBox(height: 8),
-          propertyDetailLine(
-              'Address: ', '${leaseAgreement.property.toString()}'),
-          SizedBox(height: 8),
+          propertyDetailLine('Description: ', leaseAgreement.description),
+          const SizedBox(height: 8),
+          propertyDetailLine('Address: ', leaseAgreement.property.toString()),
+          const SizedBox(height: 8),
           propertyDetailLine('Landlord: ',
               '${leaseAgreement.landlord.firstName.capitalize()} ${leaseAgreement.landlord.lastName.capitalize()}'),
         ],
@@ -131,8 +133,9 @@ class JoinScreen extends StatelessWidget {
       textBaseline: TextBaseline.alphabetic,
       children: [
         Text("$title",
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
-        Flexible(child: Text("$detail")),
+            style: const TextStyle(
+                fontWeight: FontWeight.bold, color: Colors.black)),
+        Flexible(child: Text(detail)),
       ],
     );
   }
@@ -140,6 +143,6 @@ class JoinScreen extends StatelessWidget {
 
 extension StringExtension on String {
   String capitalize() {
-    return "${this[0].toUpperCase()}${this.substring(1).toLowerCase()}";
+    return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
   }
 }

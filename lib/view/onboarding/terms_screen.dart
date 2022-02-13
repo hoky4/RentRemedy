@@ -10,23 +10,20 @@ import 'package:rentremedy_mobile/models/LeaseAgreement/maintenance.dart';
 import 'package:rentremedy_mobile/models/LeaseAgreement/one_time_security_deposit.dart';
 import 'package:rentremedy_mobile/models/LeaseAgreement/utility.dart';
 import 'package:rentremedy_mobile/models/Property/property.dart';
-import 'package:rentremedy_mobile/models/User/user.dart';
-import 'package:rentremedy_mobile/networking/api_service.dart';
-import 'package:rentremedy_mobile/view/chat/Old/message_screen2.dart';
-import 'package:rentremedy_mobile/view/chat/message_screen.dart';
+import 'package:rentremedy_mobile/providers/api_service_provider.dart';
 import 'package:rentremedy_mobile/view/chat/message_socket_handler.dart';
 
 class TermsScreen extends StatelessWidget {
   LeaseAgreement leaseAgreement;
 
-  TermsScreen({required this.leaseAgreement});
+  TermsScreen({Key? key, required this.leaseAgreement}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Terms"),
+          title: const Text("Terms"),
           automaticallyImplyLeading: false,
           centerTitle: true,
         ),
@@ -37,25 +34,25 @@ class TermsScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     duration(leaseAgreement.startDate, leaseAgreement.endDate),
-                    Divider(
+                    const Divider(
                         thickness: 1, indent: 32, endIndent: 32, height: 48),
                     monthlyFees(leaseAgreement.monthlyFees),
-                    Divider(
+                    const Divider(
                         thickness: 1, indent: 32, endIndent: 32, height: 48),
                     address(leaseAgreement.property),
-                    Divider(
+                    const Divider(
                         thickness: 1, indent: 32, endIndent: 32, height: 48),
                     deposit(leaseAgreement.securityDeposit),
-                    Divider(
+                    const Divider(
                         thickness: 1, indent: 32, endIndent: 32, height: 48),
                     amenities(leaseAgreement.amenitiesProvided),
-                    Divider(
+                    const Divider(
                         thickness: 1, indent: 32, endIndent: 32, height: 48),
                     utilitiesProvided(leaseAgreement.utilitiesProvided),
-                    Divider(
+                    const Divider(
                         thickness: 1, indent: 32, endIndent: 32, height: 48),
                     maintenanceProvided(leaseAgreement.maintenanceProvided),
-                    SizedBox(height: 24)
+                    const SizedBox(height: 24)
                   ],
                 ),
               ),
@@ -63,12 +60,12 @@ class TermsScreen extends StatelessWidget {
             Container(
                 // alignment: Alignment.center,
                 width: double.infinity,
-                decoration: new BoxDecoration(color: Colors.black12),
+                decoration: const BoxDecoration(color: Colors.black12),
                 child: Row(
                   children: [
-                    Spacer(),
+                    const Spacer(),
                     acceptButton(context, leaseAgreement.id),
-                    Spacer()
+                    const Spacer()
                   ],
                 )),
           ],
@@ -86,7 +83,7 @@ class TermsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("Maintenance Provided", style: categoryStyle),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             ListView(
               primary: false,
               itemExtent: 32.0,
@@ -100,8 +97,8 @@ class TermsScreen extends StatelessWidget {
                       fit: BoxFit.cover,
                     ),
                     title: Align(
-                      child: Text("${item.value}", style: bodyStyle2),
-                      alignment: Alignment(-1.2, 0),
+                      child: Text(item.value, style: bodyStyle2),
+                      alignment: const Alignment(-1.2, 0),
                     ),
                   )
               ],
@@ -121,7 +118,7 @@ class TermsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("Utilities Provided", style: categoryStyle),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             ListView(
               primary: false,
               itemExtent: 32.0,
@@ -135,8 +132,8 @@ class TermsScreen extends StatelessWidget {
                       fit: BoxFit.cover,
                     ),
                     title: Align(
-                      child: Text("${item.value}", style: bodyStyle2),
-                      alignment: Alignment(-1.2, 0),
+                      child: Text(item.value, style: bodyStyle2),
+                      alignment: const Alignment(-1.2, 0),
                     ),
                   )
               ],
@@ -159,7 +156,7 @@ class TermsScreen extends StatelessWidget {
               "Amenities",
               style: categoryStyle,
             ),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             ListView(
               primary: false,
               itemExtent: 32.0,
@@ -174,10 +171,10 @@ class TermsScreen extends StatelessWidget {
                     ),
                     title: Align(
                       child: Text(
-                        "${item.value}",
+                        item.value,
                         style: bodyStyle2,
                       ),
-                      alignment: Alignment(-1.2, 0),
+                      alignment: const Alignment(-1.2, 0),
                     ),
                   )
               ],
@@ -197,13 +194,13 @@ class TermsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("One Time Security Deposit", style: categoryStyle),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             Text("Deposit Amount: \$${securityDeposit.depositAmount}",
                 style: bodyStyle),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             Text("Refund Amount: \$${securityDeposit.refundAmount}",
                 style: bodyStyle),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             Text(
                 "Due Date: ${DateFormat.yMMMMd('en_US').format(securityDeposit.dueDate)}",
                 style: bodyStyle),
@@ -222,10 +219,10 @@ class TermsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("Address", style: categoryStyle),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             property != null
-                ? Text("${property.toString()}", style: bodyStyle)
-                : Text("No property assigned")
+                ? Text(property.toString(), style: bodyStyle)
+                : const Text("No property assigned")
           ],
         ),
       ),
@@ -241,20 +238,20 @@ class TermsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("Monthly Fees", style: categoryStyle),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             Text("Rent Fee: \$${monthlyFees.rentFee.rentFeeAmount}",
                 style: bodyStyle),
-            SizedBox(height: 4.0),
+            const SizedBox(height: 4.0),
             Text("Pet Fee: \$${monthlyFees.petFee.petFeeAmount}",
                 style: bodyStyle),
-            SizedBox(height: 4.0),
+            const SizedBox(height: 4.0),
             dueDateCondition(monthlyFees),
             // Text(
             //     "Due Date: ${DateFormat.yMMMMd('en_US').format(monthlyFees.dueDate!)}",
             //     style: bodyStyle),
-            SizedBox(height: 4.0),
+            const SizedBox(height: 4.0),
             Text("Late Fee: \$${monthlyFees.lateFee}", style: bodyStyle),
-            SizedBox(height: 4.0),
+            const SizedBox(height: 4.0),
             Text("Grace Period: ${monthlyFees.gracePeriod} days",
                 style: bodyStyle),
           ],
@@ -272,7 +269,6 @@ class TermsScreen extends StatelessWidget {
         return Text("Due Date: ${monthlyFees.dueDateType.value}",
             style: bodyStyle);
       case DueDateType.DayOfMonth:
-        // TODO:
         return Text(
             "Due Date: ${DateFormat.yMMMMd('en_US').format(monthlyFees.dueDate!)} *(or end of month)",
             style: bodyStyle);
@@ -290,7 +286,7 @@ class TermsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("Duration", style: categoryStyle),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             Text(
                 "${DateFormat.yMMMMd('en_US').format(startDate)} to ${DateFormat.yMMMMd('en_US').format(endDate)}",
                 style: bodyStyle),
@@ -301,7 +297,8 @@ class TermsScreen extends StatelessWidget {
   }
 
   Widget acceptButton(BuildContext context, String leaseAgreemenId) {
-    ApiService apiService = Provider.of<ApiService>(context, listen: false);
+    ApiServiceProvider apiService =
+        Provider.of<ApiServiceProvider>(context, listen: false);
 
     return ElevatedButton(
       style: ButtonStyle(
@@ -314,19 +311,21 @@ class TermsScreen extends StatelessWidget {
       ),
       onPressed: () async {
         try {
-          await apiService.signLeaseAgreement('$leaseAgreemenId');
+          await apiService.signLeaseAgreement(leaseAgreemenId);
           print('lease agreement signed');
           await apiService.makeSetupIntent();
           print('setup intent made.');
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => MessageSocketHandler()));
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const MessageSocketHandler()));
         } on Exception catch (e) {
           print(
               "Error signing leaseAgreement or setting up card payment: ${e.toString()}");
         }
       },
-      child:
-          Text('Accept', style: TextStyle(fontSize: 18, color: Colors.white)),
+      child: const Text('Accept',
+          style: TextStyle(fontSize: 18, color: Colors.white)),
     );
   }
 }

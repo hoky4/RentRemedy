@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:rentremedy_mobile/view/chat/message_screen.dart';
-import 'package:rentremedy_mobile/view/chat/message_socket_handler.dart';
 
 class PaymentSuccessScreen extends StatefulWidget {
   const PaymentSuccessScreen({Key? key}) : super(key: key);
@@ -14,17 +12,17 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Color(0xFFFFFFFF),
+        backgroundColor: const Color(0xFFFFFFFF),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image(
+              const Image(
                   image: AssetImage('assets/images/success.gif'), height: 150),
               Text("Successful", style: categoryStyle),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Text("Your payment was done successfully", style: bodyStyle2),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                     primary: Colors.redAccent[100],

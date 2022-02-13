@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/models/Payments/payment.dart';
-import 'package:rentremedy_mobile/networking/api_service.dart';
-import 'package:rentremedy_mobile/view/payment/payment_success_screen.dart';
 
 class ViewPaymentScreen extends StatelessWidget {
   Payment payment;
@@ -15,7 +12,7 @@ class ViewPaymentScreen extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text("View Payment"),
+          title: const Text("View Payment"),
           centerTitle: true,
         ),
         body: Column(
@@ -25,14 +22,12 @@ class ViewPaymentScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     balanceInfo(),
-                    Divider(
+                    const Divider(
                         thickness: 1, indent: 32, endIndent: 32, height: 48),
                   ],
                 ),
               ),
-            ),
-            // acceptButton(context, payment.id),
-            // SizedBox(height: 8.0)
+            ), // SizedBox(height: 8.0)
           ],
         ),
       ),
@@ -48,7 +43,7 @@ class ViewPaymentScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text("Balance Paid", style: categoryStyle),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             Text("Paid Amount: \$${payment.getDollarAmount}", style: bodyStyle),
             // if (payment.isLate == true) ...[
             //   Text("Late Fee: \$${payment.lateFee}", style: bodyStyle)
@@ -58,7 +53,7 @@ class ViewPaymentScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text("Paid Date: ", style: bodyStyle),
-                Text("${DateFormat.yMMMMd('en_US').format(payment.dueDate)}",
+                Text(DateFormat.yMMMMd('en_US').format(payment.dueDate),
                     style: bodyStyle),
               ],
             )

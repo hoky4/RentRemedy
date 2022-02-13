@@ -1,15 +1,14 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/models/Message/message.dart';
+import 'package:rentremedy_mobile/providers/api_service_provider.dart';
+import 'package:rentremedy_mobile/providers/auth_model_provider.dart';
 import 'package:rentremedy_mobile/providers/message_model_provider.dart';
 import 'package:rentremedy_mobile/models/Message/model.dart';
 import 'package:rentremedy_mobile/models/Message/websocket_message.dart';
 import 'package:rentremedy_mobile/networking/api.dart';
-import 'package:rentremedy_mobile/networking/api_service.dart';
 import 'package:web_socket_channel/io.dart';
-
 import 'message_screen.dart';
 
 class MessageSocketHandler extends StatefulWidget {
@@ -21,30 +20,28 @@ class MessageSocketHandler extends StatefulWidget {
 
 class _MessageSocketHandlerState extends State<MessageSocketHandler> {
   late IOWebSocketChannel channel;
-  late ApiService apiService;
-  late String cookie;
+  late ApiServiceProvider apiService;
   late List<Message> conversation;
-  late String landlordId;
   late String userId;
+  late String cookie;
 
   @override
   void initState() {
     super.initState();
 
-    apiService = Provider.of<ApiService>(context, listen: false);
-    cookie = apiService.cookie;
+    apiService = Provider.of<ApiServiceProvider>(context, listen: false);
+    cookie = context.read<AuthModelProvider>().user!.cookie!;
+    userId = context.read<AuthModelProvider>().user!.id;
+
     conversation = [];
-    // conversation = apiService.conversation;
 
     channel = IOWebSocketChannel.connect(
-      '$WEBSOCKET',
+      WEBSOCKET,
       headers: <String, dynamic>{
         'Content-Type': 'application/json',
         "Cookie": cookie
       },
     );
-
-    fetchUserAndLandlordId();
     fetchConversation();
 
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
@@ -67,15 +64,6 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler> {
     });
   }
 
-  fetchUserAndLandlordId() async {
-    await apiService.getLandlordId().then((String id) {
-      landlordId = id;
-    });
-    await apiService.getUserId().then((String id) {
-      userId = id;
-    });
-  }
-
   /// listener and handler for inbound messages
   void setupChannel() {
     var messageModel = context.read<MessageModelProvider>();
@@ -84,7 +72,6 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler> {
       Map<String, dynamic> responseMap = jsonDecode(m);
 
       if (responseMap['model'] == Model.Message.index) {
-        print('recv msg');
         Message message = apiService.parseInboundMessageFromSocket(m);
         messageModel.messageReceived(message);
       } else if (responseMap['model'] == Model.MessageDelivered.index) {
@@ -98,7 +85,6 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler> {
 
   /// hanlder for outbound messages
   void checkForNewMessages() {
-    print('recv inbound message');
     var messageModel = context.read<MessageModelProvider>();
 
     if (messageModel.sendQueue.isNotEmpty) {

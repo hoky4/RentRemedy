@@ -1,0 +1,131 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_credit_card/credit_card_brand.dart';
+import 'package:flutter_credit_card/flutter_credit_card.dart';
+import 'package:provider/provider.dart';
+import 'package:rentremedy_mobile/providers/api_service_provider.dart';
+import 'package:rentremedy_mobile/view/chat/message_socket_handler.dart';
+
+class CreditCardScreen extends StatefulWidget {
+  const CreditCardScreen({Key? key}) : super(key: key);
+
+  @override
+  _CreditCardScreenState createState() => _CreditCardScreenState();
+}
+
+class _CreditCardScreenState extends State<CreditCardScreen> {
+  String cardNumber = '';
+  String expiryDate = '';
+  String cardHolderName = '';
+  String cvvCode = '';
+  bool isCvvFocused = false;
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  late ApiServiceProvider apiServiceProvider;
+
+  @override
+  void initState() {
+    apiServiceProvider =
+        Provider.of<ApiServiceProvider>(context, listen: false);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      body: SafeArea(
+        child: Column(children: <Widget>[
+          CreditCardWidget(
+            cardNumber: cardNumber,
+            expiryDate: expiryDate,
+            cardHolderName: cardHolderName,
+            cvvCode: cvvCode,
+            showBackView: isCvvFocused,
+            obscureCardNumber: true,
+            obscureCardCvv: true,
+            animationDuration: const Duration(milliseconds: 1000),
+            onCreditCardWidgetChange: (CreditCardBrand creditCardBrand) {},
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  CreditCardForm(
+                    cardNumber: cardNumber,
+                    expiryDate: expiryDate,
+                    cardHolderName: cardHolderName,
+                    cvvCode: cvvCode,
+                    onCreditCardModelChange: onCreditCardModelChange,
+                    themeColor: Colors.blue,
+                    formKey: formKey,
+                    cardNumberDecoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Card Number',
+                        hintText: 'xxxx xxxx xxxx xxxx'),
+                    expiryDateDecoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Expired Date',
+                        hintText: 'xx/xx'),
+                    cvvCodeDecoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'CVV',
+                        hintText: 'xxx'),
+                    cardHolderDecoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Card Holder',
+                    ),
+                  ),
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          primary: const Color(0xff1b447b)),
+                      child: Container(
+                        margin: const EdgeInsets.all(8.0),
+                        child: const Text(
+                          'Submit',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: 'halter',
+                            fontSize: 14,
+                            package: 'flutter_credit_card',
+                          ),
+                        ),
+                      ),
+                      onPressed: () async {
+                        if (formKey.currentState!.validate()) {
+                          try {
+                            await apiServiceProvider.makeSetupIntent(cardNumber,
+                                expiryDate, cvvCode, cardHolderName);
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const MessageSocketHandler()));
+                          } on Exception catch (e) {
+                            print("Problem creating a setup intent.");
+                          }
+                        } else {
+                          print('Invalid Entries');
+                        }
+                      })
+                ],
+              ),
+            ),
+          )
+        ]),
+      ),
+    );
+  }
+
+  void onCreditCardModelChange(CreditCardModel creditCardModel) {
+    setState(() {
+      cardNumber = creditCardModel.cardNumber;
+      expiryDate = creditCardModel.expiryDate;
+      cardHolderName = creditCardModel.cardHolderName;
+      cvvCode = creditCardModel.cvvCode;
+      isCvvFocused = creditCardModel.isCvvFocused;
+    });
+  }
+}

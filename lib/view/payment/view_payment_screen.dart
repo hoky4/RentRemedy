@@ -42,9 +42,15 @@ class ViewPaymentScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text("Balance Paid", style: categoryStyle),
+            payment.paymentDate != null
+                ? Text("Balance Paid", style: categoryStyle)
+                : Text("Balance Unpaid", style: categoryStyle),
             const SizedBox(height: 16.0),
-            Text("Paid Amount: \$${payment.getDollarAmount}", style: bodyStyle),
+            payment.paymentDate != null
+                ? Text("Paid Amount: \$${payment.getDollarAmount}",
+                    style: bodyStyle)
+                : Text("Balance: \$${payment.getDollarAmount}",
+                    style: bodyStyle),
             // if (payment.isLate == true) ...[
             //   Text("Late Fee: \$${payment.lateFee}", style: bodyStyle)
             //   ],
@@ -52,7 +58,9 @@ class ViewPaymentScreen extends StatelessWidget {
               // crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("Paid Date: ", style: bodyStyle),
+                payment.paymentDate != null
+                    ? Text("Paid Date: ", style: bodyStyle)
+                    : Text("Due: ", style: bodyStyle),
                 Text(DateFormat.yMMMMd('en_US').format(payment.dueDate),
                     style: bodyStyle),
               ],

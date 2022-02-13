@@ -4,7 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/providers/api_service_provider.dart';
 import 'package:rentremedy_mobile/providers/auth_model_provider.dart';
 import 'package:rentremedy_mobile/providers/message_model_provider.dart';
-import 'package:rentremedy_mobile/routing/route_page.dart';
+import 'package:rentremedy_mobile/routing/route_generator.dart';
+import 'package:rentremedy_mobile/view/onboarding/credit_card_screen.dart';
 
 void main() async {
   HttpOverrides.global = MyHttpOverrides();
@@ -32,12 +33,12 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<MessageModelProvider>(
             create: (context) => MessageModelProvider())
       ],
-      child: const RoutePage(),
-      // child: const MaterialApp(
-      //   // Initially display FirstPage
-      //   initialRoute: '/',
-      //   onGenerateRoute: RouteGenerator.generateRoute,
-      // ),
+      // child: const CardScreen(),
+      child: const MaterialApp(
+        // Initially display FirstPage
+        initialRoute: '/',
+        onGenerateRoute: RouteGenerator.generateRoute,
+      ),
     );
   }
 }

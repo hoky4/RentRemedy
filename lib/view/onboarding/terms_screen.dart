@@ -12,6 +12,7 @@ import 'package:rentremedy_mobile/models/LeaseAgreement/utility.dart';
 import 'package:rentremedy_mobile/models/Property/property.dart';
 import 'package:rentremedy_mobile/providers/api_service_provider.dart';
 import 'package:rentremedy_mobile/view/chat/message_socket_handler.dart';
+import 'package:rentremedy_mobile/view/onboarding/credit_card_screen.dart';
 
 class TermsScreen extends StatelessWidget {
   LeaseAgreement leaseAgreement;
@@ -313,12 +314,11 @@ class TermsScreen extends StatelessWidget {
         try {
           await apiService.signLeaseAgreement(leaseAgreemenId);
           print('lease agreement signed');
-          await apiService.makeSetupIntent();
-          print('setup intent made.');
           Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                  builder: (context) => const MessageSocketHandler()));
+                  builder: (context) => const CreditCardScreen()));
+          // Navigator.pushReplacementNamed(context, '/creditCard');
         } on Exception catch (e) {
           print(
               "Error signing leaseAgreement or setting up card payment: ${e.toString()}");

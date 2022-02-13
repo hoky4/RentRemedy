@@ -79,6 +79,35 @@ class ApiServiceProvider {
     }
   }
 
+  dynamic getAllPayments() async {
+    final response = await http.get(
+      Uri.parse(PAYMENT),
+      headers: <String, String>{
+        'cookie': _authModelProvider.cookie!,
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseMap = json.decode(response.body);
+      List<dynamic> payments = responseMap['payments'];
+
+      if (payments.isEmpty) {
+        print('No payments found.');
+        return null;
+      } else {
+        print('Payments found.');
+
+        List<Payment> paymentList =
+            List<Payment>.from(payments.map((i) => Payment.fromJson(i)));
+
+        return paymentList;
+      }
+    } else {
+      return _handleError(response);
+    }
+  }
+
   dynamic getPaymentById(String id) async {
     final response = await http.get(
       Uri.parse('$PAYMENT/$id'),

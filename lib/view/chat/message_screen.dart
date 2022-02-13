@@ -3,8 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/models/Message/message.dart';
 import 'package:rentremedy_mobile/providers/api_service_provider.dart';
 import 'package:rentremedy_mobile/providers/auth_model_provider.dart';
-import 'package:rentremedy_mobile/view/onboarding/add_card_screen.dart';
-
+import 'package:rentremedy_mobile/view/payment/view_payment_screen.dart';
+import 'package:rentremedy_mobile/view/payment/view_payments_screen.dart';
 import 'message_box.dart';
 import 'message_input_container.dart';
 
@@ -51,8 +51,10 @@ class _MessageScreenState extends State<MessageScreen> {
             IconButton(
                 icon: const Icon(Icons.attach_money_outlined),
                 onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => AddCardScreen()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ViewPaymentsScreen()));
                 }),
             IconButton(
                 icon: const Icon(Icons.build_circle_outlined),

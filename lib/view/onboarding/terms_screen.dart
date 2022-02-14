@@ -24,10 +24,20 @@ class TermsScreen extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Terms"),
-          automaticallyImplyLeading: false,
-          centerTitle: true,
-        ),
+            title: const Text("Terms"),
+            automaticallyImplyLeading: false,
+            centerTitle: true,
+            actions: [
+              IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                const MessageSocketHandler()));
+                  })
+            ]),
         body: Column(
           children: [
             Expanded(
@@ -312,13 +322,14 @@ class TermsScreen extends StatelessWidget {
       ),
       onPressed: () async {
         try {
-          await apiService.signLeaseAgreement(leaseAgreemenId);
-          print('lease agreement signed');
+          LeaseAgreement leaseAgreement =
+              await apiService.signLeaseAgreement(leaseAgreemenId);
+          print('Lease agreement signed');
           Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                  builder: (context) => const CreditCardScreen()));
-          // Navigator.pushReplacementNamed(context, '/creditCard');
+                  builder: (context) =>
+                      CreditCardScreen(signedLeaseAgreement: leaseAgreement)));
         } on Exception catch (e) {
           print(
               "Error signing leaseAgreement or setting up card payment: ${e.toString()}");

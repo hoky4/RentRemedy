@@ -4,7 +4,7 @@ import 'package:rentremedy_mobile/models/User/user.dart';
 
 part 'payment.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class Payment {
   Payment(
       this.id,

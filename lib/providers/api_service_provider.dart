@@ -9,6 +9,8 @@ import 'package:rentremedy_mobile/models/Payments/payment.dart';
 import 'package:rentremedy_mobile/models/Payments/payment_intent_response.dart';
 import 'package:rentremedy_mobile/models/Payments/setup_intent_request.dart';
 import 'package:rentremedy_mobile/models/Payments/setup_intent_response.dart';
+import 'package:rentremedy_mobile/models/User/role.dart';
+import 'package:rentremedy_mobile/models/User/user.dart';
 import 'package:rentremedy_mobile/networking/api.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:rentremedy_mobile/providers/auth_model_provider.dart';

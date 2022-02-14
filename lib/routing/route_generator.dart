@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
 import 'package:rentremedy_mobile/view/auth/login_screen.dart';
 import 'package:rentremedy_mobile/routing/route_page.dart';
 import 'package:rentremedy_mobile/view/chat/message_socket_handler.dart';
@@ -23,8 +24,11 @@ class RouteGenerator {
       // You can also throw an exception while in development.
       // return _errorRoute();
       case '/creditCard':
-        return MaterialPageRoute(builder: (_) => const CreditCardScreen());
-
+        if (args is LeaseAgreement) {
+          return MaterialPageRoute(
+              builder: (_) => CreditCardScreen(signedLeaseAgreement: args));
+        }
+        return _errorRoute();
       default:
         // If there is no such named route in the switch statement, e.g. /third
         return _errorRoute();

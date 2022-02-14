@@ -5,7 +5,6 @@ import 'package:rentremedy_mobile/providers/api_service_provider.dart';
 import 'package:rentremedy_mobile/providers/auth_model_provider.dart';
 import 'package:rentremedy_mobile/providers/message_model_provider.dart';
 import 'package:rentremedy_mobile/routing/route_generator.dart';
-import 'package:rentremedy_mobile/view/onboarding/credit_card_screen.dart';
 
 void main() async {
   HttpOverrides.global = MyHttpOverrides();

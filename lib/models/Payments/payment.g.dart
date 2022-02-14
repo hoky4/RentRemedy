@@ -23,8 +23,8 @@ Payment _$PaymentFromJson(Map<String, dynamic> json) => Payment(
 
 Map<String, dynamic> _$PaymentToJson(Payment instance) => <String, dynamic>{
       'id': instance.id,
-      'leaseAgreement': instance.leaseAgreement,
-      'payer': instance.payer,
+      'leaseAgreement': instance.leaseAgreement.toJson(),
+      'payer': instance.payer.toJson(),
       'chargeAmount': instance.chargeAmount,
       'paidAmount': instance.paidAmount,
       'isLate': instance.isLate,

@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:rentremedy_mobile/models/User/role.dart';
 part 'user.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class User {
   User(this.id, this.firstName, this.lastName, this.email, this.roles);
 

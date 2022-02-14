@@ -2,11 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_credit_card/credit_card_brand.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
 import 'package:provider/provider.dart';
+import 'package:rentremedy_mobile/models/Auth/logged_in_user.dart';
+import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
 import 'package:rentremedy_mobile/providers/api_service_provider.dart';
+import 'package:rentremedy_mobile/providers/auth_model_provider.dart';
 import 'package:rentremedy_mobile/view/chat/message_socket_handler.dart';
 
 class CreditCardScreen extends StatefulWidget {
-  const CreditCardScreen({Key? key}) : super(key: key);
+  LeaseAgreement signedLeaseAgreement;
+  CreditCardScreen({Key? key, required this.signedLeaseAgreement})
+      : super(key: key);
 
   @override
   _CreditCardScreenState createState() => _CreditCardScreenState();
@@ -31,6 +36,8 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var authModel = context.read<AuthModelProvider>();
+
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: SafeArea(
@@ -98,13 +105,22 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
                           try {
                             await apiServiceProvider.makeSetupIntent(cardNumber,
                                 expiryDate, cvvCode, cardHolderName);
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const MessageSocketHandler()));
+
+                            // Update with a signed lease agreement
+                            LoggedInUser? user = authModel.user;
+                            if (user != null) {
+                              user.leaseAgreement = widget.signedLeaseAgreement;
+                              authModel.loginUser(user);
+
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const MessageSocketHandler()));
+                            }
                           } on Exception catch (e) {
-                            print("Problem creating a setup intent.");
+                            print(
+                                "Problem creating a setup intent: ${e.toString()}");
                           }
                         } else {
                           print('Invalid Entries');

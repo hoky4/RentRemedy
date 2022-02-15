@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
         ProxyProvider<AuthModelProvider, ApiServiceProvider>(
           create: (context) => ApiServiceProvider(),
           update: (context, authModel, apiService) {
-            if (apiService == null) throw ArgumentError.notNull('apiService');
+            if (apiService == null) throw ArgumentError.notNull('apiService is null');
             apiService.authModelProvider = authModel;
             return apiService;
           },
@@ -33,11 +33,6 @@ class MyApp extends StatelessWidget {
             create: (context) => MessageModelProvider())
       ],
       child: const RoutePage(),
-      // child: const MaterialApp(
-      //   // Initially display FirstPage
-      //   initialRoute: '/',
-      //   onGenerateRoute: RouteGenerator.generateRoute,
-      // ),
     );
   }
 }

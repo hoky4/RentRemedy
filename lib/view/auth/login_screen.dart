@@ -173,19 +173,19 @@ class _LoginScreenState extends State<LoginScreen> {
                 setState(() {
                   isLoading = true;
                 });
-                LoggedInUser? user =
+                LoggedInUser user =
                     await apiService.login(txtEmail.text, txtPassword.text);
-                if (user != null) {
-                  LeaseAgreement? leaseAgreement =
-                      await apiService.findExistingLeaseAgreements(user);
 
-                  if (leaseAgreement != null) {
-                    user.leaseAgreement = leaseAgreement;
-                  } else {
-                    print('lease agreement is null');
-                  }
-                  authModel.loginUser(user);
+                LeaseAgreement? leaseAgreement =
+                    await apiService.findExistingLeaseAgreements(user);
+
+                if (leaseAgreement != null) {
+                  user.leaseAgreement = leaseAgreement;
                 }
+
+                authModel.loginUser(user);
+
+                Navigator.pushReplacementNamed(context, '/');
 
                 setState(() {
                   _statusMessage = 'Login Success';
@@ -231,10 +231,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           InkWell(
             onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const SignupScreen()));
+              Navigator.pushNamed(context, '/signup');
             },
             child: const Text(
               'Signup',

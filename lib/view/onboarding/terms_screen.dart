@@ -315,10 +315,7 @@ class TermsScreen extends StatelessWidget {
           print('lease agreement signed');
           await apiService.makeSetupIntent();
           print('setup intent made.');
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const MessageSocketHandler()));
+          Navigator.pushReplacementNamed(context,'/chat');
         } on Exception catch (e) {
           print(
               "Error signing leaseAgreement or setting up card payment: ${e.toString()}");

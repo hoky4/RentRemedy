@@ -37,8 +37,8 @@ class _MessageScreenState extends State<MessageScreen> {
               IconButton(
                 icon: const Icon(Icons.logout),
                 onPressed: () {
-                  // Navigator.pushReplacementNamed(context, '/login');
                   authModel.logoutUser();
+                  Navigator.pushReplacementNamed(context, '/login');
                 },
               ),
               const Text("General")

@@ -3,8 +3,13 @@ import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:rentremedy_mobile/providers/api_service_provider.dart';
-import 'package:rentremedy_mobile/view/onboarding/terms_screen.dart';
 import 'confirmation_screen.dart';
+
+class JoinScreenArguments {
+  final LeaseAgreement leaseAgreement;
+
+  JoinScreenArguments(this.leaseAgreement);
+}
 
 class JoinScreen extends StatelessWidget {
   late LeaseAgreement leaseAgreement;
@@ -53,12 +58,11 @@ class JoinScreen extends StatelessWidget {
         try {
           await apiService.joinLeaseAgreement(leaseAgreement.id);
           if (leaseAgreement.property != null) {
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => TermsScreen(
-                          leaseAgreement: leaseAgreement,
-                        )));
+            Navigator.pushReplacementNamed(
+              context, '/terms',  
+              arguments: JoinScreenArguments(
+                leaseAgreement
+              ));
           }
         } on ForbiddenException catch (e) {
           ScaffoldMessenger.of(context)

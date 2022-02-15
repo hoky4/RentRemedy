@@ -88,12 +88,9 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                 });
                 return;
               } else if (leaseAgreement.status == Status.Unassigned) {
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => JoinScreen(
-                              leaseAgreement: leaseAgreement,
-                            )));
+                Navigator.pushReplacementNamed(
+                  context, '/join',  
+                  arguments: JoinScreenArguments(leaseAgreement));
               }
             }
           } on BadRequestException catch (e) {

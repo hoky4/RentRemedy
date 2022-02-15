@@ -162,10 +162,9 @@ class _SignupScreenState extends State<SignupScreen> {
                       _messageColor = Colors.green;
                       isLoading = false;
                     });
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const LoginScreen()));
+                    
+                    Navigator.pop(context);
+
                   } on BadRequestException catch (e) {
                     setState(() {
                       _statusMessage = e.toString();
@@ -196,9 +195,8 @@ class _SignupScreenState extends State<SignupScreen> {
           ),
           InkWell(
             onTap: () {
-              Navigator.pop(context);
-              // Navigator.push(context,
-              //     new MaterialPageRoute(builder: (context) => LoginScreen()));
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => const LoginScreen()));
             },
             child: const Text(
               'Login',

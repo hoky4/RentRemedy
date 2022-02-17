@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
+import 'package:rentremedy_mobile/Model/LeaseAgreement/lease_agreement.dart';
 import 'package:rentremedy_mobile/view/auth/login_screen.dart';
 import 'package:rentremedy_mobile/routing/route_page.dart';
 import 'package:rentremedy_mobile/view/chat/message_socket_handler.dart';

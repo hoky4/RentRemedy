@@ -1,13 +1,13 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:rentremedy_mobile/models/Fees/monthly_fees.dart';
-import 'package:rentremedy_mobile/models/LeaseAgreement/amenity.dart';
-import 'package:rentremedy_mobile/models/LeaseAgreement/maintenance.dart';
-import 'package:rentremedy_mobile/models/LeaseAgreement/one_time_security_deposit.dart';
-import 'package:rentremedy_mobile/models/LeaseAgreement/utility.dart';
-import 'package:rentremedy_mobile/models/Property/property.dart';
-import 'package:rentremedy_mobile/models/LeaseAgreement/signature.dart';
-import 'package:rentremedy_mobile/models/LeaseAgreement/status.dart';
-import 'package:rentremedy_mobile/models/User/user.dart';
+import 'package:rentremedy_mobile/Model/Fees/monthly_fees.dart';
+import 'package:rentremedy_mobile/Model/LeaseAgreement/amenity.dart';
+import 'package:rentremedy_mobile/Model/LeaseAgreement/maintenance.dart';
+import 'package:rentremedy_mobile/Model/LeaseAgreement/one_time_security_deposit.dart';
+import 'package:rentremedy_mobile/Model/LeaseAgreement/utility.dart';
+import 'package:rentremedy_mobile/Model/Property/property.dart';
+import 'package:rentremedy_mobile/Model/LeaseAgreement/signature.dart';
+import 'package:rentremedy_mobile/Model/LeaseAgreement/status.dart';
+import 'package:rentremedy_mobile/Model/User/user.dart';
 part 'lease_agreement.g.dart';
 
 @JsonSerializable(explicitToJson: true)

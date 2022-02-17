@@ -1,9 +1,9 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'package:rentremedy_mobile/models/Message/websocket_message.dart';
+import 'package:rentremedy_mobile/Model/Message/websocket_message.dart';
 
-import '../models/Message/message.dart';
+import '../Model/Message/message.dart';
 
 class MessageModelProvider extends ChangeNotifier {
   List<Message> _recentMessages = [];

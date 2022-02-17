@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
-import 'package:rentremedy_mobile/models/LeaseAgreement/status.dart';
+import 'package:rentremedy_mobile/Model/LeaseAgreement/lease_agreement.dart';
+import 'package:rentremedy_mobile/Model/LeaseAgreement/status.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:rentremedy_mobile/providers/api_service_provider.dart';
 

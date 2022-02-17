@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
-import 'package:rentremedy_mobile/models/User/user.dart';
+import 'package:rentremedy_mobile/Model/LeaseAgreement/lease_agreement.dart';
+import 'package:rentremedy_mobile/Model/User/user.dart';
 
 part 'payment.g.dart';
 

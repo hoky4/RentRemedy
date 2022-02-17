@@ -97,6 +97,8 @@ class PaymentScreen extends StatelessWidget {
                     builder: (context) => const PaymentSuccessScreen()));
           } on Exception catch (e) {
             print("Exception while making payment intent.");
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(e.toString())));
           }
         },
         child: const Text('Pay Balance',

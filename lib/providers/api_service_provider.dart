@@ -273,7 +273,7 @@ class ApiServiceProvider {
           'roles': [0]
         }),
       )
-          .timeout(const Duration(seconds: 10), onTimeout: () {
+          .timeout(const Duration(seconds: 15), onTimeout: () {
         throw TimeoutException(
             'The connection has timed out, Please try again!');
       });

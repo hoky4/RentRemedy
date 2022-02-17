@@ -1,8 +1,6 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:rentremedy_mobile/Networking/api_exception.dart';
 import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
 import 'login_screen.dart';
 
@@ -164,13 +162,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     });
 
                     Navigator.pop(context);
-                  } on BadRequestException catch (e) {
-                    setState(() {
-                      _statusMessage = e.toString();
-                      _messageColor = Colors.red;
-                      isLoading = false;
-                    });
-                  } on TimeoutException catch (e) {
+                  } on Exception catch (e) {
                     setState(() {
                       _statusMessage = e.toString();
                       _messageColor = Colors.red;

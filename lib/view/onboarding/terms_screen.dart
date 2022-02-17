@@ -328,15 +328,11 @@ class TermsScreen extends StatelessWidget {
 
           Navigator.pushReplacementNamed(context, '/creditCard',
               arguments: JoinScreenArguments(leaseAgreement));
-          // Navigator.pushReplacement(
-          //     context,
-          //     MaterialPageRoute(
-          //         builder: (context) =>
-          //             CreditCardScreen(signedLeaseAgreement: leaseAgreement)));
-          // Navigator.pushReplacementNamed(context, '/chat');
         } on Exception catch (e) {
           print(
               "Error signing leaseAgreement or setting up card payment: ${e.toString()}");
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(e.toString())));
         }
       },
       child: const Text('Accept',

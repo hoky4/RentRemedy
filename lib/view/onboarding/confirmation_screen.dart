@@ -92,19 +92,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                     arguments: JoinScreenArguments(leaseAgreement));
               }
             }
-          } on BadRequestException catch (e) {
-            setState(() {
-              _statusMessage = e.toString();
-              _messageColor = Colors.red;
-              isLoading = false;
-            });
-          } on UnauthorizedException catch (e) {
-            setState(() {
-              _statusMessage = e.toString();
-              _messageColor = Colors.red;
-              isLoading = false;
-            });
-          } on NotFoundException catch (e) {
+          } on Exception catch (e) {
             setState(() {
               _statusMessage = e.toString();
               _messageColor = Colors.red;

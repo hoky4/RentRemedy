@@ -60,7 +60,7 @@ class JoinScreen extends StatelessWidget {
             Navigator.pushReplacementNamed(context, '/terms',
                 arguments: JoinScreenArguments(leaseAgreement));
           }
-        } on ForbiddenException catch (e) {
+        } on Exception catch (e) {
           ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: Text(e.toString())));
           Navigator.pushReplacementNamed(context, '/confirmation');

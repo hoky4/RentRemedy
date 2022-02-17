@@ -1,10 +1,8 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/Model/Auth/logged_in_user.dart';
 import 'package:rentremedy_mobile/Model/LeaseAgreement/lease_agreement.dart';
-import 'package:rentremedy_mobile/Networking/api_exception.dart';
 import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
 import 'package:rentremedy_mobile/Providers/auth_model_provider.dart';
 
@@ -191,19 +189,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   _messageColor = Colors.green;
                   isLoading = false;
                 });
-              } on BadRequestException catch (e) {
-                setState(() {
-                  _statusMessage = e.toString();
-                  _messageColor = Colors.red;
-                  isLoading = false;
-                });
-              } on UnauthorizedException catch (e) {
-                setState(() {
-                  _statusMessage = e.toString();
-                  _messageColor = Colors.red;
-                  isLoading = false;
-                });
-              } on TimeoutException catch (e) {
+              } on Exception catch (e) {
                 setState(() {
                   _statusMessage = e.toString();
                   _messageColor = Colors.red;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rentremedy_mobile/Model/LeaseAgreement/lease_agreement.dart';
 import 'package:rentremedy_mobile/Model/User/user.dart';
-import 'package:rentremedy_mobile/networking/api_service.dart';
+import 'package:rentremedy_mobile/Networking/api_service.dart';
 
 import '../../chat/Old/message_screen2.dart';
 

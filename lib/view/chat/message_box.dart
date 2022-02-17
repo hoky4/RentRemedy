@@ -3,11 +3,11 @@ import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/Model/Message/message.dart';
 import 'package:rentremedy_mobile/Model/Message/message_type.dart';
 import 'package:rentremedy_mobile/Model/Payments/payment.dart';
-import 'package:rentremedy_mobile/providers/api_service_provider.dart';
-import 'package:rentremedy_mobile/providers/auth_model_provider.dart';
-import 'package:rentremedy_mobile/view/payment/payment_screen.dart';
-import 'package:rentremedy_mobile/view/payment/payment_success_screen.dart';
-import 'package:rentremedy_mobile/view/payment/view_payment_screen.dart';
+import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
+import 'package:rentremedy_mobile/Providers/auth_model_provider.dart';
+import 'package:rentremedy_mobile/View/Payment/payment_screen.dart';
+import 'package:rentremedy_mobile/View/Payment/payment_success_screen.dart';
+import 'package:rentremedy_mobile/View/Payment/view_payment_screen.dart';
 
 class MessageBox extends StatelessWidget {
   final Message message;

@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/Model/LeaseAgreement/lease_agreement.dart';
-import 'package:rentremedy_mobile/networking/api_exception.dart';
-import 'package:rentremedy_mobile/providers/api_service_provider.dart';
-import 'package:rentremedy_mobile/view/onboarding/terms_screen.dart';
-import 'confirmation_screen.dart';
+import 'package:rentremedy_mobile/Networking/api_exception.dart';
+import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
+
+class JoinScreenArguments {
+  final LeaseAgreement leaseAgreement;
+
+  JoinScreenArguments(this.leaseAgreement);
+}
 
 class JoinScreen extends StatelessWidget {
   late LeaseAgreement leaseAgreement;
@@ -53,20 +57,13 @@ class JoinScreen extends StatelessWidget {
         try {
           await apiService.joinLeaseAgreement(leaseAgreement.id);
           if (leaseAgreement.property != null) {
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => TermsScreen(
-                          leaseAgreement: leaseAgreement,
-                        )));
+            Navigator.pushReplacementNamed(context, '/terms',
+                arguments: JoinScreenArguments(leaseAgreement));
           }
         } on ForbiddenException catch (e) {
           ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: Text(e.toString())));
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const ConfirmationScreen()));
+          Navigator.pushReplacementNamed(context, '/confirmation');
         }
       },
       child: const Text(
@@ -87,11 +84,7 @@ class JoinScreen extends StatelessWidget {
   Widget noButton(BuildContext context) {
     return TextButton(
       onPressed: () {
-        // Navigator.pop(context);
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const ConfirmationScreen()));
+        Navigator.pushReplacementNamed(context, '/confirmation');
       },
       child: const Text(
         'No',

@@ -9,11 +9,9 @@ import 'package:rentremedy_mobile/Model/Payments/payment.dart';
 import 'package:rentremedy_mobile/Model/Payments/payment_intent_response.dart';
 import 'package:rentremedy_mobile/Model/Payments/setup_intent_request.dart';
 import 'package:rentremedy_mobile/Model/Payments/setup_intent_response.dart';
-import 'package:rentremedy_mobile/Model/User/role.dart';
-import 'package:rentremedy_mobile/Model/User/user.dart';
-import 'package:rentremedy_mobile/networking/api.dart';
-import 'package:rentremedy_mobile/networking/api_exception.dart';
-import 'package:rentremedy_mobile/providers/auth_model_provider.dart';
+import 'package:rentremedy_mobile/Networking/api.dart';
+import 'package:rentremedy_mobile/Networking/api_exception.dart';
+import 'package:rentremedy_mobile/Providers/auth_model_provider.dart';
 import 'package:http/http.dart' as http;
 
 class ApiServiceProvider {

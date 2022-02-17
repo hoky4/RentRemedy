@@ -1,36 +1,47 @@
 import 'package:flutter/material.dart';
-import 'package:rentremedy_mobile/Model/LeaseAgreement/lease_agreement.dart';
-import 'package:rentremedy_mobile/view/auth/login_screen.dart';
-import 'package:rentremedy_mobile/routing/route_page.dart';
-import 'package:rentremedy_mobile/view/chat/message_socket_handler.dart';
-import 'package:rentremedy_mobile/view/onboarding/credit_card_screen.dart';
+import 'package:rentremedy_mobile/View/Onboarding/join_screen.dart';
+import 'package:rentremedy_mobile/Routing/app_navigation_router.dart';
+import 'package:rentremedy_mobile/View/Auth/login_screen.dart';
+import 'package:rentremedy_mobile/View/Auth/signup_screen.dart';
+import 'package:rentremedy_mobile/View/Chat/message_socket_handler.dart';
+import 'package:rentremedy_mobile/View/Onboarding/credit_card_screen.dart';
+import 'package:rentremedy_mobile/View/Onboarding/confirmation_screen.dart';
+import 'package:rentremedy_mobile/View/Onboarding/terms_screen.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     // Getting arguments passed in while calling Navigator.pushNamed
-    final args = settings.arguments;
-
     switch (settings.name) {
       case '/':
-        return MaterialPageRoute(builder: (_) => const RoutePage());
+        return MaterialPageRoute(builder: (_) => const AppNavigationRouter());
       case '/login':
         return MaterialPageRoute(builder: (_) => const LoginScreen());
+      case '/signup':
+        return MaterialPageRoute(builder: (_) => const SignupScreen());
+      case '/confirmation':
+        return MaterialPageRoute(builder: (_) => const ConfirmationScreen());
+      case '/join':
+        final args = settings.arguments as JoinScreenArguments;
+        return MaterialPageRoute(
+            builder: (_) => JoinScreen(leaseAgreement: args.leaseAgreement));
+      case '/terms':
+        final args = settings.arguments as JoinScreenArguments;
+        return MaterialPageRoute(
+            builder: (_) => TermsScreen(leaseAgreement: args.leaseAgreement));
       case '/chat':
-        // Validation of correct data type
-        // if (args is String) {
         return MaterialPageRoute(builder: (_) => const MessageSocketHandler());
       // }
       // If args is not of the correct type, return an error page.
       // You can also throw an exception while in development.
       // return _errorRoute();
       case '/creditCard':
-        if (args is LeaseAgreement) {
-          return MaterialPageRoute(
-              builder: (_) => CreditCardScreen(signedLeaseAgreement: args));
-        }
+        final args = settings.arguments as JoinScreenArguments;
+        return MaterialPageRoute(
+            builder: (_) =>
+                CreditCardScreen(signedLeaseAgreement: args.leaseAgreement));
+
         return _errorRoute();
       default:
-        // If there is no such named route in the switch statement, e.g. /third
         return _errorRoute();
     }
   }
@@ -39,9 +50,9 @@ class RouteGenerator {
     return MaterialPageRoute(builder: (_) {
       return Scaffold(
         appBar: AppBar(
-          title: Text('Error'),
+          title: const Text('Error'),
         ),
-        body: Center(
+        body: const Center(
           child: Text('No such named route'),
         ),
       );

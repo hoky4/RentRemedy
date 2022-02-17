@@ -4,9 +4,9 @@ import 'package:flutter_credit_card/flutter_credit_card.dart';
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/Model/Auth/logged_in_user.dart';
 import 'package:rentremedy_mobile/Model/LeaseAgreement/lease_agreement.dart';
-import 'package:rentremedy_mobile/providers/api_service_provider.dart';
-import 'package:rentremedy_mobile/providers/auth_model_provider.dart';
-import 'package:rentremedy_mobile/view/chat/message_socket_handler.dart';
+import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
+import 'package:rentremedy_mobile/Providers/auth_model_provider.dart';
+import 'package:rentremedy_mobile/View/Chat/message_socket_handler.dart';
 
 class CreditCardScreen extends StatefulWidget {
   LeaseAgreement signedLeaseAgreement;

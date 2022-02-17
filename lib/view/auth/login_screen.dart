@@ -4,10 +4,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/Model/Auth/logged_in_user.dart';
 import 'package:rentremedy_mobile/Model/LeaseAgreement/lease_agreement.dart';
-import 'package:rentremedy_mobile/networking/api_exception.dart';
-import 'package:rentremedy_mobile/providers/api_service_provider.dart';
-import 'package:rentremedy_mobile/providers/auth_model_provider.dart';
-import 'package:rentremedy_mobile/view/auth/signup_screen.dart';
+import 'package:rentremedy_mobile/Networking/api_exception.dart';
+import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
+import 'package:rentremedy_mobile/Providers/auth_model_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -173,19 +172,19 @@ class _LoginScreenState extends State<LoginScreen> {
                 setState(() {
                   isLoading = true;
                 });
-                LoggedInUser? user =
+                LoggedInUser user =
                     await apiService.login(txtEmail.text, txtPassword.text);
-                if (user != null) {
-                  LeaseAgreement? leaseAgreement =
-                      await apiService.findExistingLeaseAgreements(user);
 
-                  if (leaseAgreement != null) {
-                    user.leaseAgreement = leaseAgreement;
-                  } else {
-                    print('lease agreement is null');
-                  }
-                  authModel.loginUser(user);
+                LeaseAgreement? leaseAgreement =
+                    await apiService.findExistingLeaseAgreements(user);
+
+                if (leaseAgreement != null) {
+                  user.leaseAgreement = leaseAgreement;
                 }
+
+                authModel.loginUser(user);
+
+                Navigator.pushReplacementNamed(context, '/');
 
                 setState(() {
                   _statusMessage = 'Login Success';
@@ -231,10 +230,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           InkWell(
             onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const SignupScreen()));
+              Navigator.pushNamed(context, '/signup');
             },
             child: const Text(
               'Signup',

@@ -41,10 +41,6 @@ class AuthModelProvider extends ChangeNotifier {
     return _loggedInUser?.leaseAgreement;
   }
 
-  bool get isLoggedIn {
-    return _loggedInUser != null;
-  }
-
   AuthStatus get status {
     return _status;
   }

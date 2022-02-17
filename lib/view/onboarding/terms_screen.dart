@@ -10,9 +10,9 @@ import 'package:rentremedy_mobile/Model/LeaseAgreement/maintenance.dart';
 import 'package:rentremedy_mobile/Model/LeaseAgreement/one_time_security_deposit.dart';
 import 'package:rentremedy_mobile/Model/LeaseAgreement/utility.dart';
 import 'package:rentremedy_mobile/Model/Property/property.dart';
-import 'package:rentremedy_mobile/providers/api_service_provider.dart';
-import 'package:rentremedy_mobile/view/chat/message_socket_handler.dart';
-import 'package:rentremedy_mobile/view/onboarding/credit_card_screen.dart';
+import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
+import 'package:rentremedy_mobile/View/Chat/message_socket_handler.dart';
+import 'join_screen.dart';
 
 class TermsScreen extends StatelessWidget {
   LeaseAgreement leaseAgreement;
@@ -325,11 +325,15 @@ class TermsScreen extends StatelessWidget {
           LeaseAgreement leaseAgreement =
               await apiService.signLeaseAgreement(leaseAgreemenId);
           print('Lease agreement signed');
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      CreditCardScreen(signedLeaseAgreement: leaseAgreement)));
+
+          Navigator.pushReplacementNamed(context, '/creditCard',
+              arguments: JoinScreenArguments(leaseAgreement));
+          // Navigator.pushReplacement(
+          //     context,
+          //     MaterialPageRoute(
+          //         builder: (context) =>
+          //             CreditCardScreen(signedLeaseAgreement: leaseAgreement)));
+          // Navigator.pushReplacementNamed(context, '/chat');
         } on Exception catch (e) {
           print(
               "Error signing leaseAgreement or setting up card payment: ${e.toString()}");

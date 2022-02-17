@@ -2,8 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:rentremedy_mobile/networking/api_exception.dart';
-import 'package:rentremedy_mobile/providers/api_service_provider.dart';
+import 'package:rentremedy_mobile/Networking/api_exception.dart';
+import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
 import 'login_screen.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -162,10 +162,8 @@ class _SignupScreenState extends State<SignupScreen> {
                       _messageColor = Colors.green;
                       isLoading = false;
                     });
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const LoginScreen()));
+
+                    Navigator.pop(context);
                   } on BadRequestException catch (e) {
                     setState(() {
                       _statusMessage = e.toString();
@@ -196,9 +194,8 @@ class _SignupScreenState extends State<SignupScreen> {
           ),
           InkWell(
             onTap: () {
-              Navigator.pop(context);
-              // Navigator.push(context,
-              //     new MaterialPageRoute(builder: (context) => LoginScreen()));
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => const LoginScreen()));
             },
             child: const Text(
               'Login',

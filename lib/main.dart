@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:rentremedy_mobile/providers/api_service_provider.dart';
-import 'package:rentremedy_mobile/providers/auth_model_provider.dart';
-import 'package:rentremedy_mobile/providers/message_model_provider.dart';
-import 'package:rentremedy_mobile/routing/route_generator.dart';
+import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
+import 'package:rentremedy_mobile/Providers/auth_model_provider.dart';
+import 'package:rentremedy_mobile/Providers/message_model_provider.dart';
+import 'package:rentremedy_mobile/Routing/route_page.dart';
 
 void main() async {
   HttpOverrides.global = MyHttpOverrides();
@@ -24,7 +24,8 @@ class MyApp extends StatelessWidget {
         ProxyProvider<AuthModelProvider, ApiServiceProvider>(
           create: (context) => ApiServiceProvider(),
           update: (context, authModel, apiService) {
-            if (apiService == null) throw ArgumentError.notNull('apiService');
+            if (apiService == null)
+              throw ArgumentError.notNull('apiService is null');
             apiService.authModelProvider = authModel;
             return apiService;
           },
@@ -32,12 +33,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<MessageModelProvider>(
             create: (context) => MessageModelProvider())
       ],
-      // child: const CardScreen(),
-      child: const MaterialApp(
-        // Initially display FirstPage
-        initialRoute: '/',
-        onGenerateRoute: RouteGenerator.generateRoute,
-      ),
+      child: const RoutePage(),
     );
   }
 }

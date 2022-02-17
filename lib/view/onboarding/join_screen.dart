@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
+import 'package:rentremedy_mobile/Model/LeaseAgreement/lease_agreement.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:rentremedy_mobile/providers/api_service_provider.dart';
 import 'confirmation_screen.dart';
@@ -58,11 +58,8 @@ class JoinScreen extends StatelessWidget {
         try {
           await apiService.joinLeaseAgreement(leaseAgreement.id);
           if (leaseAgreement.property != null) {
-            Navigator.pushReplacementNamed(
-              context, '/terms',  
-              arguments: JoinScreenArguments(
-                leaseAgreement
-              ));
+            Navigator.pushReplacementNamed(context, '/terms',
+                arguments: JoinScreenArguments(leaseAgreement));
           }
         } on ForbiddenException catch (e) {
           ScaffoldMessenger.of(context)

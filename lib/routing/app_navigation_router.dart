@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
+import 'package:rentremedy_mobile/Model/LeaseAgreement/lease_agreement.dart';
 import 'package:rentremedy_mobile/providers/auth_model_provider.dart';
 import 'package:rentremedy_mobile/view/onboarding/join_screen.dart';
 
@@ -35,14 +35,12 @@ class _AppNavigationRouterState extends State<AppNavigationRouter> {
         if (isSigned(leaseAgreement)) {
           Navigator.pushReplacementNamed(context, '/chat');
         } else {
-          Navigator.pushReplacementNamed(
-            context, '/terms', 
-            arguments: JoinScreenArguments(leaseAgreement));
+          Navigator.pushReplacementNamed(context, '/terms',
+              arguments: JoinScreenArguments(leaseAgreement));
         }
       } else {
         Navigator.pushReplacementNamed(context, '/confirmation');
       }
-
     } else if (authModel.status == AuthStatus.notLoggedIn) {
       Navigator.pushReplacementNamed(context, '/login');
     }

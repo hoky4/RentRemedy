@@ -1,11 +1,11 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:rentremedy_mobile/models/Message/message.dart';
+import 'package:rentremedy_mobile/Model/Message/message.dart';
 import 'package:rentremedy_mobile/providers/auth_model_provider.dart';
 import 'package:rentremedy_mobile/providers/message_model_provider.dart';
-import 'package:rentremedy_mobile/models/Message/model.dart';
-import 'package:rentremedy_mobile/models/Message/websocket_message.dart';
+import 'package:rentremedy_mobile/Model/Message/model.dart';
+import 'package:rentremedy_mobile/Model/Message/websocket_message.dart';
 import 'message_textbox.dart';
 
 class MessageInputContainer extends StatefulWidget {

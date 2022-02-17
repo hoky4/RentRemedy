@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:rentremedy_mobile/models/User/role.dart';
+import 'package:rentremedy_mobile/Model/User/role.dart';
 part 'user.g.dart';
 
 @JsonSerializable()

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:rentremedy_mobile/models/Payments/payment.dart';
+import 'package:rentremedy_mobile/Model/Payments/payment.dart';
 
 class ViewPaymentScreen extends StatelessWidget {
   Payment payment;

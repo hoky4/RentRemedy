@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
-import 'package:rentremedy_mobile/models/Auth/logged_in_user.dart';
-import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
+import 'package:rentremedy_mobile/Model/Auth/logged_in_user.dart';
+import 'package:rentremedy_mobile/Model/LeaseAgreement/lease_agreement.dart';
 
 enum AuthStatus { pending, loggedIn, notLoggedIn }
 

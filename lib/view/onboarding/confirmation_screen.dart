@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
-import 'package:rentremedy_mobile/models/LeaseAgreement/status.dart';
+import 'package:rentremedy_mobile/Model/LeaseAgreement/lease_agreement.dart';
+import 'package:rentremedy_mobile/Model/LeaseAgreement/status.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:rentremedy_mobile/providers/api_service_provider.dart';
 
@@ -88,9 +88,8 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                 });
                 return;
               } else if (leaseAgreement.status == Status.Unassigned) {
-                Navigator.pushReplacementNamed(
-                  context, '/join',  
-                  arguments: JoinScreenArguments(leaseAgreement));
+                Navigator.pushReplacementNamed(context, '/join',
+                    arguments: JoinScreenArguments(leaseAgreement));
               }
             }
           } on BadRequestException catch (e) {

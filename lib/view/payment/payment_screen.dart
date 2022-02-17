@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:rentremedy_mobile/models/Payments/payment.dart';
+import 'package:rentremedy_mobile/Model/Payments/payment.dart';
 import 'package:rentremedy_mobile/providers/api_service_provider.dart';
 import 'package:rentremedy_mobile/view/payment/payment_success_screen.dart';
 

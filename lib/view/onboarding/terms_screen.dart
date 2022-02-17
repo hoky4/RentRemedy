@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:rentremedy_mobile/models/Fees/due_date_type.dart';
-import 'package:rentremedy_mobile/models/Fees/monthly_fees.dart';
-import 'package:rentremedy_mobile/models/LeaseAgreement/amenity.dart';
-import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
-import 'package:rentremedy_mobile/models/LeaseAgreement/maintenance.dart';
-import 'package:rentremedy_mobile/models/LeaseAgreement/one_time_security_deposit.dart';
-import 'package:rentremedy_mobile/models/LeaseAgreement/utility.dart';
-import 'package:rentremedy_mobile/models/Property/property.dart';
+import 'package:rentremedy_mobile/Model/Fees/due_date_type.dart';
+import 'package:rentremedy_mobile/Model/Fees/monthly_fees.dart';
+import 'package:rentremedy_mobile/Model/LeaseAgreement/amenity.dart';
+import 'package:rentremedy_mobile/Model/LeaseAgreement/lease_agreement.dart';
+import 'package:rentremedy_mobile/Model/LeaseAgreement/maintenance.dart';
+import 'package:rentremedy_mobile/Model/LeaseAgreement/one_time_security_deposit.dart';
+import 'package:rentremedy_mobile/Model/LeaseAgreement/utility.dart';
+import 'package:rentremedy_mobile/Model/Property/property.dart';
 import 'package:rentremedy_mobile/providers/api_service_provider.dart';
 import 'package:rentremedy_mobile/view/chat/message_socket_handler.dart';
 
@@ -315,7 +315,7 @@ class TermsScreen extends StatelessWidget {
           print('lease agreement signed');
           await apiService.makeSetupIntent();
           print('setup intent made.');
-          Navigator.pushReplacementNamed(context,'/chat');
+          Navigator.pushReplacementNamed(context, '/chat');
         } on Exception catch (e) {
           print(
               "Error signing leaseAgreement or setting up card payment: ${e.toString()}");

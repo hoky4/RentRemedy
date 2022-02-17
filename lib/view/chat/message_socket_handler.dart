@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:rentremedy_mobile/models/Message/message.dart';
+import 'package:rentremedy_mobile/Model/Message/message.dart';
 import 'package:rentremedy_mobile/providers/api_service_provider.dart';
 import 'package:rentremedy_mobile/providers/auth_model_provider.dart';
 import 'package:rentremedy_mobile/providers/message_model_provider.dart';
-import 'package:rentremedy_mobile/models/Message/model.dart';
-import 'package:rentremedy_mobile/models/Message/websocket_message.dart';
+import 'package:rentremedy_mobile/Model/Message/model.dart';
+import 'package:rentremedy_mobile/Model/Message/websocket_message.dart';
 import 'package:rentremedy_mobile/networking/api.dart';
 import 'package:web_socket_channel/io.dart';
 import 'message_screen.dart';

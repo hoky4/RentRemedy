@@ -11,7 +11,6 @@ import 'package:rentremedy_mobile/Model/LeaseAgreement/one_time_security_deposit
 import 'package:rentremedy_mobile/Model/LeaseAgreement/utility.dart';
 import 'package:rentremedy_mobile/Model/Property/property.dart';
 import 'package:rentremedy_mobile/providers/api_service_provider.dart';
-import 'package:rentremedy_mobile/view/chat/message_socket_handler.dart';
 
 class TermsScreen extends StatelessWidget {
   LeaseAgreement leaseAgreement;

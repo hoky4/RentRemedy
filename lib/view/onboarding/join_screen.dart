@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/Model/LeaseAgreement/lease_agreement.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:rentremedy_mobile/providers/api_service_provider.dart';
-import 'confirmation_screen.dart';
 
 class JoinScreenArguments {
   final LeaseAgreement leaseAgreement;
@@ -64,10 +63,7 @@ class JoinScreen extends StatelessWidget {
         } on ForbiddenException catch (e) {
           ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: Text(e.toString())));
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const ConfirmationScreen()));
+          Navigator.pushReplacementNamed(context, '/confirmation');
         }
       },
       child: const Text(
@@ -88,11 +84,7 @@ class JoinScreen extends StatelessWidget {
   Widget noButton(BuildContext context) {
     return TextButton(
       onPressed: () {
-        // Navigator.pop(context);
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const ConfirmationScreen()));
+        Navigator.pushReplacementNamed(context, '/confirmation');
       },
       child: const Text(
         'No',

@@ -35,6 +35,8 @@ class _AppNavigationRouterState extends State<AppNavigationRouter> {
         if (isSigned(leaseAgreement)) {
           Navigator.pushReplacementNamed(context, '/chat');
         } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Lease Agreement Not Signed Yet")));
           Navigator.pushReplacementNamed(context, '/terms',
               arguments: JoinScreenArguments(leaseAgreement));
         }
@@ -48,7 +50,7 @@ class _AppNavigationRouterState extends State<AppNavigationRouter> {
 
   @override
   Widget build(BuildContext context) {
-    return const CircularProgressIndicator();
+    return const Scaffold(body: CircularProgressIndicator());
   }
 
   bool isSigned(LeaseAgreement leaseAgreement) {

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:provider/provider.dart';
+import 'package:rentremedy_mobile/Components/app_bar.dart';
 import 'package:rentremedy_mobile/Model/LeaseAgreement/lease_agreement.dart';
 import 'package:rentremedy_mobile/Model/Message/message.dart';
 import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
 import 'package:rentremedy_mobile/Providers/auth_model_provider.dart';
-import 'package:rentremedy_mobile/View/Onboarding/terms_screen.dart';
+import 'package:rentremedy_mobile/View/Onboarding/join_screen.dart';
 import 'package:rentremedy_mobile/View/Payment/view_payments_screen.dart';
 import 'message_box.dart';
 import 'message_input_container.dart';
@@ -32,51 +33,49 @@ class _MessageScreenState extends State<MessageScreen> {
     var authModel = context.read<AuthModelProvider>();
 
     return Scaffold(
-        appBar: AppBar(
-          title: Row(
-            children: [
-              // IconButton(icon: Icon(Icons.menu), onPressed: () {}),
-              IconButton(
-                icon: const Icon(Icons.logout),
-                onPressed: () {
-                  authModel.logoutUser();
-                  Navigator.pushReplacementNamed(context, '/login');
-                },
-              ),
-              const Text("General")
-            ],
-          ),
-          automaticallyImplyLeading: false,
-          actions: [
-            if (authModel.leaseAgreement!.signatures.isEmpty) ...[
-              IconButton(
-                  icon: const Icon(FontAwesome5.hand_paper),
-                  onPressed: () {
-                    LeaseAgreement? leaseAgreement = authModel.leaseAgreement;
-                    if (leaseAgreement != null) {
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  TermsScreen(leaseAgreement: leaseAgreement)));
-                    }
-                  })
-            ],
-            IconButton(
-                icon: const Icon(Icons.comment_rounded), onPressed: () {}),
-            IconButton(
-                icon: const Icon(Icons.attach_money_outlined),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const ViewPaymentsScreen()));
-                }),
-            IconButton(
-                icon: const Icon(Icons.build_circle_outlined),
-                onPressed: () {}),
-          ],
-        ),
+        appBar: CustomAppBar("General"),
+        // AppBar(
+        //   title: Row(
+        //     children: [
+        //       // IconButton(icon: Icon(Icons.menu), onPressed: () {}),
+        //       IconButton(
+        //         icon: const Icon(Icons.logout),
+        //         onPressed: () {
+        //           authModel.logoutUser();
+        //           Navigator.pushReplacementNamed(context, '/login');
+        //         },
+        //       ),
+        //       const Text("General")
+        //     ],
+        //   ),
+        //   automaticallyImplyLeading: false,
+        //   actions: [
+        //     if (authModel.leaseAgreement!.signatures.isEmpty) ...[
+        //       IconButton(
+        //           icon: const Icon(FontAwesome5.hand_paper),
+        //           onPressed: () {
+        //             LeaseAgreement? leaseAgreement = authModel.leaseAgreement;
+        //             if (leaseAgreement != null) {
+        //               Navigator.pushReplacementNamed(context, '/terms',
+        //                   arguments: JoinScreenArguments(leaseAgreement));
+        //             }
+        //           })
+        //     ],
+        //     IconButton(
+        //         icon: const Icon(Icons.comment_rounded), onPressed: () {}),
+        //     IconButton(
+        //         icon: const Icon(Icons.attach_money_outlined),
+        //         onPressed: () {
+        //           Navigator.push(
+        //               context,
+        //               MaterialPageRoute(
+        //                   builder: (context) => const ViewPaymentsScreen()));
+        //         }),
+        //     IconButton(
+        //         icon: const Icon(Icons.build_circle_outlined),
+        //         onPressed: () {}),
+        //   ],
+        // ),
         body: Column(children: [
           Expanded(
             child: Padding(

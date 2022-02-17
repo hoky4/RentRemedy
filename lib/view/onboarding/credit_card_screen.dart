@@ -112,11 +112,7 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
                               user.leaseAgreement = widget.signedLeaseAgreement;
                               authModel.loginUser(user);
 
-                              Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const MessageSocketHandler()));
+                              Navigator.pushReplacementNamed(context, '/chat');
                             }
                           } on Exception catch (e) {
                             print(

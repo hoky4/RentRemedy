@@ -7,6 +7,7 @@ import 'package:rentremedy_mobile/View/Chat/message_socket_handler.dart';
 import 'package:rentremedy_mobile/View/Onboarding/credit_card_screen.dart';
 import 'package:rentremedy_mobile/View/Onboarding/confirmation_screen.dart';
 import 'package:rentremedy_mobile/View/Onboarding/terms_screen.dart';
+import 'package:rentremedy_mobile/View/Payment/view_payments_screen.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -39,6 +40,8 @@ class RouteGenerator {
         return MaterialPageRoute(
             builder: (_) =>
                 CreditCardScreen(signedLeaseAgreement: args.leaseAgreement));
+      case '/viewPayments':
+        return MaterialPageRoute(builder: (_) => const ViewPaymentsScreen());
 
         return _errorRoute();
       default:

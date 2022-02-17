@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:rentremedy_mobile/Components/app_bar.dart';
 import 'package:rentremedy_mobile/Model/Payments/payment.dart';
 import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
 import 'package:rentremedy_mobile/View/Payment/view_payment_screen.dart';
@@ -35,6 +36,7 @@ class _ViewPaymentsScreenState extends State<ViewPaymentsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: CustomAppBar("View Payments"),
       body: Column(children: [
         Expanded(
           child: Padding(

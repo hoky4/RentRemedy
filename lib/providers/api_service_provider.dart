@@ -89,6 +89,8 @@ class ApiServiceProvider {
     );
 
     if (response.statusCode == 200) {
+      print("got all payments");
+
       Map<String, dynamic> responseMap = json.decode(response.body);
       List<dynamic> payments = responseMap['payments'];
 

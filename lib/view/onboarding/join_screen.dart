@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/Model/LeaseAgreement/lease_agreement.dart';
-import 'package:rentremedy_mobile/Networking/api_exception.dart';
 import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
 
 class JoinScreenArguments {

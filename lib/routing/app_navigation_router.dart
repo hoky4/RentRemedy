@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/Model/LeaseAgreement/lease_agreement.dart';
 import 'package:rentremedy_mobile/Providers/auth_model_provider.dart';
-import 'package:rentremedy_mobile/View/onboarding/join_screen.dart';
+import 'package:rentremedy_mobile/View/Onboarding/join_screen.dart';
 
 class AppNavigationRouter extends StatefulWidget {
   const AppNavigationRouter({Key? key}) : super(key: key);

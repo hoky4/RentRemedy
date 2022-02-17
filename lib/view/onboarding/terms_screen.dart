@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:rentremedy_mobile/Model/Auth/logged_in_user.dart';
 import 'package:rentremedy_mobile/Model/Fees/due_date_type.dart';
 import 'package:rentremedy_mobile/Model/Fees/monthly_fees.dart';
 import 'package:rentremedy_mobile/Model/LeaseAgreement/amenity.dart';
@@ -11,16 +12,18 @@ import 'package:rentremedy_mobile/Model/LeaseAgreement/one_time_security_deposit
 import 'package:rentremedy_mobile/Model/LeaseAgreement/utility.dart';
 import 'package:rentremedy_mobile/Model/Property/property.dart';
 import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
-import 'package:rentremedy_mobile/View/Chat/message_socket_handler.dart';
+import 'package:rentremedy_mobile/Providers/auth_model_provider.dart';
 import 'join_screen.dart';
 
 class TermsScreen extends StatelessWidget {
-  LeaseAgreement leaseAgreement;
+  final LeaseAgreement leaseAgreement;
 
   TermsScreen({Key? key, required this.leaseAgreement}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    var authModel = context.read<AuthModelProvider>();
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -31,11 +34,16 @@ class TermsScreen extends StatelessWidget {
               IconButton(
                   icon: const Icon(Icons.close),
                   onPressed: () {
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                const MessageSocketHandler()));
+                    Navigator.pushReplacementNamed(context, 'chat');
+
+                    // Update with a unsigned lease agreement
+                    LoggedInUser? user = authModel.user;
+                    if (user != null) {
+                      user.leaseAgreement = leaseAgreement;
+                      authModel.loginUser(user);
+
+                      Navigator.pushReplacementNamed(context, '/chat');
+                    }
                   })
             ]),
         body: Column(

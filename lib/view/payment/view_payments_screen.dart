@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:rentremedy_mobile/Components/app_bar.dart';
 import 'package:rentremedy_mobile/Model/Payments/payment.dart';
 import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
 import 'package:rentremedy_mobile/View/Payment/view_payment_screen.dart';
@@ -13,10 +12,12 @@ class ViewPaymentsScreen extends StatefulWidget {
   _ViewPaymentsScreenState createState() => _ViewPaymentsScreenState();
 }
 
-class _ViewPaymentsScreenState extends State<ViewPaymentsScreen> {
+class _ViewPaymentsScreenState extends State<ViewPaymentsScreen>
+    with AutomaticKeepAliveClientMixin<ViewPaymentsScreen> {
   late ApiServiceProvider apiService;
 
   late List<Payment> payments;
+  late bool isLoading = true;
 
   @override
   void initState() {
@@ -28,29 +29,40 @@ class _ViewPaymentsScreenState extends State<ViewPaymentsScreen> {
 
   fetchPayments() async {
     List<Payment> paymentsList = await apiService.getAllPayments();
-    setState(() {
-      payments = paymentsList;
-    });
+    if (mounted) {
+      setState(() {
+        payments = paymentsList;
+        isLoading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar("View Payments"),
-      body: Column(children: [
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ListView.builder(
-                itemCount: payments.length,
-                itemBuilder: (context, index) => PaymentItem(
-                      payment: payments[index],
-                    )),
-          ),
-        ),
-      ]),
-    );
+    return !isLoading
+        ? Scaffold(
+            body: Column(children: [
+              if (payments != null) ...[
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ListView.builder(
+                        itemCount: payments.length,
+                        itemBuilder: (context, index) => PaymentItem(
+                              payment: payments[index],
+                            )),
+                  ),
+                ),
+              ] else ...[
+                const Center(child: Text("No payments yet"))
+              ],
+            ]),
+          )
+        : const Scaffold(body: Center(child: CircularProgressIndicator()));
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class PaymentItem extends StatelessWidget {

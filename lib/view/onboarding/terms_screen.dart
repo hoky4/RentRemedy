@@ -34,14 +34,11 @@ class TermsScreen extends StatelessWidget {
               IconButton(
                   icon: const Icon(Icons.close),
                   onPressed: () {
-                    Navigator.pushReplacementNamed(context, 'chat');
-
                     // Update with a unsigned lease agreement
                     LoggedInUser? user = authModel.user;
                     if (user != null) {
                       user.leaseAgreement = leaseAgreement;
                       authModel.loginUser(user);
-
                       Navigator.pushReplacementNamed(context, '/chat');
                     }
                   })

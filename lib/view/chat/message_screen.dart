@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:provider/provider.dart';
-import 'package:rentremedy_mobile/Components/app_bar.dart';
 import 'package:rentremedy_mobile/Model/LeaseAgreement/lease_agreement.dart';
 import 'package:rentremedy_mobile/Model/Message/message.dart';
 import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
 import 'package:rentremedy_mobile/Providers/auth_model_provider.dart';
+import 'package:rentremedy_mobile/View/Components/custom_app_bar.dart';
 import 'package:rentremedy_mobile/View/Onboarding/join_screen.dart';
 import 'package:rentremedy_mobile/View/Payment/view_payments_screen.dart';
 import 'message_box.dart';
@@ -21,7 +21,7 @@ class MessageScreen extends StatefulWidget {
 
 class _MessageScreenState extends State<MessageScreen> {
   late ApiServiceProvider apiService;
-
+  late bool isLoading = false;
   @override
   void initState() {
     super.initState();
@@ -33,7 +33,7 @@ class _MessageScreenState extends State<MessageScreen> {
     var authModel = context.read<AuthModelProvider>();
 
     return Scaffold(
-        appBar: CustomAppBar("General"),
+        // appBar: CustomAppBar(title: "General", enabled: true),
         // AppBar(
         //   title: Row(
         //     children: [
@@ -77,17 +77,17 @@ class _MessageScreenState extends State<MessageScreen> {
         //   ],
         // ),
         body: Column(children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ListView.builder(
-                  itemCount: widget.allMessages.length,
-                  itemBuilder: (context, index) => MessageBox(
-                        message: widget.allMessages[index],
-                      )),
-            ),
-          ),
-          MessageInputContainer(allMessages: widget.allMessages),
-        ]));
+      Expanded(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ListView.builder(
+              itemCount: widget.allMessages.length,
+              itemBuilder: (context, index) => MessageBox(
+                    message: widget.allMessages[index],
+                  )),
+        ),
+      ),
+      MessageInputContainer(allMessages: widget.allMessages),
+    ]));
   }
 }

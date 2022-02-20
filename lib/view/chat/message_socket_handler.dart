@@ -30,6 +30,7 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
   late String userId;
   late String cookie;
   bool isLoading = true;
+  final ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
@@ -73,7 +74,7 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
     }
   }
 
-  /// listener and handler for inbound messages
+  /// listener and handler for inbound and delivered messages
   void setupChannel() {
     var messageModel = context.read<MessageModelProvider>();
 
@@ -89,10 +90,18 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
         messageModel.movePendingMessageToRecent(
             responseMap['messageTempId'], deliveredDate, userId);
       }
+
+      if (scrollController.hasClients) {
+        scrollController.animateTo(
+          scrollController.position.minScrollExtent,
+          curve: Curves.easeOut,
+          duration: const Duration(milliseconds: 300),
+        );
+      }
     });
   }
 
-  /// hanlder for outbound messages
+  /// hanlder for sending messages
   void checkForNewMessages() {
     var messageModel = context.read<MessageModelProvider>();
 
@@ -107,21 +116,6 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
 
       messageModel.moveFirstMessageFromSendToPending();
     }
-  }
-
-  @override
-  void dipose() {
-    super.dispose();
-    channel.sink.close();
-    print('...closing socket.........');
-  }
-
-  @override
-  void deactivate() {
-    super.deactivate();
-    channel.sink.close();
-    var messageModel = context.read<MessageModelProvider>();
-    messageModel.clearRecentMessages();
   }
 
   @override
@@ -181,7 +175,10 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
             isLoading
                 ? const Scaffold(
                     body: Center(child: CircularProgressIndicator()))
-                : MessageScreen(allMessages: allMessages),
+                : MessageScreen(
+                    allMessages: allMessages,
+                    scrollController: scrollController,
+                  ),
             if (leaseAgreement != null &&
                 leaseAgreement.signatures.isNotEmpty) ...[
               const ViewPaymentsScreen(),
@@ -195,4 +192,19 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
 
   @override
   bool get wantKeepAlive => true;
+
+  @override
+  void dipose() {
+    super.dispose();
+    channel.sink.close();
+    print('...closing socket.........');
+  }
+
+  @override
+  void deactivate() {
+    super.deactivate();
+    channel.sink.close();
+    var messageModel = context.read<MessageModelProvider>();
+    messageModel.clearRecentMessages();
+  }
 }

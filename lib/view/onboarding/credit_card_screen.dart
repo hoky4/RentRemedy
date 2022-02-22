@@ -114,6 +114,9 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
                               Navigator.pushReplacementNamed(context, '/chat');
                             }
                           } on Exception catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                content: Text(
+                                    "Problem creating a setup intent: ${e.toString()}")));
                             print(
                                 "Problem creating a setup intent: ${e.toString()}");
                           }

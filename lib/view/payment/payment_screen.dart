@@ -49,7 +49,7 @@ class PaymentScreen extends StatelessWidget {
           children: [
             Text("Balance", style: categoryStyle),
             // SizedBox(height: 8.0),
-            Text("\$${payment.getDollarAmount}", style: amountStyle),
+            Text("\$${payment.chargeAmount}", style: amountStyle),
             Row(
               // crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,

@@ -47,10 +47,9 @@ class ViewPaymentScreen extends StatelessWidget {
                 : Text("Balance Unpaid", style: categoryStyle),
             const SizedBox(height: 16.0),
             payment.paymentDate != null
-                ? Text("Paid Amount: \$${payment.getDollarAmount}",
+                ? Text("Paid Amount: \$${payment.chargeAmount}",
                     style: bodyStyle)
-                : Text("Balance: \$${payment.getDollarAmount}",
-                    style: bodyStyle),
+                : Text("Balance: \$${payment.chargeAmount}", style: bodyStyle),
             // if (payment.isLate == true) ...[
             //   Text("Late Fee: \$${payment.lateFee}", style: bodyStyle)
             //   ],

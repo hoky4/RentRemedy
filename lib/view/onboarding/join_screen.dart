@@ -54,10 +54,14 @@ class JoinScreen extends StatelessWidget {
     return TextButton(
       onPressed: () async {
         try {
-          await apiService.joinLeaseAgreement(leaseAgreement.id);
           if (leaseAgreement.property != null) {
+            await apiService.joinLeaseAgreement(leaseAgreement.id);
+
             Navigator.pushReplacementNamed(context, '/terms',
                 arguments: JoinScreenArguments(leaseAgreement));
+          } else {
+            print("throwing exception");
+            throw Exception("Property not connected");
           }
         } on Exception catch (e) {
           ScaffoldMessenger.of(context)

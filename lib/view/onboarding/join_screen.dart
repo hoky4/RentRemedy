@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
 import 'package:rentremedy_mobile/view/onboarding/terms_screen.dart';
-
-import 'accept_screen.dart';
 import 'confirmation_screen.dart';
 
 class JoinScreen extends StatelessWidget {
   late LeaseAgreement leaseAgreement;
+
   JoinScreen({Key? key, required this.leaseAgreement}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    ApiService apiService = ApiService();
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Join Property'),
@@ -38,7 +36,7 @@ class JoinScreen extends StatelessWidget {
                     children: [
                       noButton(context),
                       SizedBox(width: 8),
-                      yesButton(apiService, context),
+                      yesButton(context),
                     ],
                   )
                 ],
@@ -46,7 +44,9 @@ class JoinScreen extends StatelessWidget {
     );
   }
 
-  Widget yesButton(ApiService apiService, BuildContext context) {
+  Widget yesButton(BuildContext context) {
+    ApiService apiService = Provider.of<ApiService>(context, listen: false);
+
     return TextButton(
       onPressed: () async {
         try {
@@ -114,7 +114,7 @@ class JoinScreen extends StatelessWidget {
           propertyDetailLine('Description: ', '${leaseAgreement.description}'),
           SizedBox(height: 8),
           propertyDetailLine(
-              '\Address: ', '\n${leaseAgreement.property.toString()}'),
+              'Address: ', '${leaseAgreement.property.toString()}'),
           SizedBox(height: 8),
           propertyDetailLine('Landlord: ',
               '${leaseAgreement.landlord.firstName.capitalize()} ${leaseAgreement.landlord.lastName.capitalize()}'),
@@ -125,10 +125,13 @@ class JoinScreen extends StatelessWidget {
 
   Widget propertyDetailLine(String title, String detail) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.baseline,
+      textBaseline: TextBaseline.alphabetic,
       children: [
         Text("$title",
             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
-        Text("$detail"),
+        Flexible(child: Text("$detail")),
       ],
     );
   }

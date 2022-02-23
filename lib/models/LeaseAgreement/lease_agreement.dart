@@ -13,12 +13,12 @@ part 'lease_agreement.g.dart';
 @JsonSerializable(explicitToJson: true)
 class LeaseAgreement {
   LeaseAgreement(
-      this.id, 
-      this.shortId, 
-      this.name, 
-      this.description, 
-      this.landlord, 
-      this.tenant, 
+      this.id,
+      this.shortId,
+      this.name,
+      this.description,
+      this.landlord,
+      this.tenant,
       this.signatures,
       this.startDate,
       this.endDate,
@@ -28,8 +28,7 @@ class LeaseAgreement {
       this.monthlyFees,
       this.amenitiesProvided,
       this.utilitiesProvided,
-      this.maintenanceProvided
-      );
+      this.maintenanceProvided);
 
   String id;
   String shortId;
@@ -47,8 +46,8 @@ class LeaseAgreement {
   List<Amenity> amenitiesProvided;
   List<Utility> utilitiesProvided;
   List<Maintenance> maintenanceProvided;
-  
-  factory LeaseAgreement.fromJson(Map<String, dynamic> json) =>
+
+  factory LeaseAgreement.fromJson(Map<String, dynamic?> json) =>
       _$LeaseAgreementFromJson(json);
 
   Map<String, dynamic> toJson() => _$LeaseAgreementToJson(this);

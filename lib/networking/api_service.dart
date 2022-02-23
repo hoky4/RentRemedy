@@ -1,22 +1,162 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
+import 'package:rentremedy_mobile/models/LeaseAgreement/status.dart';
+import 'package:rentremedy_mobile/models/Message/message.dart';
+import 'package:rentremedy_mobile/models/Message/websocket_message.dart';
+import 'package:rentremedy_mobile/models/Message/model.dart';
+import 'package:rentremedy_mobile/models/Payments/payment.dart';
+import 'package:rentremedy_mobile/models/Payments/payment_intent_response.dart';
+import 'package:rentremedy_mobile/models/Payments/setup_intent_response.dart';
 import 'package:rentremedy_mobile/models/User/user.dart';
 import 'package:rentremedy_mobile/networking/api.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:web_socket_channel/io.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class ApiService {
   final storage = FlutterSecureStorage();
   final myKey = 'myCookie';
   var cookie = '';
+  var channel;
+  var landlordId = '';
+  List<Message> conversation = [];
 
-  signLeaseAgreement(id) async {
+  dynamic makePaymentIntent(String id) async {
+    var result;
+
+    final response = await http.post(Uri.parse('$PAYMENT/payment-intent'),
+        headers: <String, String>{
+          'cookie': cookie,
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'paymentId': id,
+        }));
+
+    if (response.statusCode == 200) {
+      // print('resp-paid-balance: ${response.body}');
+
+      Map<String, dynamic> responseMap = jsonDecode(response.body);
+      PaymentIntentResponse payment =
+          PaymentIntentResponse.fromJson(responseMap);
+      // print('payment-intent-payment-paid-date: ${payment.payment.paymentDate}');
+      // print('payment-intent-payment-status: ${payment.status}');
+      return payment;
+    } else {
+      result = _handleError(response);
+    }
+    return result;
+  }
+
+  dynamic makeSetupIntent() async {
+    var result;
+
+    final response = await http.post(Uri.parse('$PAYMENT/setup-intent'),
+        headers: <String, String>{
+          'cookie': cookie,
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          "type": "card",
+          "number": "4242424242424242",
+          "expMonth": 7,
+          "expYear": 2025,
+          "cvc": "333"
+        }));
+
+    if (response.statusCode == 200) {
+      // print('resp-setup-intent: ${response.body}');
+
+      Map<String, dynamic> responseMap = jsonDecode(response.body);
+      SetupIntentResponse setupIntentResponse =
+          SetupIntentResponse.fromJson(responseMap);
+      // print('setup-intent-status: ${setupIntentResponse.status}');
+      return setupIntentResponse;
+    } else {
+      result = _handleError(response);
+    }
+    return result;
+  }
+
+  dynamic getPaymentById(String id) async {
+    var result;
+
+    final response = await http.get(
+      Uri.parse('$PAYMENT/$id'),
+      headers: <String, String>{
+        'cookie': cookie,
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      // print('resp-payment: ${response.body}');
+
+      Map<String, dynamic> responseMap = jsonDecode(response.body);
+      Payment payment = Payment.fromJson(responseMap);
+      return payment;
+    } else {
+      result = _handleError(response);
+    }
+    return result;
+  }
+
+  Message parseInboundMessageFromSocket(String inboundMessage) {
+    Map<String, dynamic> responseMap = jsonDecode(inboundMessage);
+    Message message = Message.fromJson(responseMap);
+    return message;
+  }
+
+  closeSocket() {
+    channel.sink.close();
+  }
+
+  Future<List<Message>> getConversation() async {
+    var result;
+    if (landlordId.isEmpty) {
+      landlordId = await getLandlordId();
+    }
+
+    print('landlord-id: $landlordId');
+    if (cookie.isEmpty) {
+      print('\ncookie is empty');
+      await readFromSecureStorage('myCookie');
+    }
+
+    final response = await http.get(
+      Uri.parse('$CONVERSATION/$landlordId'),
+      headers: <String, String>{
+        'cookie': cookie,
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print('resp-convo: ${response.body}');
+      Map<String, dynamic> responseMap = jsonDecode(response.body);
+
+      List<dynamic> conversationListDynamic = responseMap['conversation'];
+
+      List<Message> conversationList = List<Message>.from(
+          conversationListDynamic.map((i) => Message.fromJson(i)));
+      // messageModel.messages = conversationList;
+      conversation = conversationList;
+      return conversationList;
+    } else {
+      result = _handleError(response);
+    }
+
+    return result;
+  }
+
+  dynamic signLeaseAgreement(id) async {
     await readFromSecureStorage('myCookie');
+    var responseJson;
 
     final response = await http.post(
       Uri.parse('$LEASEAGREEMENTS/$id/signatures'),
@@ -28,10 +168,24 @@ class ApiService {
     );
 
     if (response.statusCode == 200) {
-      return;
+      print('\nresponse: ${response.body}');
+      Map<String, dynamic> responseMap = jsonDecode(response.body);
+
+      var leaseAgreement = LeaseAgreement.fromJson(responseMap);
+
+      // obtain shared preferences
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString('landlordId', leaseAgreement.landlord.id);
+      landlordId = leaseAgreement.landlord.id;
+      print('Saved landlordId: ${leaseAgreement.landlord.id}');
+      landlordId = leaseAgreement.landlord.id;
+
+      return leaseAgreement;
     } else {
-      _handleError(response);
+      responseJson = _handleError(response);
     }
+
+    return responseJson;
   }
 
   dynamic joinLeaseAgreement(id) async {
@@ -65,15 +219,16 @@ class ApiService {
         });
 
     if (response.statusCode == 200) {
-      print('\nresponse: ${response.body}');
+      print('\nget-la-response: ${response.body}');
       Map<String, dynamic> responseMap = jsonDecode(response.body);
-      
+
       List<dynamic> leaseAgreements = responseMap['leaseAgreements'];
       if (leaseAgreements.isEmpty) {
         throw NotFoundException("No Results Found");
       }
 
-      Map<String, dynamic> leaseAgreementMap = responseMap['leaseAgreements'][0];
+      Map<String, dynamic> leaseAgreementMap =
+          responseMap['leaseAgreements'][0];
       var leaseAgreement = LeaseAgreement.fromJson(leaseAgreementMap);
       print('la-status: ${leaseAgreement.status}');
       return leaseAgreement;
@@ -88,7 +243,8 @@ class ApiService {
     var leaseAgreement = null;
 
     final response = await http.get(
-        Uri.parse('$LEASEAGREEMENTS?tenant=$id&status=AssignedSigned'),
+        // Uri.parse('$LEASEAGREEMENTS?tenant=$id&status=AssignedSigned'),
+        Uri.parse('$LEASEAGREEMENTS?tenant=$id'),
         headers: <String, String>{
           'cookie': cookie,
           'Content-Type': 'application/json; charset=UTF-8',
@@ -103,7 +259,16 @@ class ApiService {
         return null;
       } else {
         print('Active lease agreement found.');
-        leaseAgreement = LeaseAgreement.fromJson(leaseAgreements[0]);
+
+        List<LeaseAgreement> leaseAgreementList = List<LeaseAgreement>.from(
+            leaseAgreements.map((i) => LeaseAgreement.fromJson(i)));
+
+        List<LeaseAgreement> signedLeaseAgreements = leaseAgreementList
+            .where((i) => (i.status == Status.AssignedUnsigned ||
+                i.status == Status.AssignedSigned))
+            .toList();
+        // leaseAgreement = LeaseAgreement.fromJson(leaseAgreements[0]);
+        leaseAgreement = signedLeaseAgreements.first;
         return leaseAgreement;
       }
     } else {
@@ -130,7 +295,7 @@ class ApiService {
           'roles': [0]
         }),
       )
-          .timeout(Duration(seconds: 7), onTimeout: () {
+          .timeout(Duration(seconds: 10), onTimeout: () {
         throw TimeoutException(
             'The connection has timed out, Please try again!');
       });
@@ -202,7 +367,6 @@ class ApiService {
       } else {
         responseJson = _handleError(response);
       }
-
     } on SocketException {
       print('No net');
       throw Exception('No Internet connection');
@@ -215,6 +379,7 @@ class ApiService {
     Map<String, dynamic> responseBodyJson = {};
     String message = '';
     final statusCode = response.statusCode;
+    print('statusCode: $statusCode');
 
     switch (statusCode) {
       case 400:
@@ -262,7 +427,7 @@ class ApiService {
           'password': password,
         }),
       )
-          .timeout(Duration(seconds: 7), onTimeout: () {
+          .timeout(Duration(seconds: 15), onTimeout: () {
         throw TimeoutException(
             'The connection has timed out, Please try again!');
       });
@@ -308,5 +473,17 @@ class ApiService {
   Future<void> readFromSecureStorage(myKey) async {
     cookie = (await storage.read(key: myKey))!;
   }
-}
 
+  Future<String> getUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    final id = (prefs.getString('id') ?? '');
+    return id;
+  }
+
+  Future<String> getLandlordId() async {
+    final prefs = await SharedPreferences.getInstance();
+    final id = (prefs.getString('landlordId') ?? '');
+
+    return id;
+  }
+}

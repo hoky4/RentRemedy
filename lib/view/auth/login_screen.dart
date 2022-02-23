@@ -1,15 +1,19 @@
 import 'dart:async';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
+import 'package:rentremedy_mobile/models/LeaseAgreement/status.dart';
+import 'package:rentremedy_mobile/models/User/user.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
 import 'package:rentremedy_mobile/view/auth/signup_screen.dart';
+import 'package:rentremedy_mobile/view/chat/message_screen.dart';
+import 'package:rentremedy_mobile/view/chat/message_socket_handler.dart';
+
 import 'package:rentremedy_mobile/view/onboarding/terms_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../chat/message_screen.dart';
+import '../chat/Old/message_screen2.dart';
 import '../onboarding/confirmation_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -25,9 +29,16 @@ class _LoginScreenState extends State<LoginScreen> {
   late Color _messageColor = Colors.black;
   final TextEditingController txtEmail = TextEditingController();
   final TextEditingController txtPassword = TextEditingController();
-  ApiService apiService = ApiService();
+
   bool isLoading = false;
   var hasLeaseAgreement = false;
+  late ApiService apiService;
+
+  @override
+  void initState() {
+    apiService = Provider.of<ApiService>(context, listen: false);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -167,23 +178,20 @@ class _LoginScreenState extends State<LoginScreen> {
                 setState(() {
                   isLoading = true;
                 });
-                await apiService.login(txtEmail.text, txtPassword.text);
+                User? user =
+                    await apiService.login(txtEmail.text, txtPassword.text);
                 LeaseAgreement? leaseAgreement =
                     await _findLeaseAgreementById();
                 bool hasLeaseAgreement = leaseAgreement != null ? true : false;
 
-                setState(() {
-                  _statusMessage = 'Login Success';
-                  _messageColor = Colors.green;
-                  isLoading = false;
-                });
-
                 if (hasLeaseAgreement) {
                   if (isSigned(leaseAgreement)) {
+                    // await apiService.getConversation();
+
                     Navigator.pushReplacement(
                         context,
                         new MaterialPageRoute(
-                            builder: (context) => MessageScreen()));
+                            builder: (context) => MessageSocketHandler()));
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                         content: Text("Lease Agreement not signed yet.")));
@@ -199,6 +207,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       new MaterialPageRoute(
                           builder: (context) => ConfirmationScreen()));
                 }
+
+                setState(() {
+                  _statusMessage = 'Login Success';
+                  _messageColor = Colors.green;
+                  isLoading = false;
+                });
               } on BadRequestException catch (e) {
                 setState(() {
                   _statusMessage = e.toString();
@@ -253,17 +267,23 @@ class _LoginScreenState extends State<LoginScreen> {
     final prefs = await SharedPreferences.getInstance();
     final id = (prefs.getString('id') ?? '');
     var leaseAgreement = await apiService.findExistingLeaseAgreements(id);
-    // return leaseAgreement != null ? Tuple2<bool, LeaseAgreement>(true, leaseAgreement) : const Tuple2<bool, LeaseAgreement?>(false, null);
     return leaseAgreement;
   }
 
   bool isSigned(LeaseAgreement leaseAgreement) {
     if (leaseAgreement.signatures.isEmpty) {
-      print("Existing Lease Agreement Not signed.");
+      print("Existing Lease Agreement NOT signed.");
       return false;
     }
     print("Existing Lease Agreement Signed.");
 
     return true;
+  }
+
+  @override
+  void dispose() {
+    txtEmail.dispose();
+    txtPassword.dispose();
+    super.dispose();
   }
 }

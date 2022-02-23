@@ -1,7 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/models/Fees/due_date_type.dart';
 import 'package:rentremedy_mobile/models/Fees/monthly_fees.dart';
 import 'package:rentremedy_mobile/models/LeaseAgreement/amenity.dart';
@@ -10,8 +10,11 @@ import 'package:rentremedy_mobile/models/LeaseAgreement/maintenance.dart';
 import 'package:rentremedy_mobile/models/LeaseAgreement/one_time_security_deposit.dart';
 import 'package:rentremedy_mobile/models/LeaseAgreement/utility.dart';
 import 'package:rentremedy_mobile/models/Property/property.dart';
+import 'package:rentremedy_mobile/models/User/user.dart';
 import 'package:rentremedy_mobile/networking/api_service.dart';
+import 'package:rentremedy_mobile/view/chat/Old/message_screen2.dart';
 import 'package:rentremedy_mobile/view/chat/message_screen.dart';
+import 'package:rentremedy_mobile/view/chat/message_socket_handler.dart';
 
 class TermsScreen extends StatelessWidget {
   LeaseAgreement leaseAgreement;
@@ -298,7 +301,7 @@ class TermsScreen extends StatelessWidget {
   }
 
   Widget acceptButton(BuildContext context, String leaseAgreemenId) {
-    ApiService apiService = ApiService();
+    ApiService apiService = Provider.of<ApiService>(context, listen: false);
 
     return ElevatedButton(
       style: ButtonStyle(
@@ -310,9 +313,17 @@ class TermsScreen extends StatelessWidget {
         ),
       ),
       onPressed: () async {
-        await apiService.signLeaseAgreement('$leaseAgreemenId');
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => MessageScreen()));
+        try {
+          await apiService.signLeaseAgreement('$leaseAgreemenId');
+          print('lease agreement signed');
+          await apiService.makeSetupIntent();
+          print('setup intent made.');
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => MessageSocketHandler()));
+        } on Exception catch (e) {
+          print(
+              "Error signing leaseAgreement or setting up card payment: ${e.toString()}");
+        }
       },
       child:
           Text('Accept', style: TextStyle(fontSize: 18, color: Colors.white)),

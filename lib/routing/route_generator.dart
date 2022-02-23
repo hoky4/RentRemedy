@@ -5,7 +5,7 @@ import 'package:rentremedy_mobile/View/Auth/login_screen.dart';
 import 'package:rentremedy_mobile/View/Auth/signup_screen.dart';
 import 'package:rentremedy_mobile/View/Chat/message_socket_handler.dart';
 import 'package:rentremedy_mobile/View/Onboarding/credit_card_screen.dart';
-import 'package:rentremedy_mobile/View/Onboarding/confirmation_screen.dart';
+import 'package:rentremedy_mobile/Old/confirmation_screen.dart';
 import 'package:rentremedy_mobile/View/Onboarding/terms_screen.dart';
 import 'package:rentremedy_mobile/View/Payment/view_payments_screen.dart';
 

@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/Model/Payments/payment.dart';
 import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
+import 'package:rentremedy_mobile/View/Payment/payment_screen.dart';
 import 'package:rentremedy_mobile/View/Payment/view_payment_screen.dart';
 
 class ViewPaymentsScreen extends StatefulWidget {
@@ -27,7 +28,7 @@ class _ViewPaymentsScreenState extends State<ViewPaymentsScreen>
     fetchPayments();
   }
 
-  fetchPayments() async {
+  Future fetchPayments() async {
     List<Payment> paymentsList = await apiService.getAllPayments();
     if (mounted) {
       setState(() {
@@ -46,11 +47,13 @@ class _ViewPaymentsScreenState extends State<ViewPaymentsScreen>
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: ListView.builder(
-                        itemCount: payments.length,
-                        itemBuilder: (context, index) => PaymentItem(
-                              payment: payments[index],
-                            )),
+                    child: RefreshIndicator(
+                      child: ListView.builder(
+                          itemCount: payments.length,
+                          itemBuilder: (context, index) =>
+                              PaymentItem(payment: payments[index])),
+                      onRefresh: fetchPayments,
+                    ),
                   ),
                 ),
               ] else ...[
@@ -78,10 +81,17 @@ class PaymentItem extends StatelessWidget {
           ? const Text('Status: Paid')
           : const Text('Status: Unpaid'),
       onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ViewPaymentScreen(payment: payment)));
+        if (payment.paymentDate != null) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ViewPaymentScreen(payment: payment)));
+        } else {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => PaymentScreen(payment: payment)));
+        }
       },
     ));
   }

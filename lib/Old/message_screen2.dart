@@ -4,10 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/Model/Message/message.dart';
 import 'package:rentremedy_mobile/Model/User/user.dart';
-import 'package:rentremedy_mobile/networking/api_service.dart';
-import '../../auth/login_screen.dart';
-import '../message_box.dart';
-import '../message_textbox.dart';
+import '../View/auth/login_screen.dart';
+import '../View/Chat/message_box.dart';
+import '../View/Chat/message_textbox.dart';
 
 class MessageScreen2 extends StatefulWidget {
   // User user;
@@ -28,7 +27,7 @@ class _MessageScreen2State extends State<MessageScreen2> {
   @override
   void initState() {
     super.initState();
-    apiService = Provider.of<ApiService>(context, listen: false);
+    // apiService = Provider.of<ApiService>(context, listen: false);
     conversation = apiService.conversation;
     loadId();
   }

@@ -58,16 +58,7 @@ class ApiServiceProvider {
           'cookie': _authModelProvider.cookie!,
           'Content-Type': 'application/json',
         },
-        body: jsonEncode(request.toJson())
-
-        // body: jsonEncode(<String, dynamic>{
-        //   "type": "card",
-        //   "number": "4242424242424242",
-        //   "expMonth": 7,
-        //   "expYear": 2025,
-        //   "cvc": "333"
-        // })
-        );
+        body: jsonEncode(request.toJson()));
 
     if (response.statusCode == 200) {
       Map<String, dynamic> responseMap = jsonDecode(response.body);
@@ -203,6 +194,7 @@ class ApiServiceProvider {
         });
 
     if (response.statusCode == 200) {
+      print("LA-resp: ${response.body}");
       Map<String, dynamic> responseMap = jsonDecode(response.body);
 
       List<dynamic> leaseAgreements = responseMap['leaseAgreements'];

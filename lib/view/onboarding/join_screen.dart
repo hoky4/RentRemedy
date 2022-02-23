@@ -18,6 +18,7 @@ class JoinScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: const Text('Join Property'),
         automaticallyImplyLeading: false,
       ),

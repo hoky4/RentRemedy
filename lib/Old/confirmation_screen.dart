@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/Model/LeaseAgreement/lease_agreement.dart';
 import 'package:rentremedy_mobile/Model/LeaseAgreement/status.dart';
-import 'package:rentremedy_mobile/Networking/api_exception.dart';
 import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
+import 'package:rentremedy_mobile/Providers/auth_model_provider.dart';
+import 'package:rentremedy_mobile/Providers/message_model_provider.dart';
 
-import 'join_screen.dart';
+import '../View/Onboarding/join_screen.dart';
 
 class ConfirmationScreen extends StatefulWidget {
   const ConfirmationScreen({Key? key}) : super(key: key);
@@ -31,10 +32,23 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var messageModel = context.watch<MessageModelProvider>();
+    var authModel = context.read<AuthModelProvider>();
+
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: const Text('Confirmation'),
         automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: const Icon(Icons.logout),
+          onPressed: () {
+            authModel.logoutUser();
+            messageModel.clearRecentMessages();
+            Navigator.pushReplacementNamed(context, '/login');
+          },
+          color: Colors.black,
+        ),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -44,8 +58,9 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 200),
-                  const Text("Enter the ID from the email.",
+                  const SizedBox(height: 150),
+                  const Text(
+                      "You will receive a confirmation code in your email after applying and being accepted to a rent remedy property.",
                       style:
                           TextStyle(fontWeight: FontWeight.w500, fontSize: 20)),
                   statusMessage(),

@@ -40,6 +40,7 @@ class _MessageScreenState extends State<MessageScreen> {
               controller: widget.scrollController,
               reverse: true,
               itemCount: widget.allMessages.length,
+              physics: const AlwaysScrollableScrollPhysics(),
               itemBuilder: (context, index) {
                 final reversedIndex = widget.allMessages.length - 1 - index;
                 return MessageBox(

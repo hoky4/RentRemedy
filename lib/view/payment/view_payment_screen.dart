@@ -47,9 +47,11 @@ class ViewPaymentScreen extends StatelessWidget {
                 : Text("Balance Unpaid", style: categoryStyle),
             const SizedBox(height: 16.0),
             payment.paymentDate != null
-                ? Text("Paid Amount: \$${payment.chargeAmount}",
+                ? Text(
+                    "Paid Amount: \$${convertToDollar(payment.chargeAmount)}",
                     style: bodyStyle)
-                : Text("Balance: \$${payment.chargeAmount}", style: bodyStyle),
+                : Text("Balance: \$${convertToDollar(payment.getDollarAmount)}",
+                    style: bodyStyle),
             // if (payment.isLate == true) ...[
             //   Text("Late Fee: \$${payment.lateFee}", style: bodyStyle)
             //   ],
@@ -68,6 +70,12 @@ class ViewPaymentScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String convertToDollar(amount) {
+    final value = amount / 100;
+    final money = NumberFormat("###,###,###", "en_us");
+    return money.format(value);
   }
 }
 

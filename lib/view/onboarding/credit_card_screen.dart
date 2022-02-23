@@ -39,6 +39,10 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
+      appBar: AppBar(
+          centerTitle: true,
+          automaticallyImplyLeading: false,
+          title: const Text("Credit Collection")),
       body: SafeArea(
         child: Column(children: <Widget>[
           CreditCardWidget(
@@ -52,6 +56,8 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
             animationDuration: const Duration(milliseconds: 1000),
             onCreditCardWidgetChange: (CreditCardBrand creditCardBrand) {},
           ),
+          const Text("Enter credit card information to continue.",
+              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20)),
           Expanded(
             child: SingleChildScrollView(
               child: Column(

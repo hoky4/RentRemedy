@@ -31,17 +31,21 @@ class TermsScreen extends StatelessWidget {
             automaticallyImplyLeading: false,
             centerTitle: true,
             actions: [
-              IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () {
-                    // Update with a unsigned lease agreement
-                    LoggedInUser? user = authModel.user;
-                    if (user != null) {
-                      user.leaseAgreement = leaseAgreement;
-                      authModel.loginUser(user);
-                      Navigator.pushReplacementNamed(context, '/chat');
-                    }
-                  })
+              TextButton(
+                style: TextButton.styleFrom(
+                  primary: Colors.white70, // foreground
+                ),
+                onPressed: () {
+                  // Update with a unsigned lease agreement
+                  LoggedInUser? user = authModel.user;
+                  if (user != null) {
+                    user.leaseAgreement = leaseAgreement;
+                    authModel.loginUser(user);
+                    Navigator.pushReplacementNamed(context, '/chat');
+                  }
+                },
+                child: Text('Sign Later'),
+              ),
             ]),
         body: Column(
           children: [
@@ -211,10 +215,12 @@ class TermsScreen extends StatelessWidget {
           children: [
             Text("One Time Security Deposit", style: categoryStyle),
             const SizedBox(height: 8.0),
-            Text("Deposit Amount: \$${securityDeposit.depositAmount}",
+            Text(
+                "Deposit Amount: \$${convertToDollar(securityDeposit.depositAmount)}",
                 style: bodyStyle),
             const SizedBox(height: 8.0),
-            Text("Refund Amount: \$${securityDeposit.refundAmount}",
+            Text(
+                "Refund Amount: \$${convertToDollar(securityDeposit.refundAmount)}",
                 style: bodyStyle),
             const SizedBox(height: 8.0),
             Text(
@@ -255,10 +261,12 @@ class TermsScreen extends StatelessWidget {
           children: [
             Text("Monthly Fees", style: categoryStyle),
             const SizedBox(height: 8.0),
-            Text("Rent Fee: \$${monthlyFees.rentFee.rentFeeAmount}",
+            Text(
+                "Rent Fee: \$${convertToDollar(monthlyFees.rentFee.rentFeeAmount)}",
                 style: bodyStyle),
             const SizedBox(height: 4.0),
-            Text("Pet Fee: \$${monthlyFees.petFee.petFeeAmount}",
+            Text(
+                "Pet Fee: \$${convertToDollar(monthlyFees.petFee.petFeeAmount)}",
                 style: bodyStyle),
             const SizedBox(height: 4.0),
             dueDateCondition(monthlyFees),
@@ -266,7 +274,8 @@ class TermsScreen extends StatelessWidget {
             //     "Due Date: ${DateFormat.yMMMMd('en_US').format(monthlyFees.dueDate!)}",
             //     style: bodyStyle),
             const SizedBox(height: 4.0),
-            Text("Late Fee: \$${monthlyFees.lateFee}", style: bodyStyle),
+            Text("Late Fee: \$${convertToDollar(monthlyFees.lateFee)}",
+                style: bodyStyle),
             const SizedBox(height: 4.0),
             Text("Grace Period: ${monthlyFees.gracePeriod} days",
                 style: bodyStyle),
@@ -343,6 +352,12 @@ class TermsScreen extends StatelessWidget {
       child: const Text('Accept',
           style: TextStyle(fontSize: 18, color: Colors.white)),
     );
+  }
+
+  String convertToDollar(amount) {
+    final value = amount / 100;
+    final money = NumberFormat("###,###,###", "en_us");
+    return money.format(value);
   }
 }
 

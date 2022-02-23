@@ -49,7 +49,8 @@ class PaymentScreen extends StatelessWidget {
           children: [
             Text("Balance", style: categoryStyle),
             // SizedBox(height: 8.0),
-            Text("\$${payment.chargeAmount}", style: amountStyle),
+            Text("\$${convertToDollar(payment.chargeAmount)}",
+                style: amountStyle),
             Row(
               // crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -108,6 +109,12 @@ class PaymentScreen extends StatelessWidget {
                 fontWeight: FontWeight.w400)),
       ),
     );
+  }
+
+  String convertToDollar(amount) {
+    final value = amount / 100;
+    final money = NumberFormat("###,###,###", "en_us");
+    return money.format(value);
   }
 }
 

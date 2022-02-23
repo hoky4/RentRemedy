@@ -1,14 +1,12 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:rentremedy_mobile/models/Message/message_model.dart';
-import 'package:rentremedy_mobile/networking/api_service.dart';
-import 'package:rentremedy_mobile/view/auth/login_screen.dart';
-import 'package:rentremedy_mobile/view/auth/route_page.dart';
-import 'package:rentremedy_mobile/view/onboarding/terms_screen.dart';
+import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
+import 'package:rentremedy_mobile/Providers/auth_model_provider.dart';
+import 'package:rentremedy_mobile/Providers/message_model_provider.dart';
+import 'package:rentremedy_mobile/Routing/route_page.dart';
 
-void main() {
+void main() async {
   HttpOverrides.global = MyHttpOverrides();
   runApp(const MyApp());
 }
@@ -21,17 +19,21 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        Provider(create: (context) => ApiService()),
-        ChangeNotifierProvider<MessageModel>(
-            create: (context) => MessageModel())
-      ],
-      child: MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
+        ChangeNotifierProvider<AuthModelProvider>(
+            create: (context) => AuthModelProvider()),
+        ProxyProvider<AuthModelProvider, ApiServiceProvider>(
+          create: (context) => ApiServiceProvider(),
+          update: (context, authModel, apiService) {
+            if (apiService == null)
+              throw ArgumentError.notNull('apiService is null');
+            apiService.authModelProvider = authModel;
+            return apiService;
+          },
         ),
-        home: const LoginScreen(),
-      ),
+        ChangeNotifierProvider<MessageModelProvider>(
+            create: (context) => MessageModelProvider())
+      ],
+      child: const RoutePage(),
     );
   }
 }

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
-import 'package:rentremedy_mobile/models/LeaseAgreement/status.dart';
-import 'package:rentremedy_mobile/networking/api_exception.dart';
-import 'package:rentremedy_mobile/networking/api_service.dart';
+import 'package:rentremedy_mobile/Model/LeaseAgreement/lease_agreement.dart';
+import 'package:rentremedy_mobile/Model/LeaseAgreement/status.dart';
+import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
+import 'package:rentremedy_mobile/Providers/auth_model_provider.dart';
+import 'package:rentremedy_mobile/Providers/message_model_provider.dart';
 
-import 'join_screen.dart';
+import '../View/Onboarding/join_screen.dart';
 
 class ConfirmationScreen extends StatefulWidget {
   const ConfirmationScreen({Key? key}) : super(key: key);
@@ -17,7 +18,7 @@ class ConfirmationScreen extends StatefulWidget {
 class _ConfirmationScreenState extends State<ConfirmationScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController txtCode = TextEditingController();
-  var apiService;
+  late ApiServiceProvider apiService;
 
   String _statusMessage = '';
   late Color _messageColor = Colors.black;
@@ -25,27 +26,41 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
 
   @override
   void initState() {
-    apiService = Provider.of<ApiService>(context, listen: false);
+    apiService = Provider.of<ApiServiceProvider>(context, listen: false);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    var messageModel = context.watch<MessageModelProvider>();
+    var authModel = context.read<AuthModelProvider>();
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Confirmation'),
+        centerTitle: true,
+        title: const Text('Confirmation'),
         automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: const Icon(Icons.logout),
+          onPressed: () {
+            authModel.logoutUser();
+            messageModel.clearRecentMessages();
+            Navigator.pushReplacementNamed(context, '/login');
+          },
+          color: Colors.black,
+        ),
       ),
       body: SingleChildScrollView(
         child: Container(
-            padding: EdgeInsets.all(36),
+            padding: const EdgeInsets.all(36),
             child: Form(
               key: _formKey,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(height: 200),
-                  Text("Enter the ID from the email.",
+                  const SizedBox(height: 150),
+                  const Text(
+                      "You will receive a confirmation code in your email after applying and being accepted to a rent remedy property.",
                       style:
                           TextStyle(fontWeight: FontWeight.w500, fontSize: 20)),
                   statusMessage(),
@@ -56,7 +71,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                       maintainAnimation: true,
                       maintainState: true,
                       visible: isLoading,
-                      child: CircularProgressIndicator()),
+                      child: const CircularProgressIndicator()),
                 ],
               ),
             )),
@@ -88,27 +103,11 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                 });
                 return;
               } else if (leaseAgreement.status == Status.Unassigned) {
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => JoinScreen(
-                              leaseAgreement: leaseAgreement,
-                            )));
+                Navigator.pushReplacementNamed(context, '/join',
+                    arguments: JoinScreenArguments(leaseAgreement));
               }
             }
-          } on BadRequestException catch (e) {
-            setState(() {
-              _statusMessage = e.toString();
-              _messageColor = Colors.red;
-              isLoading = false;
-            });
-          } on UnauthorizedException catch (e) {
-            setState(() {
-              _statusMessage = e.toString();
-              _messageColor = Colors.red;
-              isLoading = false;
-            });
-          } on NotFoundException catch (e) {
+          } on Exception catch (e) {
             setState(() {
               _statusMessage = e.toString();
               _messageColor = Colors.red;
@@ -117,7 +116,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
           }
         }
       },
-      child: Text('Submit'),
+      child: const Text('Submit'),
     );
   }
 
@@ -125,7 +124,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
     return TextFormField(
         controller: txtCode,
         keyboardType: TextInputType.text,
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
             hintText: 'Enter Confirmation Code', icon: Icon(Icons.lock)),
         validator: (text) => text!.isEmpty ? 'Code is required' : null);
   }

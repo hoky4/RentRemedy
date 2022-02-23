@@ -1,11 +1,7 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:rentremedy_mobile/networking/api_exception.dart';
-import 'package:rentremedy_mobile/networking/api_service.dart';
-
+import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
 import 'login_screen.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -23,12 +19,12 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController txtLastName = TextEditingController();
   final TextEditingController txtEmail = TextEditingController();
   final TextEditingController txtPassword = TextEditingController();
-  var apiService;
+  late ApiServiceProvider apiService;
   bool isLoading = false;
 
   @override
   void initState() {
-    apiService = Provider.of<ApiService>(context, listen: false);
+    apiService = Provider.of<ApiServiceProvider>(context, listen: false);
     super.initState();
   }
 
@@ -38,14 +34,14 @@ class _SignupScreenState extends State<SignupScreen> {
         body: SingleChildScrollView(
       child: Container(
           alignment: Alignment.center,
-          padding: EdgeInsets.all(36),
+          padding: const EdgeInsets.all(36),
           child: Form(
               key: _formKey,
               child: Column(
                 children: [
-                  SizedBox(height: 100),
+                  const SizedBox(height: 100),
                   titleLogo(),
-                  SizedBox(height: 25),
+                  const SizedBox(height: 25),
                   statusMessage(),
                   firstNameInput(),
                   lastNameInput(),
@@ -57,7 +53,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       maintainAnimation: true,
                       maintainState: true,
                       visible: isLoading,
-                      child: CircularProgressIndicator()),
+                      child: const CircularProgressIndicator()),
                   showLoginButton(),
                 ],
               ))),
@@ -82,12 +78,12 @@ class _SignupScreenState extends State<SignupScreen> {
 
   Widget firstNameInput() {
     return Padding(
-        padding: EdgeInsets.only(top: 24),
+        padding: const EdgeInsets.only(top: 24),
         child: TextFormField(
           controller: txtFirstName,
           keyboardType: TextInputType.name,
-          decoration:
-              InputDecoration(hintText: 'First Name', icon: Icon(Icons.person)),
+          decoration: const InputDecoration(
+              hintText: 'First Name', icon: Icon(Icons.person)),
           validator: (text) => text!.isEmpty ? 'First Name is required' : null,
           onChanged: (value) {},
         ));
@@ -95,44 +91,44 @@ class _SignupScreenState extends State<SignupScreen> {
 
   Widget lastNameInput() {
     return Padding(
-        padding: EdgeInsets.only(top: 24),
+        padding: const EdgeInsets.only(top: 24),
         child: TextFormField(
           controller: txtLastName,
           keyboardType: TextInputType.name,
-          decoration:
-              InputDecoration(hintText: 'Last Name', icon: Icon(Icons.person)),
+          decoration: const InputDecoration(
+              hintText: 'Last Name', icon: Icon(Icons.person)),
           validator: (text) => text!.isEmpty ? 'Last Name is required' : null,
         ));
   }
 
   Widget emailInput() {
     return Padding(
-        padding: EdgeInsets.only(top: 24),
+        padding: const EdgeInsets.only(top: 24),
         child: TextFormField(
           controller: txtEmail,
           keyboardType: TextInputType.emailAddress,
           decoration:
-              InputDecoration(hintText: 'Email', icon: Icon(Icons.email)),
+              const InputDecoration(hintText: 'Email', icon: Icon(Icons.email)),
           validator: (text) => text!.isEmpty ? 'Email is required' : null,
         ));
   }
 
   Widget passwordInput() {
     return Padding(
-        padding: EdgeInsets.only(top: 24),
+        padding: const EdgeInsets.only(top: 24),
         child: TextFormField(
           controller: txtPassword,
           keyboardType: TextInputType.emailAddress,
           obscureText: true,
-          decoration:
-              InputDecoration(hintText: 'Password', icon: Icon(Icons.lock)),
+          decoration: const InputDecoration(
+              hintText: 'Password', icon: Icon(Icons.lock)),
           validator: (text) => text!.isEmpty ? 'Password is required' : null,
         ));
   }
 
   Widget signupButton() {
     return Padding(
-        padding: EdgeInsets.only(top: 48),
+        padding: const EdgeInsets.only(top: 48),
         child: Container(
             height: 60,
             width: 200,
@@ -146,7 +142,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   ),
                 ),
               ),
-              child: Text(
+              child: const Text(
                 'Sign up',
                 style: TextStyle(fontSize: 18, color: Colors.white),
               ),
@@ -164,17 +160,9 @@ class _SignupScreenState extends State<SignupScreen> {
                       _messageColor = Colors.green;
                       isLoading = false;
                     });
-                    Navigator.push(
-                        context,
-                        new MaterialPageRoute(
-                            builder: (context) => LoginScreen()));
-                  } on BadRequestException catch (e) {
-                    setState(() {
-                      _statusMessage = e.toString();
-                      _messageColor = Colors.red;
-                      isLoading = false;
-                    });
-                  } on TimeoutException catch (e) {
+
+                    Navigator.pop(context);
+                  } on Exception catch (e) {
                     setState(() {
                       _statusMessage = e.toString();
                       _messageColor = Colors.red;
@@ -192,16 +180,16 @@ class _SignupScreenState extends State<SignupScreen> {
     return Padding(
         padding: const EdgeInsets.fromLTRB(65, 20, 0, 0),
         child: Row(children: [
-          Text(
+          const Text(
             'Already have Account ? ',
             style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
           ),
           InkWell(
             onTap: () {
-              Navigator.push(context,
-                  new MaterialPageRoute(builder: (context) => LoginScreen()));
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => const LoginScreen()));
             },
-            child: Text(
+            child: const Text(
               'Login',
               style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
             ),

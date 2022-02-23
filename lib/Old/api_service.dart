@@ -3,15 +3,15 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
-import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
-import 'package:rentremedy_mobile/models/LeaseAgreement/status.dart';
-import 'package:rentremedy_mobile/models/Message/message.dart';
-import 'package:rentremedy_mobile/models/Message/websocket_message.dart';
-import 'package:rentremedy_mobile/models/Message/model.dart';
-import 'package:rentremedy_mobile/models/Payments/payment.dart';
-import 'package:rentremedy_mobile/models/Payments/payment_intent_response.dart';
-import 'package:rentremedy_mobile/models/Payments/setup_intent_response.dart';
-import 'package:rentremedy_mobile/models/User/user.dart';
+import 'package:rentremedy_mobile/Model/LeaseAgreement/lease_agreement.dart';
+import 'package:rentremedy_mobile/Model/LeaseAgreement/status.dart';
+import 'package:rentremedy_mobile/Model/Message/message.dart';
+import 'package:rentremedy_mobile/Model/Message/websocket_message.dart';
+import 'package:rentremedy_mobile/Model/Message/model.dart';
+import 'package:rentremedy_mobile/Model/Payments/payment.dart';
+import 'package:rentremedy_mobile/Model/Payments/payment_intent_response.dart';
+import 'package:rentremedy_mobile/Model/Payments/setup_intent_response.dart';
+import 'package:rentremedy_mobile/Model/User/user.dart';
 import 'package:rentremedy_mobile/networking/api.dart';
 import 'package:rentremedy_mobile/networking/api_exception.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,13 +19,7 @@ import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class ApiService {
-  final storage = FlutterSecureStorage();
-  final myKey = 'myCookie';
-  var cookie = '';
-  var channel;
-  var landlordId = '';
-  List<Message> conversation = [];
-
+  /*
   dynamic makePaymentIntent(String id) async {
     var result;
 
@@ -51,8 +45,9 @@ class ApiService {
       result = _handleError(response);
     }
     return result;
-  }
+  }*/
 
+  /*
   dynamic makeSetupIntent() async {
     var result;
 
@@ -81,8 +76,9 @@ class ApiService {
       result = _handleError(response);
     }
     return result;
-  }
+  }*/
 
+  /*
   dynamic getPaymentById(String id) async {
     var result;
 
@@ -104,18 +100,16 @@ class ApiService {
       result = _handleError(response);
     }
     return result;
-  }
+  }*/
 
+  /*
   Message parseInboundMessageFromSocket(String inboundMessage) {
     Map<String, dynamic> responseMap = jsonDecode(inboundMessage);
     Message message = Message.fromJson(responseMap);
     return message;
-  }
+  }*/
 
-  closeSocket() {
-    channel.sink.close();
-  }
-
+  /*
   Future<List<Message>> getConversation() async {
     var result;
     if (landlordId.isEmpty) {
@@ -137,7 +131,7 @@ class ApiService {
     );
 
     if (response.statusCode == 200) {
-      print('resp-convo: ${response.body}');
+      // print('resp-convo: ${response.body}');
       Map<String, dynamic> responseMap = jsonDecode(response.body);
 
       List<dynamic> conversationListDynamic = responseMap['conversation'];
@@ -145,15 +139,15 @@ class ApiService {
       List<Message> conversationList = List<Message>.from(
           conversationListDynamic.map((i) => Message.fromJson(i)));
       // messageModel.messages = conversationList;
-      conversation = conversationList;
       return conversationList;
     } else {
       result = _handleError(response);
     }
 
     return result;
-  }
+  }*/
 
+  /*
   dynamic signLeaseAgreement(id) async {
     await readFromSecureStorage('myCookie');
     var responseJson;
@@ -186,8 +180,9 @@ class ApiService {
     }
 
     return responseJson;
-  }
+  }*/
 
+  /*
   dynamic joinLeaseAgreement(id) async {
     var responseJson;
     await readFromSecureStorage('myCookie');
@@ -207,12 +202,13 @@ class ApiService {
       responseJson = _handleError(response);
     }
     return responseJson;
-  }
+  }*/
 
-  Future<LeaseAgreement?> getLeaseAgreement(code) async {
+  /*
+  Future<LeaseAgreement?> getLeaseAgreement(shortId) async {
     await readFromSecureStorage('myCookie');
 
-    final response = await http.get(Uri.parse('$LEASEAGREEMENTS?code=$code'),
+    final response = await http.get(Uri.parse('$LEASEAGREEMENTS?code=$shortId'),
         headers: <String, String>{
           'cookie': cookie,
           'Content-Type': 'application/json; charset=UTF-8',
@@ -236,8 +232,9 @@ class ApiService {
       _handleError(response);
     }
     return null;
-  }
+  }*/
 
+  /*
   dynamic findExistingLeaseAgreements(id) async {
     await readFromSecureStorage('myCookie');
     var leaseAgreement = null;
@@ -274,8 +271,9 @@ class ApiService {
     } else {
       _handleError(response);
     }
-  }
+  }*/
 
+  /*
   dynamic signup(firstName, lastName, email, password) async {
     var responseJson;
 
@@ -312,8 +310,9 @@ class ApiService {
       throw Exception('No Internet connection');
     }
     return responseJson;
-  }
+  }*/
 
+  /*
   dynamic logout() async {
     var responseJson;
 
@@ -343,10 +342,10 @@ class ApiService {
 
     return responseJson;
   }
+  */
 
+  /*
   dynamic loggedInUser() async {
-    var responseJson;
-
     await readFromSecureStorage('myCookie');
     if (cookie.isEmpty) {
       print('No existing cookie found.');
@@ -365,16 +364,15 @@ class ApiService {
         User user = User.fromJson(responseMap);
         return user;
       } else {
-        responseJson = _handleError(response);
+        return _handleError(response);
       }
     } on SocketException {
       print('No net');
       throw Exception('No Internet connection');
     }
+  }*/
 
-    return responseJson;
-  }
-
+  /*
   dynamic _handleError(http.Response response) async {
     Map<String, dynamic> responseBodyJson = {};
     String message = '';
@@ -409,8 +407,9 @@ class ApiService {
         throw Exception('Error occured while Communication with Server with'
             'StatusCode: ${response.statusCode}');
     }
-  }
+  }*/
 
+  /*
   dynamic login(email, password) async {
     var responseJson;
 
@@ -464,26 +463,26 @@ class ApiService {
     }
 
     return responseJson;
-  }
+  }*/
 
-  Future writeToSecureStorage(myKey, rawCookie) async {
-    await storage.write(key: myKey, value: rawCookie);
-  }
+  // Future writeToSecureStorage(myKey, rawCookie) async {
+  //   await storage.write(key: myKey, value: rawCookie);
+  // }
 
-  Future<void> readFromSecureStorage(myKey) async {
-    cookie = (await storage.read(key: myKey))!;
-  }
+  // Future<void> readFromSecureStorage(myKey) async {
+  //   cookie = (await storage.read(key: myKey))!;
+  // }
 
-  Future<String> getUserId() async {
-    final prefs = await SharedPreferences.getInstance();
-    final id = (prefs.getString('id') ?? '');
-    return id;
-  }
+  // Future<String> getUserId() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final id = (prefs.getString('id') ?? '');
+  //   return id;
+  // }
 
-  Future<String> getLandlordId() async {
-    final prefs = await SharedPreferences.getInstance();
-    final id = (prefs.getString('landlordId') ?? '');
+  // Future<String> getLandlordId() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final id = (prefs.getString('landlordId') ?? '');
 
-    return id;
-  }
+  //   return id;
+  // }
 }

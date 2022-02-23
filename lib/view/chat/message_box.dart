@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:rentremedy_mobile/models/Message/message.dart';
-import 'package:rentremedy_mobile/models/Message/message_type.dart';
-import 'package:rentremedy_mobile/models/Payments/payment.dart';
-import 'package:rentremedy_mobile/networking/api_exception.dart';
-import 'package:rentremedy_mobile/networking/api_service.dart';
-import 'package:rentremedy_mobile/view/payment/payment_screen.dart';
-import 'package:rentremedy_mobile/view/payment/payment_success_screen.dart';
-import 'package:rentremedy_mobile/view/payment/view_payment_screen.dart';
+import 'package:rentremedy_mobile/Model/Message/message.dart';
+import 'package:rentremedy_mobile/Model/Message/message_type.dart';
+import 'package:rentremedy_mobile/Model/Payments/payment.dart';
+import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
+import 'package:rentremedy_mobile/Providers/auth_model_provider.dart';
+import 'package:rentremedy_mobile/View/Payment/payment_screen.dart';
+import 'package:rentremedy_mobile/View/Payment/payment_success_screen.dart';
+import 'package:rentremedy_mobile/View/Payment/view_payment_screen.dart';
 
 class MessageBox extends StatelessWidget {
   final Message message;
@@ -15,9 +15,10 @@ class MessageBox extends StatelessWidget {
   const MessageBox({Key? key, required this.message}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    String landlordId =
-        Provider.of<ApiService>(context, listen: false).landlordId;
-    ApiService apiService = Provider.of<ApiService>(context, listen: false);
+    String? landlordId = context.read<AuthModelProvider>().landlordId;
+
+    ApiServiceProvider apiService =
+        Provider.of<ApiServiceProvider>(context, listen: false);
     String messageBtnText =
         message.type == MessageType.PaymentDue ? 'Pay Now' : 'View Payment';
     Color? messageBtnColor = message.type == MessageType.PaymentDue
@@ -31,11 +32,11 @@ class MessageBox extends StatelessWidget {
             ? MainAxisAlignment.start
             : MainAxisAlignment.end,
         children: [
-          if (message.sender == landlordId) ...[Icon(Icons.person_pin)],
+          if (message.sender == landlordId) ...[const Icon(Icons.person_pin)],
           Container(
             constraints: BoxConstraints(
                 maxWidth: MediaQuery.of(context).size.width * .6),
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
               color: Colors.blue
                   .withOpacity(message.sender != landlordId ? 1 : 0.08),
@@ -75,11 +76,11 @@ class MessageBox extends StatelessWidget {
                                   builder: (context) =>
                                       PaymentScreen(payment: payment)));
                         } else {
-                          Navigator.pushReplacement(
+                          Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      PaymentSuccessScreen()));
+                                      const PaymentSuccessScreen()));
                         }
                       } else if (message.type ==
                           MessageType.PaymentSuccessful) {
@@ -91,7 +92,8 @@ class MessageBox extends StatelessWidget {
                       }
                     },
                     child: Text(messageBtnText,
-                        style: TextStyle(fontSize: 18, color: Colors.white)),
+                        style:
+                            const TextStyle(fontSize: 18, color: Colors.white)),
                   )
                 ]
               ],

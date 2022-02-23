@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:rentremedy_mobile/models/Payments/payment.dart';
-import 'package:rentremedy_mobile/networking/api_service.dart';
-import 'package:rentremedy_mobile/view/payment/payment_success_screen.dart';
+import 'package:rentremedy_mobile/Model/Payments/payment.dart';
+import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
+import 'package:rentremedy_mobile/View/Payment/payment_success_screen.dart';
 
 class PaymentScreen extends StatelessWidget {
   Payment payment;
@@ -15,7 +15,7 @@ class PaymentScreen extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Pay Balance"),
+          title: const Text("Pay Balance"),
           centerTitle: true,
         ),
         body: Column(
@@ -25,14 +25,14 @@ class PaymentScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     balanceInfo(),
-                    Divider(
+                    const Divider(
                         thickness: 1, indent: 32, endIndent: 32, height: 48),
                   ],
                 ),
               ),
             ),
             acceptButton(context, payment.id),
-            SizedBox(height: 8.0)
+            const SizedBox(height: 8.0)
           ],
         ),
       ),
@@ -49,15 +49,16 @@ class PaymentScreen extends StatelessWidget {
           children: [
             Text("Balance", style: categoryStyle),
             // SizedBox(height: 8.0),
-            Text("\$${payment.getDollarAmount}", style: amountStyle),
+            Text("\$${convertToDollar(payment.chargeAmount)}",
+                style: amountStyle),
             Row(
               // crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("Due: ",
+                const Text("Due: ",
                     style:
                         TextStyle(fontSize: 18, fontWeight: FontWeight.w300)),
-                Text("${DateFormat.yMMMMd('en_US').format(payment.dueDate)}",
+                Text(DateFormat.yMMMMd('en_US').format(payment.dueDate),
                     style: bodyStyle),
               ],
             )
@@ -68,7 +69,8 @@ class PaymentScreen extends StatelessWidget {
   }
 
   Widget acceptButton(BuildContext context, String leaseAgreemenId) {
-    ApiService apiService = Provider.of<ApiService>(context, listen: false);
+    ApiServiceProvider apiService =
+        Provider.of<ApiServiceProvider>(context, listen: false);
 
     return SizedBox(
       child: ElevatedButton(
@@ -88,22 +90,31 @@ class PaymentScreen extends StatelessWidget {
         // ),
         onPressed: () async {
           try {
-            await apiService.makePaymentIntent('${payment.id}');
+            await apiService.makePaymentIntent(payment.id);
+            // Navigator.pop(context);
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => PaymentSuccessScreen()));
+                    builder: (context) => const PaymentSuccessScreen()));
           } on Exception catch (e) {
             print("Exception while making payment intent.");
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(e.toString())));
           }
         },
-        child: Text('Pay Balance',
+        child: const Text('Pay Balance',
             style: TextStyle(
                 fontSize: 24,
                 color: Colors.white,
                 fontWeight: FontWeight.w400)),
       ),
     );
+  }
+
+  String convertToDollar(amount) {
+    final value = amount / 100;
+    final money = NumberFormat("###,###,###", "en_us");
+    return money.format(value);
   }
 }
 

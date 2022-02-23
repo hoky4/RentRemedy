@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:rentremedy_mobile/networking/api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'login_screen.dart';
+import '../View/Auth/login_screen.dart';
 
 class SuccessScreen extends StatefulWidget {
   SuccessScreen({
@@ -15,7 +14,7 @@ class SuccessScreen extends StatefulWidget {
 
 class _SuccessScreenState extends State<SuccessScreen> {
   String _name = '';
-  ApiService apiService = ApiService();
+  // ApiService apiService = ApiService();
 
   @override
   void initState() {
@@ -35,20 +34,22 @@ class _SuccessScreenState extends State<SuccessScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Successfully Logged in'),
+          title: const Text('Successfully Logged in'),
           automaticallyImplyLeading: false,
           actions: [
             IconButton(
-              icon: Icon(Icons.logout),
+              icon: const Icon(Icons.logout),
               onPressed: () async {
-                await apiService.logout();
+                // await apiService.logout();
 
-                Navigator.push(context,
-                    new MaterialPageRoute(builder: (context) => LoginScreen()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const LoginScreen()));
               },
             )
           ],
         ),
-        body: Center(child: Text('Welcome, ${_name}!')));
+        body: Center(child: Text('Welcome, $_name!')));
   }
 }

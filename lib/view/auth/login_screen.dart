@@ -1,20 +1,10 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:rentremedy_mobile/models/LeaseAgreement/lease_agreement.dart';
-import 'package:rentremedy_mobile/models/LeaseAgreement/status.dart';
-import 'package:rentremedy_mobile/models/User/user.dart';
-import 'package:rentremedy_mobile/networking/api_exception.dart';
-import 'package:rentremedy_mobile/networking/api_service.dart';
-import 'package:rentremedy_mobile/view/auth/signup_screen.dart';
-import 'package:rentremedy_mobile/view/chat/message_screen.dart';
-import 'package:rentremedy_mobile/view/chat/message_socket_handler.dart';
-
-import 'package:rentremedy_mobile/view/onboarding/terms_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../chat/Old/message_screen2.dart';
-import '../onboarding/confirmation_screen.dart';
+import 'package:rentremedy_mobile/Model/Auth/logged_in_user.dart';
+import 'package:rentremedy_mobile/Model/LeaseAgreement/lease_agreement.dart';
+import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
+import 'package:rentremedy_mobile/Providers/auth_model_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -32,11 +22,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool isLoading = false;
   var hasLeaseAgreement = false;
-  late ApiService apiService;
+  late ApiServiceProvider apiService;
 
   @override
   void initState() {
-    apiService = Provider.of<ApiService>(context, listen: false);
+    apiService = Provider.of<ApiServiceProvider>(context, listen: false);
     super.initState();
   }
 
@@ -54,9 +44,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SizedBox(height: 100),
+                    const SizedBox(height: 100),
                     titleLogo(),
-                    SizedBox(height: 25),
+                    const SizedBox(height: 25),
                     statusMessage(),
                     emailInput(),
                     passwordInput(),
@@ -66,7 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         maintainAnimation: true,
                         maintainState: true,
                         visible: isLoading,
-                        child: CircularProgressIndicator()),
+                        child: const CircularProgressIndicator()),
                     showSignupButton(),
                   ],
                 ),
@@ -106,19 +96,19 @@ class _LoginScreenState extends State<LoginScreen> {
         },
         decoration: InputDecoration(
           hintText: 'Enter Email',
-          icon: Icon(Icons.email),
+          icon: const Icon(Icons.email),
           enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: Colors.grey)),
+              borderSide: const BorderSide(color: Colors.grey)),
           focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: Colors.blue)),
+              borderSide: const BorderSide(color: Colors.blue)),
           errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: Colors.red)),
+              borderSide: const BorderSide(color: Colors.red)),
           focusedErrorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: Colors.red)),
+              borderSide: const BorderSide(color: Colors.red)),
         ),
       ),
     );
@@ -139,27 +129,29 @@ class _LoginScreenState extends State<LoginScreen> {
         },
         decoration: InputDecoration(
           hintText: 'Enter Password',
-          icon: Icon(Icons.lock),
+          icon: const Icon(Icons.lock),
           enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: Colors.grey)),
+              borderSide: const BorderSide(color: Colors.grey)),
           focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: Colors.blue)),
+              borderSide: const BorderSide(color: Colors.blue)),
           errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: Colors.red)),
+              borderSide: const BorderSide(color: Colors.red)),
           focusedErrorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: Colors.red)),
+              borderSide: const BorderSide(color: Colors.red)),
         ),
       ),
     );
   }
 
   Widget loginButton() {
+    var authModel = context.read<AuthModelProvider>();
+
     return Padding(
-      padding: EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16.0),
       child: Container(
         height: 50,
         width: 400,
@@ -178,54 +170,26 @@ class _LoginScreenState extends State<LoginScreen> {
                 setState(() {
                   isLoading = true;
                 });
-                User? user =
+                LoggedInUser user =
                     await apiService.login(txtEmail.text, txtPassword.text);
+
                 LeaseAgreement? leaseAgreement =
-                    await _findLeaseAgreementById();
-                bool hasLeaseAgreement = leaseAgreement != null ? true : false;
+                    await apiService.findExistingLeaseAgreements(user);
 
-                if (hasLeaseAgreement) {
-                  if (isSigned(leaseAgreement)) {
-                    // await apiService.getConversation();
-
-                    Navigator.pushReplacement(
-                        context,
-                        new MaterialPageRoute(
-                            builder: (context) => MessageSocketHandler()));
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text("Lease Agreement not signed yet.")));
-                    Navigator.pushReplacement(
-                        context,
-                        new MaterialPageRoute(
-                            builder: (context) =>
-                                TermsScreen(leaseAgreement: leaseAgreement)));
-                  }
-                } else {
-                  Navigator.pushReplacement(
-                      context,
-                      new MaterialPageRoute(
-                          builder: (context) => ConfirmationScreen()));
+                if (leaseAgreement != null) {
+                  user.leaseAgreement = leaseAgreement;
                 }
+
+                authModel.loginUser(user);
+
+                Navigator.pushReplacementNamed(context, '/');
 
                 setState(() {
                   _statusMessage = 'Login Success';
                   _messageColor = Colors.green;
                   isLoading = false;
                 });
-              } on BadRequestException catch (e) {
-                setState(() {
-                  _statusMessage = e.toString();
-                  _messageColor = Colors.red;
-                  isLoading = false;
-                });
-              } on UnauthorizedException catch (e) {
-                setState(() {
-                  _statusMessage = e.toString();
-                  _messageColor = Colors.red;
-                  isLoading = false;
-                });
-              } on TimeoutException catch (e) {
+              } on Exception catch (e) {
                 setState(() {
                   _statusMessage = e.toString();
                   _messageColor = Colors.red;
@@ -246,38 +210,20 @@ class _LoginScreenState extends State<LoginScreen> {
     return Padding(
         padding: const EdgeInsets.fromLTRB(65, 20, 0, 0),
         child: Row(children: [
-          Text(
+          const Text(
             "Don't have Account ? ",
             style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
           ),
           InkWell(
             onTap: () {
-              Navigator.push(context,
-                  new MaterialPageRoute(builder: (context) => SignupScreen()));
+              Navigator.pushNamed(context, '/signup');
             },
-            child: Text(
+            child: const Text(
               'Signup',
               style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
             ),
           ),
         ]));
-  }
-
-  Future<LeaseAgreement?> _findLeaseAgreementById() async {
-    final prefs = await SharedPreferences.getInstance();
-    final id = (prefs.getString('id') ?? '');
-    var leaseAgreement = await apiService.findExistingLeaseAgreements(id);
-    return leaseAgreement;
-  }
-
-  bool isSigned(LeaseAgreement leaseAgreement) {
-    if (leaseAgreement.signatures.isEmpty) {
-      print("Existing Lease Agreement NOT signed.");
-      return false;
-    }
-    print("Existing Lease Agreement Signed.");
-
-    return true;
   }
 
   @override

@@ -4,7 +4,12 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/Model/Payments/payment.dart';
 import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
-import 'package:rentremedy_mobile/View/Payment/payment_success_screen.dart';
+
+class PaymentScreenArguments {
+  final Payment payment;
+
+  PaymentScreenArguments(this.payment);
+}
 
 class PaymentScreen extends StatelessWidget {
   Payment payment;
@@ -43,16 +48,13 @@ class PaymentScreen extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 200.0, 0, 0),
       child: Align(
-        // alignment: Alignment.center,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text("Balance", style: categoryStyle),
-            // SizedBox(height: 8.0),
             Text("\$${convertToDollar(payment.chargeAmount)}",
                 style: amountStyle),
             Row(
-              // crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text("Due: ",
@@ -79,23 +81,10 @@ class PaymentScreen extends StatelessWidget {
             fixedSize: const Size(200, 72),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50))),
-
-        // ButtonStyle(
-        //   backgroundColor: MaterialStateProperty.all(Colors.green),
-        //   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-        //     RoundedRectangleBorder(
-        //       borderRadius: BorderRadius.circular(24.0),
-        //     ),
-        //   ),
-        // ),
         onPressed: () async {
           try {
             await apiService.makePaymentIntent(payment.id);
-            // Navigator.pop(context);
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const PaymentSuccessScreen()));
+            Navigator.pushReplacementNamed(context, '/paymentSuccess');
           } on Exception catch (e) {
             print("Exception while making payment intent.");
             ScaffoldMessenger.of(context)

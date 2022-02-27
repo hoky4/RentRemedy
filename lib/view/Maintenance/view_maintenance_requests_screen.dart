@@ -87,13 +87,11 @@ class MaintenanceRequestItem extends StatelessWidget {
     return Card(
         child: ListTile(
       title: Text(maintenanceRequest.item),
-      subtitle: Text(maintenanceRequest.status.name),
+      subtitle: Text('Status: ${maintenanceRequest.status.name}'),
       onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ViewMaintenanceRequestScreen(
-                    maintenanceRequest: maintenanceRequest)));
+        Navigator.pushNamed(context, '/viewMaintenanceRequest',
+            arguments:
+                ViewMaintenanceRequestScreenArguments(maintenanceRequest));
       },
     ));
   }

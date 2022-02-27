@@ -3,6 +3,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:rentremedy_mobile/Model/Maintenance/maintenance_request.dart';
 
+class ViewMaintenanceRequestScreenArguments {
+  final MaintenanceRequest maintenanceRequest;
+
+  ViewMaintenanceRequestScreenArguments(this.maintenanceRequest);
+}
+
 class ViewMaintenanceRequestScreen extends StatelessWidget {
   MaintenanceRequest maintenanceRequest;
   ViewMaintenanceRequestScreen({Key? key, required this.maintenanceRequest})
@@ -13,19 +19,22 @@ class ViewMaintenanceRequestScreen extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("View Payment"),
+          title: const Text("View Maintenance Request"),
           centerTitle: true,
         ),
         body: Column(
           children: [
             Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    balanceInfo(),
-                    const Divider(
-                        thickness: 1, indent: 32, endIndent: 32, height: 48),
-                  ],
+              child: Padding(
+                padding: const EdgeInsets.all(32.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      maintenanceRequestInfo(),
+                      const Divider(
+                          thickness: 1, indent: 32, endIndent: 32, height: 48),
+                    ],
+                  ),
                 ),
               ),
             ), // SizedBox(height: 8.0)
@@ -35,35 +44,51 @@ class ViewMaintenanceRequestScreen extends StatelessWidget {
     );
   }
 
-  Widget balanceInfo() {
+  Widget maintenanceRequestInfo() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 200.0, 0, 0),
+      padding: const EdgeInsets.fromLTRB(0, 150.0, 0, 0),
       child: Align(
         // alignment: Alignment.center,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Item: ${maintenanceRequest.item}", style: categoryStyle),
-            const SizedBox(height: 16.0),
-            Text("Location: ${maintenanceRequest.location}",
-                style: categoryStyle),
-            Text("Description: ${maintenanceRequest.description}",
-                style: categoryStyle),
-            Text("Severity: ${maintenanceRequest.severity}",
-                style: categoryStyle),
-            Text("Status: ${maintenanceRequest.status}", style: categoryStyle),
-            Text(
-                "Date Submitted: ${DateFormat.yMMMMd('en_US').format(maintenanceRequest.submissionDate)}",
-                style: bodyStyle),
+            maintenanceDetailLine("Item: ", maintenanceRequest.item),
+            const SizedBox(height: 8.0),
+            maintenanceDetailLine("Location: ", maintenanceRequest.location),
+            const SizedBox(height: 8.0),
+            maintenanceDetailLine(
+                "Description: ", maintenanceRequest.description),
+            const SizedBox(height: 8.0),
+            maintenanceDetailLine(
+                "Severity: ", maintenanceRequest.severity.name),
+            const SizedBox(height: 8.0),
+            maintenanceDetailLine("Status: ", maintenanceRequest.status.name),
+            const SizedBox(height: 8.0),
+            maintenanceDetailLine(
+                "Date Submitted: ",
+                DateFormat.yMMMMd('en_US')
+                    .format(maintenanceRequest.submissionDate)),
           ],
         ),
       ),
     );
   }
-}
 
-TextStyle categoryStyle = GoogleFonts.montserrat(
-    fontWeight: FontWeight.w400, fontSize: 24, color: Colors.black);
+  Widget maintenanceDetailLine(String title, String detail) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.baseline,
+      textBaseline: TextBaseline.alphabetic,
+      children: [
+        Text("$title", style: bodyStyleBold),
+        Flexible(child: Text(detail, style: bodyStyle)),
+      ],
+    );
+  }
+}
 
 TextStyle bodyStyle = GoogleFonts.montserrat(
     fontWeight: FontWeight.normal, fontSize: 16, color: Colors.black);
+
+TextStyle bodyStyleBold = GoogleFonts.montserrat(
+    fontWeight: FontWeight.w600, fontSize: 16, color: Colors.black);

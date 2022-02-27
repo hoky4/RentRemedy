@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rentremedy_mobile/View/Maintenance/maintenance_request_screen.dart';
+import 'package:rentremedy_mobile/View/Maintenance/maintenance_request_success_screen.dart';
+import 'package:rentremedy_mobile/View/Maintenance/view_maintenance_request_screen.dart';
 import 'package:rentremedy_mobile/View/Onboarding/confirmation_screen.dart';
 import 'package:rentremedy_mobile/View/Onboarding/join_screen.dart';
 import 'package:rentremedy_mobile/Routing/app_navigation_router.dart';
@@ -47,9 +49,16 @@ class RouteGenerator {
             builder: (_) => ViewPaymentScreen(payment: args.payment));
 
       case '/maintenanceRequest':
-        // final args = settings.arguments as MaintenanceRequestArguments;
         return MaterialPageRoute(builder: (_) => MaintenanceRequestScreen());
-
+      case '/maintenanceRequestSuccess':
+        return MaterialPageRoute(
+            builder: (_) => const MaintenanceRequestSuccessScreen());
+      case '/viewMaintenanceRequest':
+        final args =
+            settings.arguments as ViewMaintenanceRequestScreenArguments;
+        return MaterialPageRoute(
+            builder: (_) => ViewMaintenanceRequestScreen(
+                maintenanceRequest: args.maintenanceRequest));
       // If args is not of the correct type, return an error page.
       // You can also throw an exception while in development.
       // return _errorRoute();

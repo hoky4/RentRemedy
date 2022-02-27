@@ -57,7 +57,19 @@ class _ViewPaymentsScreenState extends State<ViewPaymentsScreen>
                   ),
                 ),
               ] else ...[
-                const Center(child: Text("No payments yet"))
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: RefreshIndicator(
+                      child: ListView.builder(
+                          itemCount: 1,
+                          itemBuilder: (context, index) => const ListTile(
+                                title: Text("No Payments Yet"),
+                              )),
+                      onRefresh: fetchPayments,
+                    ),
+                  ),
+                ),
               ],
             ]),
           )

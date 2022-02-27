@@ -139,24 +139,32 @@ class _MaintenanceRequestScreenState extends State<MaintenanceRequestScreen> {
                         )
                       ],
                     ),
+                    Visibility(
+                        maintainSize: false,
+                        maintainAnimation: true,
+                        maintainState: true,
+                        visible: isLoading,
+                        child: const CircularProgressIndicator()),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       child: ElevatedButton(
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
                             try {
+                              setState(() {
+                                isLoading = true;
+                              });
                               await apiService.createMaintenanceRequest(
                                   txtItem.text,
                                   txtLocation.text,
                                   txtDescription.text,
                                   dropdownValue);
+
+                              setState(() {
+                                isLoading = false;
+                              });
                               Navigator.pushReplacementNamed(
                                   context, '/maintenanceRequestSuccess');
-                              // Navigator.pushReplacement(
-                              //     context,
-                              //     MaterialPageRoute(
-                              //         builder: (context) => const Text(
-                              //             "Successfully Filed Maintenance Request")));
                             } on Exception catch (e) {
                               print(
                                   "Exception while filing maintenance request.");
@@ -168,12 +176,6 @@ class _MaintenanceRequestScreenState extends State<MaintenanceRequestScreen> {
                         child: const Text('Submit'),
                       ),
                     ),
-                    Visibility(
-                        maintainSize: true,
-                        maintainAnimation: true,
-                        maintainState: true,
-                        visible: isLoading,
-                        child: const CircularProgressIndicator()),
                   ],
                 ),
               ),

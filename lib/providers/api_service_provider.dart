@@ -28,6 +28,7 @@ class ApiServiceProvider {
   }
 
   dynamic getAllMaintenanceRequests() async {
+    print("cookie: ${_authModelProvider.cookie!}");
     final response = await http.get(
       Uri.parse(MAINTENANCE),
       headers: <String, String>{

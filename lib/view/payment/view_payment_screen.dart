@@ -47,29 +47,12 @@ class ViewPaymentScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            payment.paymentDate != null
-                ? Text("Balance Paid", style: categoryStyle)
-                : Text("Balance Unpaid", style: categoryStyle),
+            Text("Balance Paid", style: categoryStyle),
             const SizedBox(height: 16.0),
-            payment.paymentDate != null
-                ? Text(
-                    "Paid Amount: \$${convertToDollar(payment.chargeAmount)}",
-                    style: bodyStyle)
-                : Text("Balance: \$${convertToDollar(payment.getDollarAmount)}",
-                    style: bodyStyle),
-            // if (payment.isLate == true) ...[
-            //   Text("Late Fee: \$${payment.lateFee}", style: bodyStyle)
-            //   ],
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                payment.paymentDate != null
-                    ? Text("Paid Date: ", style: bodyStyle)
-                    : Text("Due: ", style: bodyStyle),
-                Text(DateFormat.yMMMMd('en_US').format(payment.dueDate),
-                    style: bodyStyle),
-              ],
-            )
+            paymentDetailLine(
+                "Paid Amount: ", '\$${convertToDollar(payment.chargeAmount)}'),
+            paymentDetailLine("Paid Date: ",
+                DateFormat.yMMMMd('en_US').format(payment.dueDate))
           ],
         ),
       ),
@@ -81,6 +64,17 @@ class ViewPaymentScreen extends StatelessWidget {
     final money = NumberFormat("###,###,###", "en_us");
     return money.format(value);
   }
+
+  Widget paymentDetailLine(String title, String detail) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      textBaseline: TextBaseline.alphabetic,
+      children: [
+        Text(title, style: bodyStyleBold),
+        Flexible(child: Text(detail, style: bodyStyle)),
+      ],
+    );
+  }
 }
 
 TextStyle categoryStyle = GoogleFonts.montserrat(
@@ -88,3 +82,6 @@ TextStyle categoryStyle = GoogleFonts.montserrat(
 
 TextStyle bodyStyle = GoogleFonts.montserrat(
     fontWeight: FontWeight.normal, fontSize: 16, color: Colors.black);
+
+TextStyle bodyStyleBold = GoogleFonts.montserrat(
+    fontWeight: FontWeight.w600, fontSize: 16, color: Colors.black);

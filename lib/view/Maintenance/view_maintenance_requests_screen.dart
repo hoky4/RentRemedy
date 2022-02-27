@@ -25,10 +25,10 @@ class _ViewMaintenanceRequestsScreenState
     super.initState();
     apiService = Provider.of<ApiServiceProvider>(context, listen: false);
     maintenanceRequests = [];
-    fetchPayments();
+    fetchMaintenanceRequests();
   }
 
-  Future fetchPayments() async {
+  Future fetchMaintenanceRequests() async {
     List<MaintenanceRequest> maintenanceRequestList =
         await apiService.getAllMaintenanceRequests();
     if (mounted) {
@@ -47,7 +47,7 @@ class _ViewMaintenanceRequestsScreenState
                 onPressed: () {
                   Navigator.pushNamed(context, '/maintenanceRequest');
                 },
-                tooltip: 'Increment',
+                tooltip: 'File Maintenance Request',
                 child: const Icon(Icons.add)),
             body: Column(children: [
               if (maintenanceRequests != null) ...[
@@ -61,12 +61,24 @@ class _ViewMaintenanceRequestsScreenState
                               MaintenanceRequestItem(
                                   maintenanceRequest:
                                       maintenanceRequests[index])),
-                      onRefresh: fetchPayments,
+                      onRefresh: fetchMaintenanceRequests,
                     ),
                   ),
                 ),
               ] else ...[
-                const Center(child: Text("No maintenance requests yet"))
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: RefreshIndicator(
+                      child: ListView.builder(
+                          itemCount: 1,
+                          itemBuilder: (context, index) => const ListTile(
+                                title: Text("No maintenance requests yet"),
+                              )),
+                      onRefresh: fetchMaintenanceRequests,
+                    ),
+                  ),
+                ),
               ],
             ]),
           )

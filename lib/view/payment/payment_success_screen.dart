@@ -21,7 +21,13 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
                   image: AssetImage('assets/images/success.gif'), height: 150),
               Text("Successful", style: categoryStyle),
               const SizedBox(height: 16),
-              Text("Your payment was done successfully", style: bodyStyle2),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(48.0, 0.0, 48.0, 0.0),
+                child: Text(
+                    "Your payment was done successfully. \nYou will receive a message when your payment is received.",
+                    style: bodyStyle2,
+                    textAlign: TextAlign.center),
+              ),
               const SizedBox(height: 16),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(

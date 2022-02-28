@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:rentremedy_mobile/Model/Maintenance/maintenance_request.dart';
+import 'package:rentremedy_mobile/Model/Maintenance/maintenance_request_status.dart';
+import 'package:rentremedy_mobile/Model/Maintenance/severity_type.dart';
 
 class ViewMaintenanceRequestScreenArguments {
   final MaintenanceRequest maintenanceRequest;
@@ -60,9 +62,9 @@ class ViewMaintenanceRequestScreen extends StatelessWidget {
                 "Description: ", maintenanceRequest.description),
             const SizedBox(height: 8.0),
             maintenanceDetailLine(
-                "Severity: ", maintenanceRequest.severity.name),
+                "Severity: ", maintenanceRequest.severity.value),
             const SizedBox(height: 8.0),
-            maintenanceDetailLine("Status: ", maintenanceRequest.status.name),
+            maintenanceDetailLine("Status: ", maintenanceRequest.status.value),
             const SizedBox(height: 8.0),
             maintenanceDetailLine(
                 "Date Submitted: ",

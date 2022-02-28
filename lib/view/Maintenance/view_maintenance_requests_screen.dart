@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/Model/Maintenance/maintenance_request.dart';
+import 'package:rentremedy_mobile/Model/Maintenance/maintenance_request_status.dart';
 import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
 import 'package:rentremedy_mobile/View/Maintenance/view_maintenance_request_screen.dart';
 
@@ -99,7 +100,7 @@ class MaintenanceRequestItem extends StatelessWidget {
     return Card(
         child: ListTile(
       title: Text(maintenanceRequest.item),
-      subtitle: Text('Status: ${maintenanceRequest.status.name}'),
+      subtitle: Text('Status: ${maintenanceRequest.status.value}'),
       onTap: () {
         Navigator.pushNamed(context, '/viewMaintenanceRequest',
             arguments:

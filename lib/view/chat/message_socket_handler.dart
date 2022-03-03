@@ -10,6 +10,7 @@ import 'package:rentremedy_mobile/Providers/message_model_provider.dart';
 import 'package:rentremedy_mobile/Model/Message/model.dart';
 import 'package:rentremedy_mobile/Model/Message/websocket_message.dart';
 import 'package:rentremedy_mobile/Networking/api.dart';
+import 'package:rentremedy_mobile/View/Maintenance/view_maintenance_requests_screen.dart';
 import 'package:rentremedy_mobile/View/Onboarding/join_screen.dart';
 import 'package:rentremedy_mobile/View/Payment/view_payments_screen.dart';
 import 'package:web_socket_channel/io.dart';
@@ -135,41 +136,40 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
           : 1,
       child: Scaffold(
         appBar: AppBar(
-          automaticallyImplyLeading: false,
-          bottom: TabBar(
-            tabs: [
-              const Tab(icon: Icon(Icons.comment_rounded)),
-              if (leaseAgreement != null &&
-                  leaseAgreement.signatures.isNotEmpty) ...[
-                const Tab(icon: Icon(Icons.attach_money_outlined)),
-                const Tab(icon: Icon(Icons.build_circle_outlined)),
+            automaticallyImplyLeading: false,
+            bottom: TabBar(
+              tabs: [
+                const Tab(icon: Icon(Icons.comment_rounded)),
+                if (leaseAgreement != null &&
+                    leaseAgreement.signatures.isNotEmpty) ...[
+                  const Tab(icon: Icon(Icons.attach_money_outlined)),
+                  const Tab(icon: Icon(Icons.build_circle_outlined)),
+                ],
               ],
-            ],
-          ),
-          title: const Text('Rent Remedy'),
-          leading: IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              authModel.logoutUser();
-              messageModel.clearRecentMessages();
-              Navigator.pushReplacementNamed(context, '/login');
-            },
-            color: Colors.black,
-          ),
-          actions: [
-            if (authModel.leaseAgreement!.signatures.isEmpty) ...[
-              IconButton(
-                  icon: const Icon(FontAwesome.file_text),
-                  onPressed: () async {
-                    LeaseAgreement? leaseAgreement = authModel.leaseAgreement;
-                    if (leaseAgreement != null) {
-                      Navigator.pushReplacementNamed(context, '/terms',
-                          arguments: JoinScreenArguments(leaseAgreement));
-                    }
-                  })
-            ],
-          ],
-        ),
+            ),
+            title: const Text('Rent Remedy'),
+            leading: IconButton(
+              icon: const Icon(Icons.logout),
+              onPressed: () {
+                authModel.logoutUser();
+                messageModel.clearRecentMessages();
+                Navigator.pushReplacementNamed(context, '/login');
+              },
+              color: Colors.black,
+            ),
+            actions: [
+              if (authModel.leaseAgreement!.signatures.isEmpty) ...[
+                IconButton(
+                    icon: const Icon(FontAwesome.file_text),
+                    onPressed: () async {
+                      LeaseAgreement? leaseAgreement = authModel.leaseAgreement;
+                      if (leaseAgreement != null) {
+                        Navigator.pushReplacementNamed(context, '/terms',
+                            arguments: JoinScreenArguments(leaseAgreement));
+                      }
+                    })
+              ],
+            ]),
         body: TabBarView(
           children: [
             isLoading
@@ -182,7 +182,7 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
             if (leaseAgreement != null &&
                 leaseAgreement.signatures.isNotEmpty) ...[
               const ViewPaymentsScreen(),
-              const Icon(Icons.build_circle_outlined, size: 350),
+              const ViewMaintenanceRequestsScreen(),
             ]
           ],
         ),

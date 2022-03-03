@@ -5,8 +5,7 @@ import 'package:rentremedy_mobile/Model/LeaseAgreement/status.dart';
 import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
 import 'package:rentremedy_mobile/Providers/auth_model_provider.dart';
 import 'package:rentremedy_mobile/Providers/message_model_provider.dart';
-
-import '../View/Onboarding/join_screen.dart';
+import 'join_screen.dart';
 
 class ConfirmationScreen extends StatefulWidget {
   const ConfirmationScreen({Key? key}) : super(key: key);

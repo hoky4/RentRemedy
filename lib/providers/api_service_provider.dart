@@ -4,11 +4,15 @@ import 'dart:io';
 import 'package:rentremedy_mobile/Model/Auth/logged_in_user.dart';
 import 'package:rentremedy_mobile/Model/LeaseAgreement/lease_agreement.dart';
 import 'package:rentremedy_mobile/Model/LeaseAgreement/status.dart';
+import 'package:rentremedy_mobile/Model/Maintenance/maintenance_request_request.dart';
+import 'package:rentremedy_mobile/Model/Maintenance/maintenance_request.dart';
+import 'package:rentremedy_mobile/Model/Maintenance/severity_type.dart';
 import 'package:rentremedy_mobile/Model/Message/message.dart';
 import 'package:rentremedy_mobile/Model/Payments/payment.dart';
 import 'package:rentremedy_mobile/Model/Payments/payment_intent_response.dart';
 import 'package:rentremedy_mobile/Model/Payments/setup_intent_request.dart';
 import 'package:rentremedy_mobile/Model/Payments/setup_intent_response.dart';
+import 'package:rentremedy_mobile/Model/User/user.dart';
 import 'package:rentremedy_mobile/Networking/api.dart';
 import 'package:rentremedy_mobile/Networking/api_exception.dart';
 import 'package:rentremedy_mobile/Providers/auth_model_provider.dart';
@@ -21,6 +25,71 @@ class ApiServiceProvider {
 
   set authModelProvider(AuthModelProvider authModelProvider) {
     _authModelProvider = authModelProvider;
+  }
+
+  dynamic getAllMaintenanceRequests() async {
+    print("cookie: ${_authModelProvider.cookie!}");
+    final response = await http.get(
+      Uri.parse(MAINTENANCE),
+      headers: <String, String>{
+        'cookie': _authModelProvider.cookie!,
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print("maintenance-request-resp: ${response.body}");
+      Map<String, dynamic> responseMap = json.decode(response.body);
+      List<dynamic> maintenanceRequests = responseMap['maintenanceRequests'];
+
+      if (maintenanceRequests.isEmpty) {
+        print('No maintenance requests found.');
+        return null;
+      } else {
+        print('Maintenance requests found.');
+
+        List<MaintenanceRequest> maintenanceRequestList =
+            List<MaintenanceRequest>.from(
+                maintenanceRequests.map((i) => MaintenanceRequest.fromJson(i)));
+
+        return maintenanceRequestList;
+      }
+    } else {
+      return _handleError(response);
+    }
+  }
+
+  dynamic createMaintenanceRequest(String item, String location,
+      String description, SeverityType severity) async {
+    User user = User(
+        _authModelProvider.user!.id,
+        _authModelProvider.user!.firstName,
+        _authModelProvider.user!.lastName,
+        _authModelProvider.user!.email);
+    MaintenanceRequestRequest request = MaintenanceRequestRequest(
+        // user,
+        _authModelProvider.leaseAgreement!.id,
+        severity,
+        item,
+        location,
+        description,
+        null);
+    final response = await http.post(Uri.parse(MAINTENANCE),
+        headers: <String, String>{
+          'cookie': _authModelProvider.cookie!,
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(request.toJson()));
+
+    if (response.statusCode == 201) {
+      print("status 201......");
+      Map<String, dynamic> responseMap = jsonDecode(response.body);
+      MaintenanceRequest maintenanceRequest =
+          MaintenanceRequest.fromJson(responseMap);
+      return maintenanceRequest;
+    } else {
+      return _handleError(response);
+    }
   }
 
   dynamic makePaymentIntent(String id) async {

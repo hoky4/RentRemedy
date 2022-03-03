@@ -3,8 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/Model/Payments/payment.dart';
 import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
-import 'package:rentremedy_mobile/View/Payment/payment_screen.dart';
-import 'package:rentremedy_mobile/View/Payment/view_payment_screen.dart';
+import 'package:rentremedy_mobile/View/payment/payment_screen.dart';
+import 'package:rentremedy_mobile/View/payment/view_payment_screen.dart';
 
 class ViewPaymentsScreen extends StatefulWidget {
   const ViewPaymentsScreen({Key? key}) : super(key: key);
@@ -57,7 +57,19 @@ class _ViewPaymentsScreenState extends State<ViewPaymentsScreen>
                   ),
                 ),
               ] else ...[
-                const Center(child: Text("No payments yet"))
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: RefreshIndicator(
+                      child: ListView.builder(
+                          itemCount: 1,
+                          itemBuilder: (context, index) => const ListTile(
+                                title: Text("No Payments Yet"),
+                              )),
+                      onRefresh: fetchPayments,
+                    ),
+                  ),
+                ),
               ],
             ]),
           )
@@ -82,15 +94,11 @@ class PaymentItem extends StatelessWidget {
           : const Text('Status: Unpaid'),
       onTap: () {
         if (payment.paymentDate != null) {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ViewPaymentScreen(payment: payment)));
+          Navigator.pushNamed(context, '/viewPayment',
+              arguments: ViewPaymentScreenArguments(payment));
         } else {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => PaymentScreen(payment: payment)));
+          Navigator.pushNamed(context, '/payment',
+              arguments: PaymentScreenArguments(payment));
         }
       },
     ));

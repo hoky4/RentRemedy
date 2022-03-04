@@ -37,18 +37,22 @@ class MessageBox extends StatelessWidget {
                 maxWidth: MediaQuery.of(context).size.width * .6),
             padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
-              color: Colors.blue
-                  .withOpacity(message.sender != landlordId ? 1 : 0.08),
+              color: message.sender != landlordId
+                  ? Colors.blue
+                  : Theme.of(context).primaryColorDark.withOpacity(0.80),
+              //color: Colors.blue
+              //  .withOpacity(message.sender != landlordId ? 1 : 0.08),
               borderRadius: BorderRadius.circular(30),
             ),
             child: Column(
               children: [
                 Text(
                   message.messageText,
-                  style: TextStyle(
-                      color: message.sender != landlordId
-                          ? Colors.white
-                          : Theme.of(context).textTheme.bodyText1!.color),
+                  style: const TextStyle(color: Colors.white
+                      // color: message.sender != landlordId
+                      //     ? Colors.white
+                      //     : Theme.of(context).textTheme.bodyText1!.color
+                      ),
                 ),
                 if (message.type == MessageType.PaymentDue ||
                     message.type == MessageType.PaymentSuccessful) ...[

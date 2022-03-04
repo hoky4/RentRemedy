@@ -42,6 +42,7 @@ class _ViewPaymentsScreenState extends State<ViewPaymentsScreen>
   Widget build(BuildContext context) {
     return !isLoading
         ? Scaffold(
+            backgroundColor: Theme.of(context).primaryColor,
             body: Column(children: [
               if (payments != null) ...[
                 Expanded(
@@ -73,7 +74,9 @@ class _ViewPaymentsScreenState extends State<ViewPaymentsScreen>
               ],
             ]),
           )
-        : const Scaffold(body: Center(child: CircularProgressIndicator()));
+        : Scaffold(
+            backgroundColor: Theme.of(context).primaryColor,
+            body: const Center(child: CircularProgressIndicator()));
   }
 
   @override
@@ -87,20 +90,30 @@ class PaymentItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+        color: Theme.of(context).dividerColor,
         child: ListTile(
-      title: Text(DateFormat.yMMMMd('en_US').format(payment.dueDate)),
-      subtitle: payment.paymentDate != null
-          ? const Text('Status: Paid')
-          : const Text('Status: Unpaid'),
-      onTap: () {
-        if (payment.paymentDate != null) {
-          Navigator.pushNamed(context, '/viewPayment',
-              arguments: ViewPaymentScreenArguments(payment));
-        } else {
-          Navigator.pushNamed(context, '/payment',
-              arguments: PaymentScreenArguments(payment));
-        }
-      },
-    ));
+          title: Text(
+            DateFormat.yMMMMd('en_US').format(payment.dueDate),
+            style: TextStyle(color: Colors.white),
+          ),
+          subtitle: payment.paymentDate != null
+              ? const Text(
+                  'Status: Paid',
+                  style: TextStyle(color: Colors.white70),
+                )
+              : const Text(
+                  'Status: Unpaid',
+                  style: TextStyle(color: Colors.white70),
+                ),
+          onTap: () {
+            if (payment.paymentDate != null) {
+              Navigator.pushNamed(context, '/viewPayment',
+                  arguments: ViewPaymentScreenArguments(payment));
+            } else {
+              Navigator.pushNamed(context, '/payment',
+                  arguments: PaymentScreenArguments(payment));
+            }
+          },
+        ));
   }
 }

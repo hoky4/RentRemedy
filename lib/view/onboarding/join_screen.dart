@@ -17,7 +17,9 @@ class JoinScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
+        backgroundColor: Theme.of(context).primaryColorDark,
         centerTitle: true,
         title: const Text('Join Property'),
         automaticallyImplyLeading: false,
@@ -32,8 +34,10 @@ class JoinScreen extends StatelessWidget {
                     height: 150,
                   ),
                   const Text("Is this the right property?",
-                      style:
-                          TextStyle(fontWeight: FontWeight.w500, fontSize: 20)),
+                      style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 20,
+                          color: Colors.white)),
                   propertyDetail(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -52,7 +56,10 @@ class JoinScreen extends StatelessWidget {
     ApiServiceProvider apiService =
         Provider.of<ApiServiceProvider>(context, listen: false);
 
-    return TextButton(
+    return ElevatedButton(
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
+      ),
       onPressed: () async {
         try {
           if (leaseAgreement.property != null) {
@@ -74,33 +81,20 @@ class JoinScreen extends StatelessWidget {
         'Yes',
         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
       ),
-      style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all(Colors.green),
-        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-        ),
-      ),
     );
   }
 
   Widget noButton(BuildContext context) {
-    return TextButton(
+    return ElevatedButton(
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
+      ),
       onPressed: () {
         Navigator.pushReplacementNamed(context, '/confirmation');
       },
       child: const Text(
         'No',
         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-      ),
-      style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all(Colors.red),
-        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-        ),
       ),
     );
   }
@@ -109,7 +103,7 @@ class JoinScreen extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.all(16.0),
       padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(border: Border.all(color: Colors.black)),
+      decoration: BoxDecoration(border: Border.all(color: Colors.white70)),
       child: Column(
         children: [
           propertyDetailLine('Description: ', leaseAgreement.description),
@@ -131,8 +125,12 @@ class JoinScreen extends StatelessWidget {
       children: [
         Text("$title",
             style: const TextStyle(
-                fontWeight: FontWeight.bold, color: Colors.black)),
-        Flexible(child: Text(detail)),
+                fontWeight: FontWeight.bold, color: Colors.white)),
+        Flexible(
+            child: Text(
+          detail,
+          style: const TextStyle(color: Colors.white),
+        )),
       ],
     );
   }

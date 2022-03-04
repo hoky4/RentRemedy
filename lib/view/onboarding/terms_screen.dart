@@ -27,6 +27,7 @@ class TermsScreen extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+            backgroundColor: Theme.of(context).primaryColorDark,
             title: const Text("Terms"),
             automaticallyImplyLeading: false,
             centerTitle: true,
@@ -80,12 +81,22 @@ class TermsScreen extends StatelessWidget {
             Container(
                 // alignment: Alignment.center,
                 width: double.infinity,
-                decoration: const BoxDecoration(color: Colors.black12),
-                child: Row(
+                decoration: BoxDecoration(
+                    color:
+                        Theme.of(context).primaryColorDark), //Colors.black12),
+                child: Column(
                   children: [
-                    const Spacer(),
-                    acceptButton(context, leaseAgreement.id),
-                    const Spacer()
+                    Row(
+                      children: [
+                        const Spacer(),
+                        acceptButton(context, leaseAgreement.id),
+                        const Spacer()
+                      ],
+                    ),
+                    const Text(
+                      "By selecting accept, I agree to the terms above.",
+                      style: TextStyle(color: Colors.white),
+                    )
                   ],
                 )),
           ],
@@ -215,17 +226,14 @@ class TermsScreen extends StatelessWidget {
           children: [
             Text("One Time Security Deposit", style: categoryStyle),
             const SizedBox(height: 8.0),
-            Text(
-                "Deposit Amount: \$${convertToDollar(securityDeposit.depositAmount)}",
-                style: bodyStyle),
+            detailLine("Deposit Amount: ",
+                "\$${convertToDollar(securityDeposit.depositAmount)}"),
             const SizedBox(height: 8.0),
-            Text(
-                "Refund Amount: \$${convertToDollar(securityDeposit.refundAmount)}",
-                style: bodyStyle),
+            detailLine("Refund Amount: ",
+                "\$${convertToDollar(securityDeposit.refundAmount)}"),
             const SizedBox(height: 8.0),
-            Text(
-                "Due Date: ${DateFormat.yMMMMd('en_US').format(securityDeposit.dueDate)}",
-                style: bodyStyle),
+            detailLine("Due Date: ",
+                DateFormat.yMMMMd('en_US').format(securityDeposit.dueDate)),
           ],
         ),
       ),
@@ -243,8 +251,8 @@ class TermsScreen extends StatelessWidget {
             Text("Address", style: categoryStyle),
             const SizedBox(height: 8.0),
             property != null
-                ? Text(property.toString(), style: bodyStyle)
-                : const Text("No property assigned")
+                ? detailLine("", property.toString())
+                : detailLine("", "No property assigned")
           ],
         ),
       ),
@@ -261,24 +269,18 @@ class TermsScreen extends StatelessWidget {
           children: [
             Text("Monthly Fees", style: categoryStyle),
             const SizedBox(height: 8.0),
-            Text(
-                "Rent Fee: \$${convertToDollar(monthlyFees.rentFee.rentFeeAmount)}",
-                style: bodyStyle),
+            detailLine("Rent Fee: ",
+                "\$${convertToDollar(monthlyFees.rentFee.rentFeeAmount)}"),
             const SizedBox(height: 4.0),
-            Text(
-                "Pet Fee: \$${convertToDollar(monthlyFees.petFee.petFeeAmount)}",
-                style: bodyStyle),
+            detailLine("Pet Fee: ",
+                "\$${convertToDollar(monthlyFees.petFee.petFeeAmount)}"),
             const SizedBox(height: 4.0),
             dueDateCondition(monthlyFees),
-            // Text(
-            //     "Due Date: ${DateFormat.yMMMMd('en_US').format(monthlyFees.dueDate!)}",
-            //     style: bodyStyle),
             const SizedBox(height: 4.0),
-            Text("Late Fee: \$${convertToDollar(monthlyFees.lateFee)}",
-                style: bodyStyle),
+            detailLine(
+                "Late Fee: ", "\$${convertToDollar(monthlyFees.lateFee)}"),
             const SizedBox(height: 4.0),
-            Text("Grace Period: ${monthlyFees.gracePeriod} days",
-                style: bodyStyle),
+            detailLine("Grace Period: ", "${monthlyFees.gracePeriod} days"),
           ],
         ),
       ),
@@ -288,15 +290,12 @@ class TermsScreen extends StatelessWidget {
   Widget dueDateCondition(MonthlyFees monthlyFees) {
     switch (monthlyFees.dueDateType) {
       case DueDateType.StartOfMonth:
-        return Text("Due Date: ${monthlyFees.dueDateType.value}",
-            style: bodyStyle);
+        return detailLine("Due Date: ", monthlyFees.dueDateType.value);
       case DueDateType.EndOfMonth:
-        return Text("Due Date: ${monthlyFees.dueDateType.value}",
-            style: bodyStyle);
+        return detailLine("Due Date: ", monthlyFees.dueDateType.value);
       case DueDateType.DayOfMonth:
-        return Text(
-            "Due Date: ${DateFormat.yMMMMd('en_US').format(monthlyFees.dueDate!)} *(or end of month)",
-            style: bodyStyle);
+        return detailLine("Due Date: ",
+            "${DateFormat.yMMMMd('en_US').format(monthlyFees.dueDate!)} *(or end of month)");
       default:
         return Text("Not avaliable.", style: bodyStyle);
     }
@@ -312,9 +311,8 @@ class TermsScreen extends StatelessWidget {
           children: [
             Text("Duration", style: categoryStyle),
             const SizedBox(height: 8.0),
-            Text(
-                "${DateFormat.yMMMMd('en_US').format(startDate)} to ${DateFormat.yMMMMd('en_US').format(endDate)}",
-                style: bodyStyle),
+            detailLine("",
+                "${DateFormat.yMMMMd('en_US').format(startDate)} to ${DateFormat.yMMMMd('en_US').format(endDate)}"),
           ],
         ),
       ),
@@ -325,32 +323,36 @@ class TermsScreen extends StatelessWidget {
     ApiServiceProvider apiService =
         Provider.of<ApiServiceProvider>(context, listen: false);
 
-    return ElevatedButton(
-      style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all(Colors.green),
-        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24.0),
+    return SizedBox(
+      height: 60,
+      width: 150,
+      child: ElevatedButton(
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(Colors.green),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24.0),
+            ),
           ),
         ),
-      ),
-      onPressed: () async {
-        try {
-          LeaseAgreement leaseAgreement =
-              await apiService.signLeaseAgreement(leaseAgreemenId);
-          print('Lease agreement signed');
+        onPressed: () async {
+          try {
+            LeaseAgreement leaseAgreement =
+                await apiService.signLeaseAgreement(leaseAgreemenId);
+            print('Lease agreement signed');
 
-          Navigator.pushReplacementNamed(context, '/creditCard',
-              arguments: JoinScreenArguments(leaseAgreement));
-        } on Exception catch (e) {
-          print(
-              "Error signing leaseAgreement or setting up card payment: ${e.toString()}");
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(e.toString())));
-        }
-      },
-      child: const Text('Accept',
-          style: TextStyle(fontSize: 18, color: Colors.white)),
+            Navigator.pushReplacementNamed(context, '/creditCard',
+                arguments: JoinScreenArguments(leaseAgreement));
+          } on Exception catch (e) {
+            print(
+                "Error signing leaseAgreement or setting up card payment: ${e.toString()}");
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(e.toString())));
+          }
+        },
+        child: const Text('Accept',
+            style: TextStyle(fontSize: 20, color: Colors.white)),
+      ),
     );
   }
 
@@ -358,6 +360,18 @@ class TermsScreen extends StatelessWidget {
     final value = amount / 100;
     final money = NumberFormat("###,###,###", "en_us");
     return money.format(value);
+  }
+
+  Widget detailLine(String title, String detail) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.baseline,
+      textBaseline: TextBaseline.alphabetic,
+      children: [
+        Text("$title", style: bodyStyleBold),
+        Flexible(child: Text(detail, style: bodyStyle)),
+      ],
+    );
   }
 }
 
@@ -369,3 +383,6 @@ TextStyle bodyStyle = GoogleFonts.montserrat(
 
 TextStyle bodyStyle2 = GoogleFonts.montserrat(
     fontWeight: FontWeight.w300, fontSize: 16, color: Colors.black);
+
+TextStyle bodyStyleBold = GoogleFonts.montserrat(
+    fontWeight: FontWeight.w500, fontSize: 16, color: Colors.black);

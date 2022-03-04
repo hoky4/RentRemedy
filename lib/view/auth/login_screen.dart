@@ -33,6 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).primaryColor,
       body: Padding(
         padding: const EdgeInsets.all(36.0),
         child: SingleChildScrollView(
@@ -44,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 100),
+                    const SizedBox(height: 75),
                     titleLogo(),
                     const SizedBox(height: 25),
                     statusMessage(),
@@ -70,7 +71,11 @@ class _LoginScreenState extends State<LoginScreen> {
     return Text(
       "Login",
       style: GoogleFonts.pacifico(
-          fontWeight: FontWeight.bold, fontSize: 50, color: Colors.black),
+        textStyle: Theme.of(context).textTheme.bodyText1,
+        fontWeight: FontWeight.bold,
+        fontSize: 75,
+        color: Colors.white,
+      ),
     );
   }
 
@@ -85,30 +90,35 @@ class _LoginScreenState extends State<LoginScreen> {
   Padding emailInput() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: TextFormField(
-        controller: txtEmail,
-        validator: (value) {
-          if (value!.isEmpty) {
-            return 'Email is required';
-          } else {
-            return null;
-          }
-        },
-        decoration: InputDecoration(
-          hintText: 'Enter Email',
-          icon: const Icon(Icons.email),
-          enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(color: Colors.grey)),
-          focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(color: Colors.blue)),
-          errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(color: Colors.red)),
-          focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(color: Colors.red)),
+      child: Theme(
+        data: Theme.of(context).copyWith(splashColor: Colors.transparent),
+        child: TextFormField(
+          controller: txtEmail,
+          validator: (value) {
+            if (value!.isEmpty) {
+              return 'Email is required';
+            } else {
+              return null;
+            }
+          },
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.white,
+            hintText: 'Enter Email',
+            icon: const Icon(Icons.email),
+            enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(color: Colors.grey)),
+            focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(color: Colors.blue)),
+            errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(color: Colors.red)),
+            focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(color: Colors.red)),
+          ),
         ),
       ),
     );
@@ -117,31 +127,36 @@ class _LoginScreenState extends State<LoginScreen> {
   Padding passwordInput() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: TextFormField(
-        controller: txtPassword,
-        obscureText: true,
-        validator: (value) {
-          if (value!.isEmpty) {
-            return 'Password is required';
-          } else {
-            return null;
-          }
-        },
-        decoration: InputDecoration(
-          hintText: 'Enter Password',
-          icon: const Icon(Icons.lock),
-          enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(color: Colors.grey)),
-          focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(color: Colors.blue)),
-          errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(color: Colors.red)),
-          focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(color: Colors.red)),
+      child: Theme(
+        data: Theme.of(context).copyWith(splashColor: Colors.transparent),
+        child: TextFormField(
+          controller: txtPassword,
+          obscureText: true,
+          validator: (value) {
+            if (value!.isEmpty) {
+              return 'Password is required';
+            } else {
+              return null;
+            }
+          },
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.white,
+            hintText: 'Enter Password',
+            icon: const Icon(Icons.lock),
+            enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(color: Colors.grey)),
+            focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(color: Colors.blue)),
+            errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(color: Colors.red)),
+            focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(color: Colors.red)),
+          ),
         ),
       ),
     );
@@ -153,55 +168,56 @@ class _LoginScreenState extends State<LoginScreen> {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Container(
-        height: 50,
-        width: 400,
-        child: TextButton(
-          style: TextButton.styleFrom(
-            padding: const EdgeInsets.all(8.0),
-            primary: Colors.white,
-            backgroundColor: Colors.blue,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.0)),
-            textStyle: const TextStyle(fontSize: 20),
-          ),
-          onPressed: () async {
-            if (_formKey.currentState!.validate()) {
-              try {
-                setState(() {
-                  isLoading = true;
-                });
-                LoggedInUser user =
-                    await apiService.login(txtEmail.text, txtPassword.text);
+        height: 60,
+        width: 150,
+        child: ElevatedButton(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+              // backgroundColor: MaterialStateProperty.all(Theme.of(context).primaryColor),
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24.0),
+                ),
+              ),
+            ),
+            onPressed: () async {
+              if (_formKey.currentState!.validate()) {
+                try {
+                  setState(() {
+                    isLoading = true;
+                  });
+                  LoggedInUser user =
+                      await apiService.login(txtEmail.text, txtPassword.text);
 
-                LeaseAgreement? leaseAgreement =
-                    await apiService.findExistingLeaseAgreements(user);
+                  LeaseAgreement? leaseAgreement =
+                      await apiService.findExistingLeaseAgreements(user);
 
-                if (leaseAgreement != null) {
-                  user.leaseAgreement = leaseAgreement;
+                  if (leaseAgreement != null) {
+                    user.leaseAgreement = leaseAgreement;
+                  }
+
+                  authModel.loginUser(user);
+
+                  Navigator.pushReplacementNamed(context, '/');
+
+                  setState(() {
+                    _statusMessage = 'Login Success';
+                    _messageColor = Colors.green;
+                    isLoading = false;
+                  });
+                } on Exception catch (e) {
+                  setState(() {
+                    _statusMessage = e.toString();
+                    _messageColor = Colors.red;
+                    isLoading = false;
+                  });
                 }
-
-                authModel.loginUser(user);
-
-                Navigator.pushReplacementNamed(context, '/');
-
-                setState(() {
-                  _statusMessage = 'Login Success';
-                  _messageColor = Colors.green;
-                  isLoading = false;
-                });
-              } on Exception catch (e) {
-                setState(() {
-                  _statusMessage = e.toString();
-                  _messageColor = Colors.red;
-                  isLoading = false;
-                });
+              } else {
+                print('Missing required fields');
               }
-            } else {
-              print('Missing required fields');
-            }
-          },
-          child: const Text('Login'),
-        ),
+            },
+            child: const Text('Login',
+                style: TextStyle(fontSize: 18, color: Colors.white))),
       ),
     );
   }
@@ -212,7 +228,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Row(children: [
           const Text(
             "Don't have Account ? ",
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
           InkWell(
             onTap: () {

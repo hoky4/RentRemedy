@@ -32,24 +32,25 @@ class _MessageScreenState extends State<MessageScreen> {
     var authModel = context.read<AuthModelProvider>();
 
     return Scaffold(
+        backgroundColor: Theme.of(context).primaryColor,
         body: Column(children: [
-      Expanded(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ListView.builder(
-              controller: widget.scrollController,
-              reverse: true,
-              itemCount: widget.allMessages.length,
-              physics: const AlwaysScrollableScrollPhysics(),
-              itemBuilder: (context, index) {
-                final reversedIndex = widget.allMessages.length - 1 - index;
-                return MessageBox(
-                  message: widget.allMessages[reversedIndex],
-                );
-              }),
-        ),
-      ),
-      MessageInputContainer(allMessages: widget.allMessages),
-    ]));
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ListView.builder(
+                  controller: widget.scrollController,
+                  reverse: true,
+                  itemCount: widget.allMessages.length,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    final reversedIndex = widget.allMessages.length - 1 - index;
+                    return MessageBox(
+                      message: widget.allMessages[reversedIndex],
+                    );
+                  }),
+            ),
+          ),
+          MessageInputContainer(allMessages: widget.allMessages),
+        ]));
   }
 }

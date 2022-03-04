@@ -23,8 +23,8 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
   String cvvCode = '';
   bool isCvvFocused = false;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
   late ApiServiceProvider apiServiceProvider;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -38,8 +38,10 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
     var authModel = context.read<AuthModelProvider>();
 
     return Scaffold(
+      backgroundColor: Theme.of(context).primaryColor,
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
+          backgroundColor: Theme.of(context).primaryColorDark,
           centerTitle: true,
           automaticallyImplyLeading: false,
           title: const Text("Credit Collection")),
@@ -57,7 +59,10 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
             onCreditCardWidgetChange: (CreditCardBrand creditCardBrand) {},
           ),
           const Text("Enter credit card information to continue.",
-              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20)),
+              style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 20,
+                  color: Colors.white)),
           Expanded(
             child: SingleChildScrollView(
               child: Column(
@@ -70,23 +75,64 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
                     onCreditCardModelChange: onCreditCardModelChange,
                     themeColor: Colors.blue,
                     formKey: formKey,
-                    cardNumberDecoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Card Number',
-                        hintText: 'xxxx xxxx xxxx xxxx'),
-                    expiryDateDecoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Expired Date',
-                        hintText: 'xx/xx'),
-                    cvvCodeDecoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'CVV',
-                        hintText: 'xxx'),
-                    cardHolderDecoration: const InputDecoration(
-                      border: OutlineInputBorder(),
+                    textColor: Colors.white,
+                    cardNumberDecoration: InputDecoration(
+                      hintText: 'xxxx xxxx xxxx xxxx',
+                      hintStyle: TextStyle(color: Colors.grey.shade400),
+                      border: const OutlineInputBorder(),
+                      labelText: 'Card Number',
+                      labelStyle: const TextStyle(color: Colors.white),
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: const BorderSide(color: Colors.grey)),
+                      focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: const BorderSide(color: Colors.blue)),
+                    ),
+                    expiryDateDecoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      labelText: 'Expired Date',
+                      labelStyle: const TextStyle(color: Colors.white),
+                      hintStyle: TextStyle(color: Colors.grey.shade400),
+                      hintText: 'xx/xx',
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: const BorderSide(color: Colors.grey)),
+                      focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: const BorderSide(color: Colors.blue)),
+                    ),
+                    cvvCodeDecoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      labelText: 'CVV',
+                      labelStyle: const TextStyle(color: Colors.white),
+                      hintText: 'xxx',
+                      hintStyle: TextStyle(color: Colors.grey.shade400),
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: const BorderSide(color: Colors.grey)),
+                      focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: const BorderSide(color: Colors.blue)),
+                    ),
+                    cardHolderDecoration: InputDecoration(
+                      border: const OutlineInputBorder(),
                       labelText: 'Card Holder',
+                      labelStyle: const TextStyle(color: Colors.white),
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: const BorderSide(color: Colors.grey)),
+                      focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: const BorderSide(color: Colors.blue)),
                     ),
                   ),
+                  Visibility(
+                      maintainSize: false,
+                      maintainAnimation: true,
+                      maintainState: true,
+                      visible: isLoading,
+                      child: const CircularProgressIndicator()),
                   ElevatedButton(
                       style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
@@ -108,9 +154,14 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
                       onPressed: () async {
                         if (formKey.currentState!.validate()) {
                           try {
+                            setState(() {
+                              isLoading = true;
+                            });
                             await apiServiceProvider.makeSetupIntent(cardNumber,
                                 expiryDate, cvvCode, cardHolderName);
-
+                            setState(() {
+                              isLoading = false;
+                            });
                             // Update with a signed lease agreement
                             LoggedInUser? user = authModel.user;
                             if (user != null) {

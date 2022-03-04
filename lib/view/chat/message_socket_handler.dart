@@ -135,9 +135,12 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
           ? 3
           : 1,
       child: Scaffold(
+        // backgroundColor: Theme.of(context).primaryColor,
         appBar: AppBar(
+            backgroundColor: Theme.of(context).primaryColorDark,
             automaticallyImplyLeading: false,
             bottom: TabBar(
+              indicatorColor: Colors.blue,
               tabs: [
                 const Tab(icon: Icon(Icons.comment_rounded)),
                 if (leaseAgreement != null &&
@@ -155,7 +158,7 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
                 messageModel.clearRecentMessages();
                 Navigator.pushReplacementNamed(context, '/login');
               },
-              color: Colors.black,
+              color: Colors.white,
             ),
             actions: [
               if (authModel.leaseAgreement!.signatures.isEmpty) ...[
@@ -173,8 +176,9 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
         body: TabBarView(
           children: [
             isLoading
-                ? const Scaffold(
-                    body: Center(child: CircularProgressIndicator()))
+                ? Scaffold(
+                    backgroundColor: Theme.of(context).primaryColor,
+                    body: const Center(child: CircularProgressIndicator()))
                 : MessageScreen(
                     allMessages: allMessages,
                     scrollController: scrollController,

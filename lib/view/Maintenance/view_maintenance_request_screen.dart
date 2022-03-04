@@ -20,7 +20,9 @@ class ViewMaintenanceRequestScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Theme.of(context).primaryColor,
         appBar: AppBar(
+          backgroundColor: Theme.of(context).primaryColorDark,
           title: const Text("View Maintenance Request"),
           centerTitle: true,
         ),
@@ -33,8 +35,13 @@ class ViewMaintenanceRequestScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       maintenanceRequestInfo(),
-                      const Divider(
-                          thickness: 1, indent: 32, endIndent: 32, height: 48),
+                      Divider(
+                        thickness: 1,
+                        indent: 32,
+                        endIndent: 32,
+                        height: 48,
+                        color: Colors.grey[700],
+                      ),
                     ],
                   ),
                 ),
@@ -82,15 +89,15 @@ class ViewMaintenanceRequestScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.baseline,
       textBaseline: TextBaseline.alphabetic,
       children: [
-        Text("$title", style: bodyStyleBold),
-        Flexible(child: Text(detail, style: bodyStyle)),
+        Text("$title", style: bodyStyleBoldLight),
+        Flexible(child: Text(detail, style: bodyStyleLight)),
       ],
     );
   }
 }
 
-TextStyle bodyStyle = GoogleFonts.montserrat(
-    fontWeight: FontWeight.normal, fontSize: 16, color: Colors.black);
+TextStyle bodyStyleLight = GoogleFonts.montserrat(
+    fontWeight: FontWeight.normal, fontSize: 16, color: Colors.white);
 
-TextStyle bodyStyleBold = GoogleFonts.montserrat(
-    fontWeight: FontWeight.w600, fontSize: 16, color: Colors.black);
+TextStyle bodyStyleBoldLight = GoogleFonts.montserrat(
+    fontWeight: FontWeight.w600, fontSize: 16, color: Colors.white);

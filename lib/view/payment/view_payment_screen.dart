@@ -17,7 +17,9 @@ class ViewPaymentScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Theme.of(context).primaryColor,
         appBar: AppBar(
+          backgroundColor: Theme.of(context).primaryColorDark,
           title: const Text("View Payment"),
           centerTitle: true,
         ),
@@ -28,8 +30,13 @@ class ViewPaymentScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     balanceInfo(),
-                    const Divider(
-                        thickness: 1, indent: 32, endIndent: 32, height: 48),
+                    Divider(
+                      thickness: 1,
+                      indent: 32,
+                      endIndent: 32,
+                      height: 48,
+                      color: Colors.grey[700],
+                    ),
                   ],
                 ),
               ),
@@ -47,7 +54,7 @@ class ViewPaymentScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text("Balance Paid", style: categoryStyle),
+            Text("Balance Paid", style: categoryStyleLight),
             const SizedBox(height: 16.0),
             paymentDetailLine(
                 "Paid Amount: ", '\$${convertToDollar(payment.chargeAmount)}'),
@@ -70,18 +77,18 @@ class ViewPaymentScreen extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       textBaseline: TextBaseline.alphabetic,
       children: [
-        Text(title, style: bodyStyleBold),
-        Flexible(child: Text(detail, style: bodyStyle)),
+        Text(title, style: bodyStyleBoldLight),
+        Flexible(child: Text(detail, style: bodyStyleLight)),
       ],
     );
   }
 }
 
-TextStyle categoryStyle = GoogleFonts.montserrat(
-    fontWeight: FontWeight.w400, fontSize: 24, color: Colors.black);
+TextStyle categoryStyleLight = GoogleFonts.montserrat(
+    fontWeight: FontWeight.w500, fontSize: 24, color: Colors.white);
 
-TextStyle bodyStyle = GoogleFonts.montserrat(
-    fontWeight: FontWeight.normal, fontSize: 16, color: Colors.black);
+TextStyle bodyStyleLight = GoogleFonts.montserrat(
+    fontWeight: FontWeight.normal, fontSize: 16, color: Colors.white);
 
-TextStyle bodyStyleBold = GoogleFonts.montserrat(
-    fontWeight: FontWeight.w600, fontSize: 16, color: Colors.black);
+TextStyle bodyStyleBoldLight = GoogleFonts.montserrat(
+    fontWeight: FontWeight.w600, fontSize: 16, color: Colors.white);

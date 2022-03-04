@@ -31,40 +31,41 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Theme.of(context).primaryColor,
         body: SingleChildScrollView(
-      child: Container(
-          alignment: Alignment.center,
-          padding: const EdgeInsets.all(36),
-          child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  const SizedBox(height: 100),
-                  titleLogo(),
-                  const SizedBox(height: 25),
-                  statusMessage(),
-                  firstNameInput(),
-                  lastNameInput(),
-                  emailInput(),
-                  passwordInput(),
-                  signupButton(),
-                  Visibility(
-                      maintainSize: true,
-                      maintainAnimation: true,
-                      maintainState: true,
-                      visible: isLoading,
-                      child: const CircularProgressIndicator()),
-                  showLoginButton(),
-                ],
-              ))),
-    ));
+          child: Container(
+              alignment: Alignment.center,
+              padding: const EdgeInsets.all(36),
+              child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 50),
+                      titleLogo(),
+                      const SizedBox(height: 25),
+                      statusMessage(),
+                      firstNameInput(),
+                      lastNameInput(),
+                      emailInput(),
+                      passwordInput(),
+                      signupButton(),
+                      Visibility(
+                          maintainSize: true,
+                          maintainAnimation: true,
+                          maintainState: true,
+                          visible: isLoading,
+                          child: const CircularProgressIndicator()),
+                      showLoginButton(),
+                    ],
+                  ))),
+        ));
   }
 
   Widget titleLogo() {
     return Text(
       "Signup",
       style: GoogleFonts.pacifico(
-          fontWeight: FontWeight.bold, fontSize: 50, color: Colors.black),
+          fontWeight: FontWeight.bold, fontSize: 75, color: Colors.white),
     );
   }
 
@@ -78,64 +79,138 @@ class _SignupScreenState extends State<SignupScreen> {
 
   Widget firstNameInput() {
     return Padding(
-        padding: const EdgeInsets.only(top: 24),
+      padding: const EdgeInsets.only(top: 16),
+      child: Theme(
+        data: Theme.of(context).copyWith(splashColor: Colors.transparent),
         child: TextFormField(
           controller: txtFirstName,
-          keyboardType: TextInputType.name,
-          decoration: const InputDecoration(
-              hintText: 'First Name', icon: Icon(Icons.person)),
           validator: (text) => text!.isEmpty ? 'First Name is required' : null,
-          onChanged: (value) {},
-        ));
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.white,
+            hintText: 'First Name',
+            icon: const Icon(Icons.person),
+            enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(color: Colors.grey)),
+            focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(color: Colors.blue)),
+            errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(color: Colors.red)),
+            focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(color: Colors.red)),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget lastNameInput() {
     return Padding(
-        padding: const EdgeInsets.only(top: 24),
+      padding: const EdgeInsets.only(top: 8),
+      child: Theme(
+        data: Theme.of(context).copyWith(splashColor: Colors.transparent),
         child: TextFormField(
           controller: txtLastName,
-          keyboardType: TextInputType.name,
-          decoration: const InputDecoration(
-              hintText: 'Last Name', icon: Icon(Icons.person)),
           validator: (text) => text!.isEmpty ? 'Last Name is required' : null,
-        ));
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.white,
+            hintText: 'Last Name',
+            icon: const Icon(Icons.person),
+            enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(color: Colors.grey)),
+            focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(color: Colors.blue)),
+            errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(color: Colors.red)),
+            focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(color: Colors.red)),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget emailInput() {
     return Padding(
-        padding: const EdgeInsets.only(top: 24),
+      padding: const EdgeInsets.only(top: 8),
+      child: Theme(
+        data: Theme.of(context).copyWith(splashColor: Colors.transparent),
         child: TextFormField(
           controller: txtEmail,
-          keyboardType: TextInputType.emailAddress,
-          decoration:
-              const InputDecoration(hintText: 'Email', icon: Icon(Icons.email)),
           validator: (text) => text!.isEmpty ? 'Email is required' : null,
-        ));
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.white,
+            hintText: 'Email',
+            icon: const Icon(Icons.email),
+            enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(color: Colors.grey)),
+            focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(color: Colors.blue)),
+            errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(color: Colors.red)),
+            focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(color: Colors.red)),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget passwordInput() {
     return Padding(
-        padding: const EdgeInsets.only(top: 24),
+      padding: const EdgeInsets.only(top: 8),
+      child: Theme(
+        data: Theme.of(context).copyWith(splashColor: Colors.transparent),
         child: TextFormField(
-          controller: txtPassword,
-          keyboardType: TextInputType.emailAddress,
           obscureText: true,
-          decoration: const InputDecoration(
-              hintText: 'Password', icon: Icon(Icons.lock)),
+          controller: txtPassword,
           validator: (text) => text!.isEmpty ? 'Password is required' : null,
-        ));
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.white,
+            hintText: 'Password',
+            icon: const Icon(Icons.lock),
+            enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(color: Colors.grey)),
+            focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(color: Colors.blue)),
+            errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(color: Colors.red)),
+            focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(color: Colors.red)),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget signupButton() {
     return Padding(
-        padding: const EdgeInsets.only(top: 48),
+        padding: const EdgeInsets.only(top: 16),
         child: Container(
             height: 60,
-            width: 200,
+            width: 150,
             child: ElevatedButton(
               style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all(Theme.of(context).primaryColor),
+                backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                   RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(24.0),
@@ -182,7 +257,7 @@ class _SignupScreenState extends State<SignupScreen> {
         child: Row(children: [
           const Text(
             'Already have Account ? ',
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
           InkWell(
             onTap: () {

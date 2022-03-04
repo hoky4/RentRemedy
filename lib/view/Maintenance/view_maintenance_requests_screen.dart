@@ -44,6 +44,7 @@ class _ViewMaintenanceRequestsScreenState
   Widget build(BuildContext context) {
     return !isLoading
         ? Scaffold(
+            backgroundColor: Theme.of(context).primaryColor,
             floatingActionButton: FloatingActionButton(
                 onPressed: () {
                   Navigator.pushNamed(context, '/maintenanceRequest');
@@ -83,7 +84,9 @@ class _ViewMaintenanceRequestsScreenState
               ],
             ]),
           )
-        : const Scaffold(body: Center(child: CircularProgressIndicator()));
+        : Scaffold(
+            backgroundColor: Theme.of(context).primaryColor,
+            body: const Center(child: CircularProgressIndicator()));
   }
 
   @override
@@ -98,14 +101,21 @@ class MaintenanceRequestItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+        color: Theme.of(context).dividerColor,
         child: ListTile(
-      title: Text(maintenanceRequest.item),
-      subtitle: Text('Status: ${maintenanceRequest.status.value}'),
-      onTap: () {
-        Navigator.pushNamed(context, '/viewMaintenanceRequest',
-            arguments:
-                ViewMaintenanceRequestScreenArguments(maintenanceRequest));
-      },
-    ));
+          title: Text(
+            maintenanceRequest.item,
+            style: const TextStyle(color: Colors.white),
+          ),
+          subtitle: Text(
+            'Status: ${maintenanceRequest.status.value}',
+            style: const TextStyle(color: Colors.white70),
+          ),
+          onTap: () {
+            Navigator.pushNamed(context, '/viewMaintenanceRequest',
+                arguments:
+                    ViewMaintenanceRequestScreenArguments(maintenanceRequest));
+          },
+        ));
   }
 }

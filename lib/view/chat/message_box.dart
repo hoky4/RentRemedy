@@ -23,7 +23,7 @@ class MessageBox extends StatelessWidget {
         message.type == MessageType.PaymentDue ? 'Pay Now' : 'View Payment';
     Color? messageBtnColor = message.type == MessageType.PaymentDue
         ? Colors.orangeAccent
-        : Colors.grey[400];
+        : Colors.grey[700];
 
     return Padding(
       padding: const EdgeInsets.only(top: 2.0),

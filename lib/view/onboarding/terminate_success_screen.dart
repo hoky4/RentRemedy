@@ -21,7 +21,7 @@ class _TerminateSuccessScreenState extends State<TerminateSuccessScreen> {
               Text("Successful", style: categoryStyleLight),
               const SizedBox(height: 16),
               Text("Your lease agreement was termintated successfully",
-                  style: bodyStyle2Light),
+                  style: bodyStyle2Light, textAlign: TextAlign.center),
               const SizedBox(height: 16),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -30,7 +30,7 @@ class _TerminateSuccessScreenState extends State<TerminateSuccessScreen> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(50))),
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.pop(context, true);
                 },
                 child: Text('Done', style: bodyStyleLight),
               )

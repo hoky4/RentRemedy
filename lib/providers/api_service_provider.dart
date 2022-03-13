@@ -36,10 +36,10 @@ class ApiServiceProvider {
     Address newAddress =
         Address(line1, line2, city, state, zipCode, "Section A");
     final now = DateTime.now();
-    final nowIsoStr = now.toIso8601String();
-    final nowUtc = now.toUtc();
-    final nowUtc2 = DateTime.parse(nowIsoStr);
-    print('nowUtc2: $nowIsoStr');
+    final nowPlusOneMonth = DateTime(now.year, now.month + 1, now.day, now.hour,
+        now.minute, now.second, now.millisecond, now.microsecond);
+    final nowIsoStr = nowPlusOneMonth.toIso8601String();
+
     TerminateLeaseAgreementRequest request =
         TerminateLeaseAgreementRequest(nowIsoStr, reason, newAddress);
     final response = await http.post(
@@ -137,6 +137,7 @@ class ApiServiceProvider {
         }));
 
     if (response.statusCode == 200) {
+      print("payment-resp: ${response.body}");
       Map<String, dynamic> responseMap = jsonDecode(response.body);
       PaymentIntentResponse payment =
           PaymentIntentResponse.fromJson(responseMap);
@@ -184,8 +185,7 @@ class ApiServiceProvider {
 
     if (response.statusCode == 200) {
       Map<String, dynamic> responseMap = json.decode(response.body);
-      print('All-Payments: ${response.body}');
-      debugPrint(response.body, wrapWidth: 1024);
+
       List<dynamic> payments = responseMap['payments'];
 
       if (payments.isEmpty) {
@@ -196,16 +196,7 @@ class ApiServiceProvider {
 
         List<Payment> paymentList =
             List<Payment>.from(payments.map((i) => Payment.fromJson(i)));
-        // print(paymentList.length);
-        // print('Charge-Amount-1: ${paymentList.first.chargeAmount}');
-        // print('Charge-Amont-2: ${paymentList[1].chargeAmount}');
 
-        // print('Due Date-1: ${paymentList.first.dueDate}');
-        // print('Due Date-2: ${paymentList[1].dueDate}');
-
-        for (var item in paymentList) {
-          print('Latefee: ${item.lateFee}');
-        }
         return paymentList;
       }
     } else {

@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/Model/Payments/payment.dart';
+import 'package:rentremedy_mobile/Model/Payments/payment_status.dart';
 import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
 
 class PaymentScreenArguments {
@@ -72,11 +73,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text("Balance", style: categoryStyleLight),
-            Text("\$${widget.payment.chargeAmount}"),
             Text("\$${convertToDollar(widget.payment.chargeAmount)}",
                 style: amountStyleLight),
-            Text("+\$${widget.payment.lateFee} (late fee)",
-                style: lateFeeStyle),
+            if (widget.payment.status == PaymentStatus.Late) ...[
+              Text("+\$${convertToDollar(widget.payment.lateFee)} (late fee)",
+                  style: lateFeeStyle),
+            ],
             paymentDetailLine("Due: ",
                 DateFormat.yMMMMd('en_US').format(widget.payment.dueDate)),
           ],

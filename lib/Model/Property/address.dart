@@ -3,7 +3,8 @@ part 'address.g.dart';
 
 @JsonSerializable()
 class Address {
-  Address(this.line1, this.line2, this.city, this.state, this.zipCode, this.tag);
+  Address(
+      this.line1, this.line2, this.city, this.state, this.zipCode, this.tag);
 
   String line1;
   String line2;
@@ -12,6 +13,12 @@ class Address {
   String zipCode;
   String tag;
 
-  factory Address.fromJson(Map<String, dynamic> json) => _$AddressFromJson(json);
+  factory Address.fromJson(Map<String, dynamic> json) =>
+      _$AddressFromJson(json);
   Map<String, dynamic> toJson() => _$AddressToJson(this);
+
+  @override
+  String toString() {
+    return "$line1 $line2\n$city, $state $zipCode";
+  }
 }

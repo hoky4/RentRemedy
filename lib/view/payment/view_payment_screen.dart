@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:rentremedy_mobile/Model/Payments/payment.dart';
 
+import '../../Model/Payments/payment_status.dart';
+
 class ViewPaymentScreenArguments {
   final Payment payment;
 
@@ -58,6 +60,10 @@ class ViewPaymentScreen extends StatelessWidget {
             const SizedBox(height: 16.0),
             paymentDetailLine(
                 "Paid Amount: ", '\$${convertToDollar(payment.chargeAmount)}'),
+            if (payment.status == PaymentStatus.Late) ...[
+              paymentDetailLine(
+                  "Late Fee", "\$${convertToDollar(payment.lateFee)}"),
+            ],
             paymentDetailLine("Paid Date: ",
                 DateFormat.yMMMMd('en_US').format(payment.dueDate))
           ],

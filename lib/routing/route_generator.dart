@@ -11,9 +11,11 @@ import 'package:rentremedy_mobile/View/Chat/message_socket_handler.dart';
 import 'package:rentremedy_mobile/View/Onboarding/credit_card_screen.dart';
 import 'package:rentremedy_mobile/View/Onboarding/terms_screen.dart';
 import 'package:rentremedy_mobile/View/Payment/view_payments_screen.dart';
-import 'package:rentremedy_mobile/View/payment/payment_screen.dart';
-import 'package:rentremedy_mobile/View/payment/payment_success_screen.dart';
-import 'package:rentremedy_mobile/View/payment/view_payment_screen.dart';
+import 'package:rentremedy_mobile/View/Payment/payment_screen.dart';
+import 'package:rentremedy_mobile/View/Payment/payment_success_screen.dart';
+import 'package:rentremedy_mobile/View/Payment/view_payment_screen.dart';
+
+import '../View/Onboarding/terminate_success_screen.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -35,6 +37,9 @@ class RouteGenerator {
         final args = settings.arguments as JoinScreenArguments;
         return MaterialPageRoute(
             builder: (_) => TermsScreen(leaseAgreement: args.leaseAgreement));
+      case '/terminateSuccess':
+        return MaterialPageRoute(
+            builder: (_) => const TerminateSuccessScreen());
       case '/chat':
         return MaterialPageRoute(builder: (_) => const MessageSocketHandler());
       case '/payment':

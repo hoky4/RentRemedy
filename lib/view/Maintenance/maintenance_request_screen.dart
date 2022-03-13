@@ -29,12 +29,11 @@ class _MaintenanceRequestScreenState extends State<MaintenanceRequestScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // ApiServiceProvider apiService =
-    //     Provider.of<ApiServiceProvider>(context, listen: false);
-
     return SafeArea(
       child: Scaffold(
+          backgroundColor: Theme.of(context).primaryColor,
           appBar: AppBar(
+            backgroundColor: Theme.of(context).primaryColorDark,
             title: const Text("Maintenance Request"),
             centerTitle: true,
           ),
@@ -50,10 +49,19 @@ class _MaintenanceRequestScreenState extends State<MaintenanceRequestScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 16),
                       child: TextFormField(
+                        style: const TextStyle(color: Colors.white),
                         controller: txtItem,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: 'Item',
+                          labelStyle: const TextStyle(color: Colors.white),
                           hintText: "Ex. Sink",
+                          hintStyle: TextStyle(color: Colors.grey.shade400),
+                          enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: const BorderSide(color: Colors.grey)),
+                          focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: const BorderSide(color: Colors.blue)),
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -67,9 +75,20 @@ class _MaintenanceRequestScreenState extends State<MaintenanceRequestScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 16),
                       child: TextFormField(
+                        style: const TextStyle(color: Colors.white),
                         controller: txtLocation,
-                        decoration: const InputDecoration(
-                            labelText: 'Location', hintText: 'Ex. Kitchen'),
+                        decoration: InputDecoration(
+                          labelText: 'Location',
+                          labelStyle: const TextStyle(color: Colors.white),
+                          hintText: 'Ex. Kitchen',
+                          hintStyle: TextStyle(color: Colors.grey.shade400),
+                          enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: const BorderSide(color: Colors.grey)),
+                          focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: const BorderSide(color: Colors.blue)),
+                        ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Location is required';
@@ -82,25 +101,28 @@ class _MaintenanceRequestScreenState extends State<MaintenanceRequestScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 16),
                       child: TextFormField(
+                        style: const TextStyle(color: Colors.white),
                         controller: txtDescription,
                         keyboardType: TextInputType.multiline,
                         minLines: 2,
                         maxLines: 3,
                         decoration: InputDecoration(
                           labelText: 'Description',
+                          labelStyle: const TextStyle(color: Colors.white),
                           hintText: 'Ex. Sink is leaking',
+                          hintStyle: TextStyle(color: Colors.grey.shade400),
                           enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
                               borderSide: const BorderSide(color: Colors.grey)),
                           focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
                               borderSide: const BorderSide(color: Colors.blue)),
-                          errorBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(16),
-                              borderSide: const BorderSide(color: Colors.red)),
-                          focusedErrorBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(16),
-                              borderSide: const BorderSide(color: Colors.red)),
+                          // errorBorder: OutlineInputBorder(
+                          //     borderRadius: BorderRadius.circular(16),
+                          //     borderSide: const BorderSide(color: Colors.red)),
+                          // focusedErrorBorder: OutlineInputBorder(
+                          //     borderRadius: BorderRadius.circular(16),
+                          //     borderSide: const BorderSide(color: Colors.red)),
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -113,12 +135,17 @@ class _MaintenanceRequestScreenState extends State<MaintenanceRequestScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text("Severity: "),
+                        const Text(
+                          "Severity: ",
+                          style: TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold),
+                        ),
                         DropdownButton<SeverityType>(
+                          dropdownColor: Theme.of(context).primaryColor,
                           value: dropdownValue,
                           icon: const Icon(Icons.arrow_drop_down),
                           elevation: 16,
-                          style: const TextStyle(color: Colors.black),
+                          style: const TextStyle(color: Colors.white),
                           underline: Container(
                             height: 2,
                             color: Colors.blue,

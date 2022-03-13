@@ -5,8 +5,9 @@ import 'package:rentremedy_mobile/Model/Message/message_type.dart';
 import 'package:rentremedy_mobile/Model/Payments/payment.dart';
 import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
 import 'package:rentremedy_mobile/Providers/auth_model_provider.dart';
-import 'package:rentremedy_mobile/View/payment/payment_screen.dart';
-import 'package:rentremedy_mobile/View/payment/view_payment_screen.dart';
+import 'package:rentremedy_mobile/View/Payment/payment_screen.dart';
+
+import '../Payment/view_payment_screen.dart';
 
 class MessageBox extends StatelessWidget {
   final Message message;
@@ -22,7 +23,7 @@ class MessageBox extends StatelessWidget {
         message.type == MessageType.PaymentDue ? 'Pay Now' : 'View Payment';
     Color? messageBtnColor = message.type == MessageType.PaymentDue
         ? Colors.orangeAccent
-        : Colors.grey[400];
+        : Colors.grey[700];
 
     return Padding(
       padding: const EdgeInsets.only(top: 2.0),
@@ -37,18 +38,22 @@ class MessageBox extends StatelessWidget {
                 maxWidth: MediaQuery.of(context).size.width * .6),
             padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
-              color: Colors.blue
-                  .withOpacity(message.sender != landlordId ? 1 : 0.08),
+              color: message.sender != landlordId
+                  ? Colors.blue
+                  : Theme.of(context).primaryColorDark.withOpacity(0.80),
+              //color: Colors.blue
+              //  .withOpacity(message.sender != landlordId ? 1 : 0.08),
               borderRadius: BorderRadius.circular(30),
             ),
             child: Column(
               children: [
                 Text(
                   message.messageText,
-                  style: TextStyle(
-                      color: message.sender != landlordId
-                          ? Colors.white
-                          : Theme.of(context).textTheme.bodyText1!.color),
+                  style: const TextStyle(color: Colors.white
+                      // color: message.sender != landlordId
+                      //     ? Colors.white
+                      //     : Theme.of(context).textTheme.bodyText1!.color
+                      ),
                 ),
                 if (message.type == MessageType.PaymentDue ||
                     message.type == MessageType.PaymentSuccessful) ...[

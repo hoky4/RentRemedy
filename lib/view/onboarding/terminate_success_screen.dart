@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class MaintenanceRequestSuccessScreen extends StatefulWidget {
-  const MaintenanceRequestSuccessScreen({Key? key}) : super(key: key);
+class TerminateSuccessScreen extends StatefulWidget {
+  const TerminateSuccessScreen({Key? key}) : super(key: key);
 
   @override
-  _MaintenanceRequestSuccessScreenState createState() =>
-      _MaintenanceRequestSuccessScreenState();
+  _TerminateSuccessScreenState createState() => _TerminateSuccessScreenState();
 }
 
-class _MaintenanceRequestSuccessScreenState
-    extends State<MaintenanceRequestSuccessScreen> {
+class _TerminateSuccessScreenState extends State<TerminateSuccessScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,12 +17,11 @@ class _MaintenanceRequestSuccessScreenState
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.build_circle_outlined,
-                  size: 150, color: Colors.orange[200]),
+              const Icon(Icons.done_rounded, size: 150, color: Colors.blue),
               Text("Successful", style: categoryStyleLight),
               const SizedBox(height: 16),
-              Text("Your request was done successfully",
-                  style: bodyStyle2Light),
+              Text("Your lease agreement was termintated successfully",
+                  style: bodyStyle2Light, textAlign: TextAlign.center),
               const SizedBox(height: 16),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -33,7 +30,7 @@ class _MaintenanceRequestSuccessScreenState
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(50))),
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.pop(context, true);
                 },
                 child: Text('Done', style: bodyStyleLight),
               )

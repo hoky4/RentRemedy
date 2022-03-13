@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
+
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/Model/LeaseAgreement/lease_agreement.dart';
 import 'package:rentremedy_mobile/Providers/auth_model_provider.dart';
@@ -36,7 +36,7 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
       actions: [
         if (authModel.leaseAgreement!.signatures.isEmpty) ...[
           IconButton(
-              icon: const Icon(FontAwesome5.hand_paper),
+              icon: const Icon(Icons.document_scanner),
               onPressed: enabled
                   ? () {
                       LeaseAgreement? leaseAgreement = authModel.leaseAgreement;

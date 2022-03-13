@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
 import 'package:rentremedy_mobile/Model/Auth/logged_in_user.dart';
 import 'package:rentremedy_mobile/Model/LeaseAgreement/lease_agreement.dart';
 import 'package:rentremedy_mobile/Model/LeaseAgreement/status.dart';
+import 'package:rentremedy_mobile/Model/LeaseAgreement/terminate_lease_agreement_request.dart';
 import 'package:rentremedy_mobile/Model/Maintenance/maintenance_request_request.dart';
 import 'package:rentremedy_mobile/Model/Maintenance/maintenance_request.dart';
 import 'package:rentremedy_mobile/Model/Maintenance/severity_type.dart';
@@ -12,6 +15,7 @@ import 'package:rentremedy_mobile/Model/Payments/payment.dart';
 import 'package:rentremedy_mobile/Model/Payments/payment_intent_response.dart';
 import 'package:rentremedy_mobile/Model/Payments/setup_intent_request.dart';
 import 'package:rentremedy_mobile/Model/Payments/setup_intent_response.dart';
+import 'package:rentremedy_mobile/Model/Property/address.dart';
 import 'package:rentremedy_mobile/Model/User/user.dart';
 import 'package:rentremedy_mobile/Networking/api.dart';
 import 'package:rentremedy_mobile/Networking/api_exception.dart';
@@ -25,6 +29,36 @@ class ApiServiceProvider {
 
   set authModelProvider(AuthModelProvider authModelProvider) {
     _authModelProvider = authModelProvider;
+  }
+
+  dynamic terminateLeaseAgreement(String id, String reason, String line1,
+      String line2, String city, String state, String zipCode) async {
+    Address newAddress =
+        Address(line1, line2, city, state, zipCode, "Section A");
+    final now = DateTime.now();
+    final nowPlusOneMonth = DateTime(now.year, now.month + 1, now.day, now.hour,
+        now.minute, now.second, now.millisecond, now.microsecond);
+    final nowIsoStr = nowPlusOneMonth.toIso8601String();
+
+    TerminateLeaseAgreementRequest request =
+        TerminateLeaseAgreementRequest(nowIsoStr, reason, newAddress);
+    final response = await http.post(
+      Uri.parse('$LEASEAGREEMENTS/$id/terminate'),
+      headers: <String, String>{
+        'cookie': _authModelProvider.cookie!,
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(request.toJson()),
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseMap = jsonDecode(response.body);
+      LeaseAgreement leaseAgreement = LeaseAgreement.fromJson(responseMap);
+
+      return leaseAgreement;
+    } else {
+      return _handleError(response);
+    }
   }
 
   dynamic getAllMaintenanceRequests() async {
@@ -69,6 +103,7 @@ class ApiServiceProvider {
     MaintenanceRequestRequest request = MaintenanceRequestRequest(
         // user,
         _authModelProvider.leaseAgreement!.id,
+        _authModelProvider.leaseAgreement!.property!.id,
         severity,
         item,
         location,
@@ -103,6 +138,7 @@ class ApiServiceProvider {
         }));
 
     if (response.statusCode == 200) {
+      print("payment-resp: ${response.body}");
       Map<String, dynamic> responseMap = jsonDecode(response.body);
       PaymentIntentResponse payment =
           PaymentIntentResponse.fromJson(responseMap);
@@ -150,6 +186,7 @@ class ApiServiceProvider {
 
     if (response.statusCode == 200) {
       Map<String, dynamic> responseMap = json.decode(response.body);
+
       List<dynamic> payments = responseMap['payments'];
 
       if (payments.isEmpty) {

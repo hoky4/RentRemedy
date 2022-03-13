@@ -35,7 +35,9 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
     var authModel = context.read<AuthModelProvider>();
 
     return Scaffold(
+      backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
+        backgroundColor: Theme.of(context).primaryColorDark,
         centerTitle: true,
         title: const Text('Confirmation'),
         automaticallyImplyLeading: false,
@@ -46,7 +48,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
             messageModel.clearRecentMessages();
             Navigator.pushReplacementNamed(context, '/login');
           },
-          color: Colors.black,
+          color: Colors.white,
         ),
       ),
       body: SingleChildScrollView(
@@ -59,18 +61,22 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                 children: [
                   const SizedBox(height: 150),
                   const Text(
-                      "You will receive a confirmation code in your email after applying and being accepted to a rent remedy property.",
-                      style:
-                          TextStyle(fontWeight: FontWeight.w500, fontSize: 20)),
+                    "You will receive a confirmation code in your email after applying and being accepted to a rent remedy property.",
+                    style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 20,
+                        color: Colors.white),
+                    textAlign: TextAlign.center,
+                  ),
                   statusMessage(),
                   confirmationInput(),
-                  submitButton(context),
                   Visibility(
                       maintainSize: true,
                       maintainAnimation: true,
                       maintainState: true,
                       visible: isLoading,
                       child: const CircularProgressIndicator()),
+                  submitButton(context),
                 ],
               ),
             )),
@@ -123,8 +129,11 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
     return TextFormField(
         controller: txtCode,
         keyboardType: TextInputType.text,
-        decoration: const InputDecoration(
-            hintText: 'Enter Confirmation Code', icon: Icon(Icons.lock)),
+        style: const TextStyle(color: Colors.white),
+        decoration: InputDecoration(
+            hintText: 'Enter Confirmation Code',
+            hintStyle: TextStyle(color: Colors.grey.shade400),
+            icon: const Icon(Icons.lock)),
         validator: (text) => text!.isEmpty ? 'Code is required' : null);
   }
 

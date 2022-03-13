@@ -10,6 +10,7 @@ MaintenanceRequestRequest _$MaintenanceRequestRequestFromJson(
         Map<String, dynamic> json) =>
     MaintenanceRequestRequest(
       json['leaseAgreementId'] as String,
+      json['propertyId'] as String,
       $enumDecode(_$SeverityTypeEnumMap, json['severity']),
       json['item'] as String,
       json['location'] as String,
@@ -23,6 +24,7 @@ Map<String, dynamic> _$MaintenanceRequestRequestToJson(
         MaintenanceRequestRequest instance) =>
     <String, dynamic>{
       'leaseAgreementId': instance.leaseAgreementId,
+      'propertyId': instance.propertyId,
       'severity': _$SeverityTypeEnumMap[instance.severity],
       'item': instance.item,
       'location': instance.location,

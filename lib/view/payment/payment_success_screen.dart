@@ -12,20 +12,21 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: const Color(0xFFFFFFFF),
+        backgroundColor: Theme.of(context).primaryColor,
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Image(
-                  image: AssetImage('assets/images/success.gif'), height: 150),
-              Text("Successful", style: categoryStyle),
+                  image: AssetImage('assets/images/success_transparent.gif'),
+                  height: 150),
+              Text("Successful", style: categoryStyleLight),
               const SizedBox(height: 16),
               Padding(
                 padding: const EdgeInsets.fromLTRB(48.0, 0.0, 48.0, 0.0),
                 child: Text(
                     "Your payment was done successfully. \nYou will receive a message when your payment is received.",
-                    style: bodyStyle2,
+                    style: bodyStyle2Light,
                     textAlign: TextAlign.center),
               ),
               const SizedBox(height: 16),
@@ -42,7 +43,7 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
                   //     MaterialPageRoute(
                   //         builder: (context) => MessageSocketHandler()));
                 },
-                child: Text('Done', style: bodyStyle),
+                child: Text('Done', style: bodyStyleLight),
               )
             ],
           ),
@@ -50,11 +51,11 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
   }
 }
 
-TextStyle categoryStyle = GoogleFonts.montserrat(
-    fontWeight: FontWeight.w400, fontSize: 24, color: Colors.black);
+TextStyle categoryStyleLight = GoogleFonts.montserrat(
+    fontWeight: FontWeight.w400, fontSize: 24, color: Colors.white);
 
-TextStyle bodyStyle = GoogleFonts.montserrat(
-    fontWeight: FontWeight.normal, fontSize: 16, color: Colors.black);
+TextStyle bodyStyleLight = GoogleFonts.montserrat(
+    fontWeight: FontWeight.normal, fontSize: 16, color: Colors.white);
 
-TextStyle bodyStyle2 = GoogleFonts.montserrat(
-    fontWeight: FontWeight.w300, fontSize: 16, color: Colors.black);
+TextStyle bodyStyle2Light = GoogleFonts.montserrat(
+    fontWeight: FontWeight.w300, fontSize: 16, color: Colors.white70);

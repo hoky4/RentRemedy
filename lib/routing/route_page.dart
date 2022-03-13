@@ -45,7 +45,13 @@ class _RoutePageState extends State<RoutePage> {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      theme: ThemeData(
+        primaryColor: const Color(0xff173a5e),
+        primaryColorDark: const Color(0xff071A2F),
+        // dividerColor: const Color(0xff1e4976),
+        dividerColor: const Color(0xff1e4976),
+      ),
       title: 'Rent Remedy',
       initialRoute: '/login',
       onGenerateRoute: RouteGenerator.generateRoute,

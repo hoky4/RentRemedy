@@ -103,6 +103,7 @@ class ApiServiceProvider {
     MaintenanceRequestRequest request = MaintenanceRequestRequest(
         // user,
         _authModelProvider.leaseAgreement!.id,
+        _authModelProvider.leaseAgreement!.property!.id,
         severity,
         item,
         location,

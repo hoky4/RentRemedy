@@ -4,11 +4,12 @@ part 'maintenance_request_request.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class MaintenanceRequestRequest {
-  MaintenanceRequestRequest(this.leaseAgreementId, this.severity, this.item,
-      this.location, this.description, this.dateTime);
+  MaintenanceRequestRequest(this.leaseAgreementId, this.propertyId,
+      this.severity, this.item, this.location, this.description, this.dateTime,);
 
   // User user;
   String leaseAgreementId;
+  String propertyId;
   SeverityType severity;
   String item;
   String location;

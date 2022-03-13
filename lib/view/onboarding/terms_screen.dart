@@ -32,21 +32,33 @@ class TermsScreen extends StatelessWidget {
             automaticallyImplyLeading: false,
             centerTitle: true,
             actions: [
-              TextButton(
-                style: TextButton.styleFrom(
-                  primary: Colors.white70, // foreground
+              if (leaseAgreement.signatures.isEmpty) ...[
+                TextButton(
+                  style: TextButton.styleFrom(
+                    primary: Colors.white70, // foreground
+                  ),
+                  onPressed: () {
+                    // Update with a unsigned lease agreement
+                    LoggedInUser? user = authModel.user;
+                    if (user != null) {
+                      user.leaseAgreement = leaseAgreement;
+                      authModel.loginUser(user);
+                      Navigator.pushReplacementNamed(context, '/chat');
+                    }
+                  },
+                  child: const Text('Sign Later'),
                 ),
-                onPressed: () {
-                  // Update with a unsigned lease agreement
-                  LoggedInUser? user = authModel.user;
-                  if (user != null) {
-                    user.leaseAgreement = leaseAgreement;
-                    authModel.loginUser(user);
-                    Navigator.pushReplacementNamed(context, '/chat');
-                  }
-                },
-                child: Text('Sign Later'),
-              ),
+              ] else ...[
+                TextButton(
+                  style: TextButton.styleFrom(
+                    primary: Colors.white70, // foreground
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Icon(Icons.close),
+                ),
+              ],
             ]),
         body: Column(
           children: [
@@ -73,34 +85,363 @@ class TermsScreen extends StatelessWidget {
                     const Divider(
                         thickness: 1, indent: 32, endIndent: 32, height: 48),
                     maintenanceProvided(leaseAgreement.maintenanceProvided),
-                    const SizedBox(height: 24)
+                    const SizedBox(height: 24),
+                    if (leaseAgreement.signatures.isNotEmpty) ...[
+                      const Divider(
+                          thickness: 1, indent: 32, endIndent: 32, height: 48),
+                      signedInfo(leaseAgreement.signatures.first.signDate),
+                      const SizedBox(height: 24),
+                    ]
                   ],
                 ),
               ),
             ),
-            Container(
-                // alignment: Alignment.center,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                    color:
-                        Theme.of(context).primaryColorDark), //Colors.black12),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        const Spacer(),
-                        acceptButton(context, leaseAgreement.id),
-                        const Spacer()
-                      ],
-                    ),
-                    const Text(
-                      "By selecting accept, I agree to the terms above.",
-                      style: TextStyle(color: Colors.white),
-                    )
-                  ],
-                )),
+            if (leaseAgreement.signatures.isEmpty) ...[
+              Container(
+                  // alignment: Alignment.center,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                      color: Theme.of(context)
+                          .primaryColorDark), //Colors.black12),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          const Spacer(),
+                          acceptButton(context, leaseAgreement.id),
+                          const Spacer()
+                        ],
+                      ),
+                      const Text(
+                        "By selecting accept, I agree to the terms above.",
+                        style: TextStyle(color: Colors.white),
+                      )
+                    ],
+                  )),
+            ] else ...[
+              //TODO: check condition on terminated Date
+              Container(
+                  // alignment: Alignment.center,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                      color: Theme.of(context)
+                          .primaryColorDark), //Colors.black12),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          const Spacer(),
+                          terminateButton(context, leaseAgreement.id),
+                          const Spacer()
+                        ],
+                      )
+                    ],
+                  )),
+            ],
           ],
         ),
+      ),
+    );
+  }
+
+  Widget signedInfo(DateTime signedDate) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(32.0, 24.0, 0, 0),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Signed on ${DateFormat.yMMMMd('en_US').format(signedDate)}",
+                style: bodyStyle),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget terminateButton(BuildContext context, String leaseAgreemenId) {
+    final _formKey = GlobalKey<FormState>();
+
+    ApiServiceProvider apiService =
+        Provider.of<ApiServiceProvider>(context, listen: false);
+    final TextEditingController txtReason = TextEditingController();
+    final TextEditingController txtLine1 = TextEditingController();
+    final TextEditingController txtLine2 = TextEditingController();
+    final TextEditingController txtCity = TextEditingController();
+    final TextEditingController txtState = TextEditingController();
+    final TextEditingController txtZipCode = TextEditingController();
+
+    return SizedBox(
+      height: 60,
+      width: 150,
+      child: ElevatedButton(
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(Colors.red[800]),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24.0),
+            ),
+          ),
+        ),
+        onPressed: () => showDialog<String>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            backgroundColor: Theme.of(context).primaryColor,
+            title: const Text(
+              'Complete before Terminating',
+              style: TextStyle(color: Colors.white),
+            ),
+            content: SingleChildScrollView(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      style: const TextStyle(color: Colors.white),
+                      controller: txtReason,
+                      keyboardType: TextInputType.multiline,
+                      minLines: 2,
+                      maxLines: 5,
+                      decoration: InputDecoration(
+                        labelText: 'Reason',
+                        labelStyle: const TextStyle(color: Colors.white),
+                        // hintText: 'Ex. Sink is leaking',
+                        // hintStyle: TextStyle(color: Colors.grey.shade400),
+                        enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: const BorderSide(color: Colors.grey)),
+                        focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: const BorderSide(color: Colors.blue)),
+                        errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: const BorderSide(color: Colors.red)),
+                        focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: const BorderSide(color: Colors.red)),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Description is required';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 32.0),
+                    const Text(
+                      "New Address",
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                    TextFormField(
+                      style: const TextStyle(color: Colors.white),
+                      controller: txtLine1,
+                      decoration: InputDecoration(
+                        labelText: 'Line 1',
+                        labelStyle: const TextStyle(color: Colors.white),
+                        enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: const BorderSide(color: Colors.grey)),
+                        focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: const BorderSide(color: Colors.blue)),
+                        errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: const BorderSide(color: Colors.red)),
+                        focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: const BorderSide(color: Colors.red)),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Line1 is required';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16.0),
+                    TextFormField(
+                      style: const TextStyle(color: Colors.white),
+                      controller: txtLine2,
+                      decoration: InputDecoration(
+                        labelText: 'Line 2',
+                        labelStyle: const TextStyle(color: Colors.white),
+                        enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: const BorderSide(color: Colors.grey)),
+                        focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: const BorderSide(color: Colors.blue)),
+                        errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: const BorderSide(color: Colors.red)),
+                        focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: const BorderSide(color: Colors.red)),
+                      ),
+                      // validator: (value) {
+                      //   if (value == null || value.isEmpty) {
+                      //     return 'Line2 is required';
+                      //   }
+                      //   return null;
+                      // },
+                    ),
+                    const SizedBox(height: 16.0),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            style: const TextStyle(color: Colors.white),
+                            controller: txtCity,
+                            decoration: InputDecoration(
+                              labelText: 'City',
+                              labelStyle: const TextStyle(color: Colors.white),
+                              enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide:
+                                      const BorderSide(color: Colors.grey)),
+                              focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide:
+                                      const BorderSide(color: Colors.blue)),
+                              errorBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide:
+                                      const BorderSide(color: Colors.red)),
+                              focusedErrorBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide:
+                                      const BorderSide(color: Colors.red)),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'City is required';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 8.0,
+                        ),
+                        Expanded(
+                          child: TextFormField(
+                            style: const TextStyle(color: Colors.white),
+                            controller: txtState,
+                            decoration: InputDecoration(
+                              labelText: 'State',
+                              labelStyle: const TextStyle(color: Colors.white),
+                              enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide:
+                                      const BorderSide(color: Colors.grey)),
+                              focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide:
+                                      const BorderSide(color: Colors.blue)),
+                              errorBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide:
+                                      const BorderSide(color: Colors.red)),
+                              focusedErrorBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide:
+                                      const BorderSide(color: Colors.red)),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'State is required';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16.0),
+                    TextFormField(
+                      style: const TextStyle(color: Colors.white),
+                      controller: txtZipCode,
+                      decoration: InputDecoration(
+                        labelText: 'Zip Code',
+                        labelStyle: const TextStyle(color: Colors.white),
+                        enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: const BorderSide(color: Colors.grey)),
+                        focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: const BorderSide(color: Colors.blue)),
+                        errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: const BorderSide(color: Colors.red)),
+                        focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: const BorderSide(color: Colors.red)),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Zip Code is required';
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => Navigator.pop(context, 'Cancel'),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  if (_formKey.currentState!.validate()) {
+                    try {
+                      LeaseAgreement leaseAgreement =
+                          await apiService.terminateLeaseAgreement(
+                              leaseAgreemenId,
+                              txtReason.text,
+                              txtLine1.text,
+                              txtLine2.text,
+                              txtCity.text,
+                              txtState.text,
+                              txtZipCode.text);
+                      print('Lease agreement terminated');
+
+                      Navigator.pushReplacementNamed(
+                          context, '/terminateSuccess');
+                    } on Exception catch (e) {
+                      print(
+                          "Error terminating leaseAgreement: ${e.toString()}");
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(SnackBar(content: Text(e.toString())));
+                    }
+
+                    // Navigator.pop(context, 'OK');
+                  }
+                },
+                child: const Text('Confirm'),
+              ),
+            ],
+          ),
+        ),
+        // onPressed: () async {
+        //   try {
+        //     // LeaseAgreement leaseAgreement =
+        //     //     await apiService.terminateLeaseAgreement(leaseAgreemenId);
+        //     // print('Lease agreement terminated');
+
+        //     Navigator.pushReplacementNamed(context, '/terminateSuccess');
+        //   } on Exception catch (e) {
+        //     print("Error terminating leaseAgreement: ${e.toString()}");
+        //     ScaffoldMessenger.of(context)
+        //         .showSnackBar(SnackBar(content: Text(e.toString())));
+        //   }
+        // },
+        child: const Text('Terminate',
+            style: TextStyle(fontSize: 20, color: Colors.white)),
       ),
     );
   }

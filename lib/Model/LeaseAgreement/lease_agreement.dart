@@ -3,6 +3,7 @@ import 'package:rentremedy_mobile/Model/Fees/monthly_fees.dart';
 import 'package:rentremedy_mobile/Model/LeaseAgreement/amenity.dart';
 import 'package:rentremedy_mobile/Model/LeaseAgreement/maintenance.dart';
 import 'package:rentremedy_mobile/Model/LeaseAgreement/one_time_security_deposit.dart';
+import 'package:rentremedy_mobile/Model/LeaseAgreement/termination_info.dart';
 import 'package:rentremedy_mobile/Model/LeaseAgreement/utility.dart';
 import 'package:rentremedy_mobile/Model/Property/property.dart';
 import 'package:rentremedy_mobile/Model/LeaseAgreement/signature.dart';
@@ -22,8 +23,10 @@ class LeaseAgreement {
       this.signatures,
       this.startDate,
       this.endDate,
+      this.actualEndDate,
       this.status,
       this.property,
+      this.terminationInfo,
       this.securityDeposit,
       this.monthlyFees,
       this.amenitiesProvided,
@@ -39,8 +42,10 @@ class LeaseAgreement {
   List<Signature> signatures;
   DateTime startDate;
   DateTime endDate;
+  DateTime? actualEndDate;
   Status status;
   Property? property;
+  TerminationInfo? terminationInfo;
   OneTimeSecurityDeposit securityDeposit;
   MonthlyFees monthlyFees;
   List<Amenity> amenitiesProvided;

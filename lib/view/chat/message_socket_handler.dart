@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/Model/LeaseAgreement/lease_agreement.dart';
 import 'package:rentremedy_mobile/Model/Message/message.dart';
@@ -135,10 +134,8 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
           ? 3
           : 1,
       child: Scaffold(
-        // backgroundColor: Theme.of(context).primaryColor,
         appBar: AppBar(
             backgroundColor: Theme.of(context).primaryColorDark,
-            automaticallyImplyLeading: false,
             bottom: TabBar(
               indicatorColor: Colors.blue,
               tabs: [
@@ -151,19 +148,19 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
               ],
             ),
             title: const Text('Rent Remedy'),
-            leading: IconButton(
-              icon: const Icon(Icons.logout),
-              onPressed: () {
-                authModel.logoutUser();
-                messageModel.clearRecentMessages();
-                Navigator.pushReplacementNamed(context, '/login');
-              },
-              color: Colors.white,
-            ),
+            // leading: IconButton(
+            //   icon: const Icon(Icons.logout),
+            //   onPressed: () {
+            //     authModel.logoutUser();
+            //     messageModel.clearRecentMessages();
+            //     Navigator.pushReplacementNamed(context, '/login');
+            //   },
+            //   color: Colors.white,
+            // ),
             actions: [
               if (authModel.leaseAgreement!.signatures.isEmpty) ...[
                 IconButton(
-                    icon: const Icon(FontAwesome.file_text),
+                    icon: const Icon(Icons.document_scanner),
                     onPressed: () async {
                       LeaseAgreement? leaseAgreement = authModel.leaseAgreement;
                       if (leaseAgreement != null) {
@@ -173,6 +170,41 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
                     })
               ],
             ]),
+        drawer: Drawer(
+          child: ListView(
+            // padding: EdgeInsets.zero,
+            children: [
+              DrawerHeader(
+                decoration: const BoxDecoration(
+                  color: Colors.blue,
+                ),
+                child: Text('${authModel.user?.email}'),
+              ),
+              if (authModel.leaseAgreement!.signatures.isNotEmpty) ...[
+                ListTile(
+                  title: const Text('Lease Agreement'),
+                  leading: const Icon(Icons.document_scanner),
+                  onTap: () {
+                    LeaseAgreement? leaseAgreement = authModel.leaseAgreement;
+                    if (leaseAgreement != null) {
+                      Navigator.pushNamed(context, '/terms',
+                          arguments: JoinScreenArguments(leaseAgreement));
+                    }
+                  },
+                ),
+              ],
+              ListTile(
+                title: const Text('Logout'),
+                leading: const Icon(Icons.logout),
+                onTap: () {
+                  authModel.logoutUser();
+                  messageModel.clearRecentMessages();
+                  Navigator.pushReplacementNamed(context, '/login');
+                },
+              ),
+            ],
+          ),
+        ),
         body: TabBarView(
           children: [
             isLoading

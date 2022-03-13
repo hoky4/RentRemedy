@@ -72,8 +72,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text("Balance", style: categoryStyleLight),
+            Text("\$${widget.payment.chargeAmount}"),
             Text("\$${convertToDollar(widget.payment.chargeAmount)}",
                 style: amountStyleLight),
+            Text("+\$${widget.payment.lateFee} (late fee)",
+                style: lateFeeStyle),
             paymentDetailLine("Due: ",
                 DateFormat.yMMMMd('en_US').format(widget.payment.dueDate)),
           ],
@@ -147,3 +150,6 @@ TextStyle bodyStyleBoldLight = GoogleFonts.montserrat(
 
 TextStyle amountStyleLight = GoogleFonts.montserrat(
     fontWeight: FontWeight.normal, fontSize: 48, color: Colors.white);
+
+TextStyle lateFeeStyle = GoogleFonts.montserrat(
+    fontWeight: FontWeight.normal, fontSize: 24, color: Colors.red[900]);

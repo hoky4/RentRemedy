@@ -3,8 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/Model/Payments/payment.dart';
 import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
-import 'package:rentremedy_mobile/View/payment/payment_screen.dart';
-import 'package:rentremedy_mobile/View/payment/view_payment_screen.dart';
+import 'package:rentremedy_mobile/View/Payment/payment_screen.dart';
+import 'package:rentremedy_mobile/View/Payment/view_payment_screen.dart';
 
 class ViewPaymentsScreen extends StatefulWidget {
   const ViewPaymentsScreen({Key? key}) : super(key: key);

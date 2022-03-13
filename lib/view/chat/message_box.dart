@@ -5,8 +5,9 @@ import 'package:rentremedy_mobile/Model/Message/message_type.dart';
 import 'package:rentremedy_mobile/Model/Payments/payment.dart';
 import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
 import 'package:rentremedy_mobile/Providers/auth_model_provider.dart';
-import 'package:rentremedy_mobile/View/payment/payment_screen.dart';
-import 'package:rentremedy_mobile/View/payment/view_payment_screen.dart';
+import 'package:rentremedy_mobile/View/Payment/payment_screen.dart';
+
+import '../Payment/view_payment_screen.dart';
 
 class MessageBox extends StatelessWidget {
   final Message message;

@@ -19,6 +19,7 @@ MaintenanceRequest _$MaintenanceRequestFromJson(Map<String, dynamic> json) =>
       json['description'] as String,
       DateTime.parse(json['submissionDate'] as String),
     )
+      ..statusMessage = json['statusMessage'] as String?
       ..projectedCompletionDate = json['projectedCompletionDate'] == null
           ? null
           : DateTime.parse(json['projectedCompletionDate'] as String)
@@ -37,6 +38,7 @@ Map<String, dynamic> _$MaintenanceRequestToJson(MaintenanceRequest instance) =>
       'propertyId': instance.propertyId,
       'severity': _$SeverityTypeEnumMap[instance.severity],
       'status': _$MaintenanceRequestStatusEnumMap[instance.status],
+      'statusMessage': instance.statusMessage,
       'item': instance.item,
       'location': instance.location,
       'description': instance.description,

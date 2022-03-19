@@ -8,20 +8,18 @@ enum MessageType {
   @JsonValue(2)
   PaymentSuccessful,
   @JsonValue(3)
-  PaymentProcessing,
-  @JsonValue(4)
   PaymentReceived,
-  @JsonValue(5)
+  @JsonValue(4)
   WelcomeMessage,
-  @JsonValue(6)
+  @JsonValue(5)
   MaintenanceCreated,
-  @JsonValue(7)
+  @JsonValue(6)
   MaintenanceCompleted,
-  @JsonValue(8)
+  @JsonValue(7)
   MaintenanceCancelled,
-  @JsonValue(9)
+  @JsonValue(8)
   MaintenanceUpdated,
-  @JsonValue(10)
+  @JsonValue(9)
   TerminationNotification
 }
 
@@ -31,23 +29,23 @@ extension MessageTypeExtension on MessageType {
       case MessageType.Text:
         return "Text";
       case MessageType.PaymentDue:
-        return "Payment Due";
-      case MessageType.PaymentProcessing:
-        return "Payment Processing";
+        return "Pay Now";
+      case MessageType.PaymentSuccessful:
+        return "View Payment";
       case MessageType.PaymentReceived:
-        return "Payment Received";
+        return "View Payment";
       case MessageType.WelcomeMessage:
         return "Welcome Message";
       case MessageType.MaintenanceCreated:
-        return "Maintenance Created";
+        return "View Request";
       case MessageType.MaintenanceCompleted:
-        return "Maintenance Completed";
+        return "View Completion";
       case MessageType.MaintenanceCancelled:
-        return "Maintenanc Cancelled";
+        return "View Cancellation";
       case MessageType.MaintenanceUpdated:
-        return "Maintenance Updated";
+        return "View Update";
       case MessageType.TerminationNotification:
-        return "Termination Notification";
+        return "Pay Termination";
       default:
         return "";
     }

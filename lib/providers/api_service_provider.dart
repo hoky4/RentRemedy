@@ -63,6 +63,24 @@ class ApiServiceProvider {
     }
   }
 
+  dynamic getMaintenanceRequest(String id) async {
+    final response = await http.get(
+      Uri.parse('${Environment.maintenance}/$id'),
+      headers: <String, String>{
+        'cookie': _authModelProvider.cookie!,
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseMap = jsonDecode(response.body);
+      MaintenanceRequest request = MaintenanceRequest.fromJson(responseMap);
+      return request;
+    } else {
+      return _handleError(response);
+    }
+  }
+
   dynamic getAllMaintenanceRequests() async {
     print("cookie: ${_authModelProvider.cookie!}");
     final response = await http.get(
@@ -74,7 +92,6 @@ class ApiServiceProvider {
     );
 
     if (response.statusCode == 200) {
-      log("maintenance-request-resp: ${response.body}");
       Map<String, dynamic> responseMap = json.decode(response.body);
       List<dynamic> maintenanceRequests = responseMap['maintenanceRequests'];
 
@@ -190,7 +207,6 @@ class ApiServiceProvider {
 
     if (response.statusCode == 200) {
       Map<String, dynamic> responseMap = json.decode(response.body);
-
       List<dynamic> payments = responseMap['payments'];
 
       if (payments.isEmpty) {
@@ -246,7 +262,6 @@ class ApiServiceProvider {
       );
 
       if (response.statusCode == 200) {
-        print("msg-convo: ${response.body}");
         Map<String, dynamic> responseMap = jsonDecode(response.body);
         List<dynamic> conversationListDynamic = responseMap['conversation'];
         List<Message> conversationList = List<Message>.from(

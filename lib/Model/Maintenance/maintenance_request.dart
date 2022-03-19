@@ -24,6 +24,7 @@ class MaintenanceRequest {
   String propertyId;
   SeverityType severity;
   MaintenanceRequestStatus status;
+  String? statusMessage;
   String item;
   String location;
   String description;

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:rentremedy_mobile/Model/Maintenance/maintenance_request.dart';
 import 'package:rentremedy_mobile/Model/Message/message.dart';
 import 'package:rentremedy_mobile/Model/Message/message_type.dart';
 import 'package:rentremedy_mobile/Model/Payments/payment.dart';
 import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
 import 'package:rentremedy_mobile/Providers/auth_model_provider.dart';
+import 'package:rentremedy_mobile/View/Maintenance/view_maintenance_request_screen.dart';
 import 'package:rentremedy_mobile/View/Payment/payment_screen.dart';
 
 import '../Payment/view_payment_screen.dart';
@@ -56,7 +58,11 @@ class MessageBox extends StatelessWidget {
                       ),
                 ),
                 if (message.type == MessageType.PaymentDue ||
-                    message.type == MessageType.PaymentSuccessful) ...[
+                    message.type == MessageType.PaymentSuccessful ||
+                    message.type == MessageType.MaintenanceCreated ||
+                    message.type == MessageType.MaintenanceUpdated ||
+                    message.type == MessageType.MaintenanceCancelled ||
+                    message.type == MessageType.MaintenanceCompleted) ...[
                   ElevatedButton(
                     style: ButtonStyle(
                       backgroundColor:
@@ -68,11 +74,20 @@ class MessageBox extends StatelessWidget {
                       ),
                     ),
                     onPressed: () async {
-                      Payment payment = await apiService
-                          .getPaymentById('${message.actionId}') as Payment;
-                      print('payment-id: ${payment.id}');
+                      if (message.type == MessageType.MaintenanceCreated ||
+                          message.type == MessageType.MaintenanceUpdated ||
+                          message.type == MessageType.MaintenanceCancelled ||
+                          message.type == MessageType.MaintenanceCompleted) {
+                        MaintenanceRequest request = await apiService
+                            .getMaintenanceRequest('${message.actionId}');
+                        Navigator.pushNamed(context, '/viewMaintenanceRequest',
+                            arguments:
+                                ViewMaintenanceRequestScreenArguments(request));
+                      }
 
                       if (message.type == MessageType.PaymentDue) {
+                        Payment payment = await apiService
+                            .getPaymentById('${message.actionId}') as Payment;
                         if (payment.paymentDate == null) {
                           Navigator.pushNamed(context, '/payment',
                               arguments: PaymentScreenArguments(payment));
@@ -81,11 +96,13 @@ class MessageBox extends StatelessWidget {
                         }
                       } else if (message.type ==
                           MessageType.PaymentSuccessful) {
+                        Payment payment = await apiService
+                            .getPaymentById('${message.actionId}') as Payment;
                         Navigator.pushNamed(context, '/viewPayment',
                             arguments: ViewPaymentScreenArguments(payment));
                       }
                     },
-                    child: Text(messageBtnText,
+                    child: Text(message.type.value, //messageBtnText,
                         style:
                             const TextStyle(fontSize: 18, color: Colors.white)),
                   )

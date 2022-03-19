@@ -74,9 +74,29 @@ class ViewMaintenanceRequestScreen extends StatelessWidget {
             maintenanceDetailLine("Status: ", maintenanceRequest.status.value),
             const SizedBox(height: 8.0),
             maintenanceDetailLine(
+                "Status Message: ",
+                maintenanceRequest.statusMessage != null
+                    ? '${maintenanceRequest.statusMessage}'
+                    : "N/A"),
+            const SizedBox(height: 8.0),
+            maintenanceDetailLine(
                 "Date Submitted: ",
                 DateFormat.yMMMMd('en_US')
                     .format(maintenanceRequest.submissionDate)),
+            const SizedBox(height: 8.0),
+            maintenanceDetailLine(
+                "Est. Completion: ",
+                maintenanceRequest.projectedCompletionDate != null
+                    ? DateFormat.yMMMMd('en_US')
+                        .format(maintenanceRequest.projectedCompletionDate!)
+                    : "N/A"),
+            const SizedBox(height: 8.0),
+            maintenanceDetailLine(
+                "Date Completed: ",
+                maintenanceRequest.completionDate != null
+                    ? DateFormat.yMMMMd('en_US')
+                        .format(maintenanceRequest.completionDate!)
+                    : "N/A"),
           ],
         ),
       ),

@@ -98,7 +98,13 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
           duration: const Duration(milliseconds: 300),
         );
       }
-    });
+    }, onError: (error) {
+      print("-----------------called from onError");
+    }, onDone: onSocketDone);
+  }
+
+  void onSocketDone() {
+    print("+++++++++++++++called from onDone");
   }
 
   /// hanlder for sending messages

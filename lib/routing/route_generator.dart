@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rentremedy_mobile/View/Maintenance/maintenance_request_screen.dart';
 import 'package:rentremedy_mobile/View/Maintenance/maintenance_request_success_screen.dart';
 import 'package:rentremedy_mobile/View/Maintenance/view_maintenance_request_screen.dart';
+import 'package:rentremedy_mobile/View/Menu/view_leaseagreements_screen.dart';
 import 'package:rentremedy_mobile/View/Onboarding/confirmation_screen.dart';
 import 'package:rentremedy_mobile/View/Onboarding/join_screen.dart';
 import 'package:rentremedy_mobile/Routing/app_navigation_router.dart';
@@ -74,6 +75,9 @@ class RouteGenerator {
                 CreditCardScreen(signedLeaseAgreement: args.leaseAgreement));
       case '/viewPayments':
         return MaterialPageRoute(builder: (_) => const ViewPaymentsScreen());
+      case '/viewLeaseAgreements':
+        return MaterialPageRoute(
+            builder: (_) => const ViewLeaseAgreementsScreen());
 
         return _errorRoute();
       default:

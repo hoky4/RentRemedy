@@ -92,7 +92,6 @@ class _TermsScreenState extends State<TermsScreen> {
                         thickness: 1, indent: 32, endIndent: 32, height: 48),
                     maintenanceProvided(
                         widget.leaseAgreement.maintenanceProvided),
-                    // const SizedBox(height: 24),
                     if (widget.leaseAgreement.signatures.isNotEmpty) ...[
                       const Divider(
                           thickness: 1, indent: 32, endIndent: 32, height: 48),
@@ -103,13 +102,13 @@ class _TermsScreenState extends State<TermsScreen> {
                     if (authModel
                             .leaseAgreement?.terminationInfo?.terminationDate !=
                         null) ...[
+                      // if (widget
+                      //         .leaseAgreement.terminationInfo?.terminationDate !=
+                      //     null) ...[
                       const Divider(
                           thickness: 1, indent: 32, endIndent: 32, height: 48),
                       terminationInfo(
                           authModel.leaseAgreement!.terminationInfo!),
-                      // Text(
-                      //     "Terminated on ${authModel.leaseAgreement?.terminationInfo?.reason}"),
-                      // const SizedBox(height: 24),
                     ],
                     const SizedBox(height: 24),
                   ],
@@ -330,12 +329,6 @@ class _TermsScreenState extends State<TermsScreen> {
                             borderRadius: BorderRadius.circular(16),
                             borderSide: const BorderSide(color: Colors.red)),
                       ),
-                      // validator: (value) {
-                      //   if (value == null || value.isEmpty) {
-                      //     return 'Line2 is required';
-                      //   }
-                      //   return null;
-                      // },
                     ),
                     const SizedBox(height: 16.0),
                     Row(

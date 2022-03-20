@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/Model/LeaseAgreement/lease_agreement.dart';
 import 'package:rentremedy_mobile/Model/Message/message.dart';
+import 'package:rentremedy_mobile/Model/environment.dart';
 import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
 import 'package:rentremedy_mobile/Providers/auth_model_provider.dart';
 import 'package:rentremedy_mobile/Providers/message_model_provider.dart';
@@ -43,7 +44,7 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
     conversation = [];
 
     channel = IOWebSocketChannel.connect(
-      WEBSOCKET,
+      Environment.websocket,
       headers: <String, dynamic>{
         'Content-Type': 'application/json',
         "Cookie": cookie
@@ -99,12 +100,14 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
         );
       }
     }, onError: (error) {
-      print("-----------------called from onError");
-    }, onDone: onSocketDone);
-  }
-
-  void onSocketDone() {
-    print("+++++++++++++++called from onDone");
+      channel = IOWebSocketChannel.connect(
+        Environment.websocket,
+        headers: <String, dynamic>{
+          'Content-Type': 'application/json',
+          "Cookie": cookie
+        },
+      );
+    });
   }
 
   /// hanlder for sending messages
@@ -154,15 +157,6 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
               ],
             ),
             title: const Text('Rent Remedy'),
-            // leading: IconButton(
-            //   icon: const Icon(Icons.logout),
-            //   onPressed: () {
-            //     authModel.logoutUser();
-            //     messageModel.clearRecentMessages();
-            //     Navigator.pushReplacementNamed(context, '/login');
-            //   },
-            //   color: Colors.white,
-            // ),
             actions: [
               if (authModel.leaseAgreement!.signatures.isEmpty) ...[
                 IconButton(
@@ -193,8 +187,7 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
                   onTap: () {
                     LeaseAgreement? leaseAgreement = authModel.leaseAgreement;
                     if (leaseAgreement != null) {
-                      Navigator.pushNamed(context, '/terms',
-                          arguments: JoinScreenArguments(leaseAgreement));
+                      Navigator.pushNamed(context, '/viewLeaseAgreements');
                     }
                   },
                 ),

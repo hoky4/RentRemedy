@@ -45,7 +45,7 @@ class ApiServiceProvider {
     TerminateLeaseAgreementRequest request =
         TerminateLeaseAgreementRequest(nowIsoStr, reason, newAddress);
     final response = await http.post(
-      Uri.parse('${Environment.leaseagreements}}/$id/terminate'),
+      Uri.parse('${Environment.leaseagreements}/$id/terminate'),
       headers: <String, String>{
         'cookie': _authModelProvider.cookie!,
         'Content-Type': 'application/json; charset=UTF-8',
@@ -82,7 +82,6 @@ class ApiServiceProvider {
   }
 
   dynamic getAllMaintenanceRequests() async {
-    print("cookie: ${_authModelProvider.cookie!}");
     final response = await http.get(
       Uri.parse(Environment.maintenance),
       headers: <String, String>{
@@ -367,6 +366,35 @@ class ApiServiceProvider {
             .toList();
         leaseAgreement = signedLeaseAgreements.first;
         return leaseAgreement;
+      }
+    } else {
+      return _handleError(response);
+    }
+  }
+
+  dynamic findAllLeaseAgreements() async {
+    final response = await http.get(
+        Uri.parse(
+            '${Environment.leaseagreements}?tenant=${authModelProvider.user!.id}'),
+        headers: <String, String>{
+          'cookie': authModelProvider.user!.cookie!,
+          'Content-Type': 'application/json; charset=UTF-8',
+        });
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseMap = json.decode(response.body);
+      List<dynamic> leaseAgreements = responseMap['leaseAgreements'];
+
+      if (leaseAgreements.isEmpty) {
+        print('No existing lease agreements found.');
+        return null;
+      } else {
+        print('Lease agreements found.');
+
+        List<LeaseAgreement> leaseAgreementList = List<LeaseAgreement>.from(
+            leaseAgreements.map((i) => LeaseAgreement.fromJson(i)));
+
+        return leaseAgreementList;
       }
     } else {
       return _handleError(response);

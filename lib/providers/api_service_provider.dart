@@ -1,9 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
-import 'package:flutter/foundation.dart';
-import 'package:intl/intl.dart';
 import 'package:rentremedy_mobile/Model/Auth/logged_in_user.dart';
 import 'package:rentremedy_mobile/Model/LeaseAgreement/lease_agreement.dart';
 import 'package:rentremedy_mobile/Model/LeaseAgreement/status.dart';
@@ -17,9 +14,7 @@ import 'package:rentremedy_mobile/Model/Payments/payment_intent_response.dart';
 import 'package:rentremedy_mobile/Model/Payments/setup_intent_request.dart';
 import 'package:rentremedy_mobile/Model/Payments/setup_intent_response.dart';
 import 'package:rentremedy_mobile/Model/Property/address.dart';
-import 'package:rentremedy_mobile/Model/User/user.dart';
 import 'package:rentremedy_mobile/Model/environment.dart';
-import 'package:rentremedy_mobile/Networking/api.dart';
 import 'package:rentremedy_mobile/Networking/api_exception.dart';
 import 'package:rentremedy_mobile/Providers/auth_model_provider.dart';
 import 'package:http/http.dart' as http;
@@ -113,11 +108,11 @@ class ApiServiceProvider {
 
   dynamic createMaintenanceRequest(String item, String location,
       String description, SeverityType severity) async {
-    User user = User(
-        _authModelProvider.user!.id,
-        _authModelProvider.user!.firstName,
-        _authModelProvider.user!.lastName,
-        _authModelProvider.user!.email);
+    // User user = User(
+    //     _authModelProvider.user!.id,
+    //     _authModelProvider.user!.firstName,
+    //     _authModelProvider.user!.lastName,
+    //     _authModelProvider.user!.email);
     MaintenanceRequestRequest request = MaintenanceRequestRequest(
         // user,
         _authModelProvider.leaseAgreement!.id,
@@ -157,7 +152,6 @@ class ApiServiceProvider {
             }));
 
     if (response.statusCode == 200) {
-      print("payment-resp: ${response.body}");
       Map<String, dynamic> responseMap = jsonDecode(response.body);
       PaymentIntentResponse payment =
           PaymentIntentResponse.fromJson(responseMap);
@@ -205,12 +199,14 @@ class ApiServiceProvider {
     );
 
     if (response.statusCode == 200) {
+      List<Payment> paymentList;
       Map<String, dynamic> responseMap = json.decode(response.body);
       List<dynamic> payments = responseMap['payments'];
 
       if (payments.isEmpty) {
         print('No payments found.');
-        return null;
+        paymentList = [];
+        return paymentList;
       } else {
         print('Payments found.');
 

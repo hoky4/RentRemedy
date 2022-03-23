@@ -40,15 +40,44 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
         backgroundColor: Theme.of(context).primaryColorDark,
         centerTitle: true,
         title: const Text('Confirmation'),
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          icon: const Icon(Icons.logout),
-          onPressed: () {
-            authModel.logoutUser();
-            messageModel.clearRecentMessages();
-            Navigator.pushReplacementNamed(context, '/login');
-          },
-          color: Colors.white,
+        // automaticallyImplyLeading: false,
+        // leading: IconButton(
+        //   icon: const Icon(Icons.logout),
+        //   onPressed: () {
+        //     authModel.logoutUser();
+        //     messageModel.clearRecentMessages();
+        //     Navigator.pushReplacementNamed(context, '/login');
+        //   },
+        //   color: Colors.white,
+        // ),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          // padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: const BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text('${authModel.user?.email}'),
+            ),
+            ListTile(
+              title: const Text('Lease Agreement'),
+              leading: const Icon(Icons.document_scanner),
+              onTap: () {
+                Navigator.pushNamed(context, '/viewLeaseAgreements');
+              },
+            ),
+            ListTile(
+              title: const Text('Logout'),
+              leading: const Icon(Icons.logout),
+              onTap: () {
+                authModel.logoutUser();
+                messageModel.clearRecentMessages();
+                Navigator.pushReplacementNamed(context, '/login');
+              },
+            ),
+          ],
         ),
       ),
       body: SingleChildScrollView(

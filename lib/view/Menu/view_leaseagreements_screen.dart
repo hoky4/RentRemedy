@@ -51,20 +51,7 @@ class _ViewLeaseAgreementsScreenState extends State<ViewLeaseAgreementsScreen> {
             ),
             backgroundColor: Theme.of(context).primaryColor,
             body: Column(children: [
-              if (leaseAgreements != null) ...[
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: RefreshIndicator(
-                      child: ListView.builder(
-                          itemCount: leaseAgreements.length,
-                          itemBuilder: (context, index) => LeaseAgreementItem(
-                              leaseAgreement: leaseAgreements[index])),
-                      onRefresh: fetchLeaseAgreements,
-                    ),
-                  ),
-                ),
-              ] else ...[
+              if (leaseAgreements.isEmpty) ...[
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -78,7 +65,20 @@ class _ViewLeaseAgreementsScreenState extends State<ViewLeaseAgreementsScreen> {
                     ),
                   ),
                 ),
-              ],
+              ] else ...[
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: RefreshIndicator(
+                      child: ListView.builder(
+                          itemCount: leaseAgreements.length,
+                          itemBuilder: (context, index) => LeaseAgreementItem(
+                              leaseAgreement: leaseAgreements[index])),
+                      onRefresh: fetchLeaseAgreements,
+                    ),
+                  ),
+                ),
+              ]
             ]),
           )
         : Scaffold(

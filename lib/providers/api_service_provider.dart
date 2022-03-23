@@ -89,18 +89,12 @@ class ApiServiceProvider {
       Map<String, dynamic> responseMap = json.decode(response.body);
       List<dynamic> maintenanceRequests = responseMap['maintenanceRequests'];
 
-      if (maintenanceRequests.isEmpty) {
-        print('No maintenance requests found.');
-        return null;
-      } else {
-        print('Maintenance requests found.');
+      List<MaintenanceRequest> maintenanceRequestList =
+          List<MaintenanceRequest>.from(
+              maintenanceRequests.map((i) => MaintenanceRequest.fromJson(i)));
 
-        List<MaintenanceRequest> maintenanceRequestList =
-            List<MaintenanceRequest>.from(
-                maintenanceRequests.map((i) => MaintenanceRequest.fromJson(i)));
-
-        return maintenanceRequestList;
-      }
+      return maintenanceRequestList;
+      // }
     } else {
       return _handleError(response);
     }
@@ -199,22 +193,13 @@ class ApiServiceProvider {
     );
 
     if (response.statusCode == 200) {
-      List<Payment> paymentList;
       Map<String, dynamic> responseMap = json.decode(response.body);
       List<dynamic> payments = responseMap['payments'];
 
-      if (payments.isEmpty) {
-        print('No payments found.');
-        paymentList = [];
-        return paymentList;
-      } else {
-        print('Payments found.');
+      List<Payment> paymentList =
+          List<Payment>.from(payments.map((i) => Payment.fromJson(i)));
 
-        List<Payment> paymentList =
-            List<Payment>.from(payments.map((i) => Payment.fromJson(i)));
-
-        return paymentList;
-      }
+      return paymentList;
     } else {
       return _handleError(response);
     }
@@ -381,17 +366,10 @@ class ApiServiceProvider {
       Map<String, dynamic> responseMap = json.decode(response.body);
       List<dynamic> leaseAgreements = responseMap['leaseAgreements'];
 
-      if (leaseAgreements.isEmpty) {
-        print('No existing lease agreements found.');
-        return null;
-      } else {
-        print('Lease agreements found.');
+      List<LeaseAgreement> leaseAgreementList = List<LeaseAgreement>.from(
+          leaseAgreements.map((i) => LeaseAgreement.fromJson(i)));
 
-        List<LeaseAgreement> leaseAgreementList = List<LeaseAgreement>.from(
-            leaseAgreements.map((i) => LeaseAgreement.fromJson(i)));
-
-        return leaseAgreementList;
-      }
+      return leaseAgreementList;
     } else {
       return _handleError(response);
     }

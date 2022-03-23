@@ -9,9 +9,7 @@ part of 'maintenance_request.dart';
 MaintenanceRequest _$MaintenanceRequestFromJson(Map<String, dynamic> json) =>
     MaintenanceRequest(
       json['id'] as String,
-      json['leaseAgreementId'] as String,
       User.fromJson(json['createdBy'] as Map<String, dynamic>),
-      json['propertyId'] as String,
       $enumDecode(_$SeverityTypeEnumMap, json['severity']),
       $enumDecode(_$MaintenanceRequestStatusEnumMap, json['status']),
       json['item'] as String,
@@ -33,9 +31,7 @@ MaintenanceRequest _$MaintenanceRequestFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$MaintenanceRequestToJson(MaintenanceRequest instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'leaseAgreementId': instance.leaseAgreementId,
       'createdBy': instance.createdBy.toJson(),
-      'propertyId': instance.propertyId,
       'severity': _$SeverityTypeEnumMap[instance.severity],
       'status': _$MaintenanceRequestStatusEnumMap[instance.status],
       'statusMessage': instance.statusMessage,

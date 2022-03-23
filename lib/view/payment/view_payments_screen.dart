@@ -58,7 +58,7 @@ class _ViewPaymentsScreenState extends State<ViewPaymentsScreen>
                     ),
                   ),
                 ),
-              ] else if (payments != null) ...[
+              ] else ...[
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),

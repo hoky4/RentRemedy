@@ -15,6 +15,7 @@ import 'package:rentremedy_mobile/Model/Payments/setup_intent_request.dart';
 import 'package:rentremedy_mobile/Model/Payments/setup_intent_response.dart';
 import 'package:rentremedy_mobile/Model/Property/address.dart';
 import 'package:rentremedy_mobile/Model/environment.dart';
+import 'package:rentremedy_mobile/Networking/api.dart';
 import 'package:rentremedy_mobile/Networking/api_exception.dart';
 import 'package:rentremedy_mobile/Providers/auth_model_provider.dart';
 import 'package:http/http.dart' as http;
@@ -40,7 +41,7 @@ class ApiServiceProvider {
     TerminateLeaseAgreementRequest request =
         TerminateLeaseAgreementRequest(nowIsoStr, reason, newAddress);
     final response = await http.post(
-      Uri.parse('${Environment.leaseagreements}/$id/terminate'),
+      Uri.parse('${Environment.apiUrl}$LEASEAGREEMENTS/$id/terminate'),
       headers: <String, String>{
         'cookie': _authModelProvider.cookie!,
         'Content-Type': 'application/json; charset=UTF-8',
@@ -60,7 +61,7 @@ class ApiServiceProvider {
 
   dynamic getMaintenanceRequest(String id) async {
     final response = await http.get(
-      Uri.parse('${Environment.maintenance}/$id'),
+      Uri.parse('${Environment.apiUrl}$MAINTENANCE/$id'),
       headers: <String, String>{
         'cookie': _authModelProvider.cookie!,
         'Content-Type': 'application/json; charset=UTF-8',
@@ -78,7 +79,7 @@ class ApiServiceProvider {
 
   dynamic getAllMaintenanceRequests() async {
     final response = await http.get(
-      Uri.parse(Environment.maintenance),
+      Uri.parse(Environment.apiUrl + MAINTENANCE),
       headers: <String, String>{
         'cookie': _authModelProvider.cookie!,
         'Content-Type': 'application/json',
@@ -116,12 +117,13 @@ class ApiServiceProvider {
         location,
         description,
         null);
-    final response = await http.post(Uri.parse(Environment.maintenance),
-        headers: <String, String>{
-          'cookie': _authModelProvider.cookie!,
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(request.toJson()));
+    final response =
+        await http.post(Uri.parse(Environment.apiUrl + MAINTENANCE),
+            headers: <String, String>{
+              'cookie': _authModelProvider.cookie!,
+              'Content-Type': 'application/json; charset=UTF-8',
+            },
+            body: jsonEncode(request.toJson()));
 
     if (response.statusCode == 201) {
       print("status 201......");
@@ -135,15 +137,15 @@ class ApiServiceProvider {
   }
 
   dynamic makePaymentIntent(String id) async {
-    final response =
-        await http.post(Uri.parse('${Environment.payment}/payment-intent'),
-            headers: <String, String>{
-              'cookie': _authModelProvider.cookie!,
-              'Content-Type': 'application/json; charset=UTF-8',
-            },
-            body: jsonEncode(<String, dynamic>{
-              'paymentId': id,
-            }));
+    final response = await http.post(
+        Uri.parse('${Environment.apiUrl}$PAYMENT/payment-intent'),
+        headers: <String, String>{
+          'cookie': _authModelProvider.cookie!,
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'paymentId': id,
+        }));
 
     if (response.statusCode == 200) {
       Map<String, dynamic> responseMap = jsonDecode(response.body);
@@ -166,7 +168,7 @@ class ApiServiceProvider {
         SetupIntentRequest('card', cardNumber, expiryMonth, expiryYear, cvv);
 
     final response =
-        await http.post(Uri.parse('${Environment.payment}/setup-intent'),
+        await http.post(Uri.parse('${Environment.apiUrl}$PAYMENT/setup-intent'),
             headers: <String, String>{
               'cookie': _authModelProvider.cookie!,
               'Content-Type': 'application/json',
@@ -185,7 +187,7 @@ class ApiServiceProvider {
 
   dynamic getAllPayments() async {
     final response = await http.get(
-      Uri.parse(Environment.payment),
+      Uri.parse(Environment.apiUrl + PAYMENT),
       headers: <String, String>{
         'cookie': _authModelProvider.cookie!,
         'Content-Type': 'application/json',
@@ -207,7 +209,7 @@ class ApiServiceProvider {
 
   dynamic getPaymentById(String id) async {
     final response = await http.get(
-      Uri.parse('${Environment.payment}/$id'),
+      Uri.parse('${Environment.apiUrl}$PAYMENT/$id'),
       headers: <String, String>{
         'cookie': _authModelProvider.cookie!,
         'Content-Type': 'application/json; charset=UTF-8',
@@ -234,7 +236,7 @@ class ApiServiceProvider {
 
     if (landlordId != null) {
       final response = await http.get(
-        Uri.parse('${Environment.conversation}/$landlordId'),
+        Uri.parse('${Environment.apiUrl}$CONVERSATION/$landlordId'),
         headers: <String, String>{
           'cookie': _authModelProvider.cookie!,
           'Content-Type': 'application/json; charset=UTF-8',
@@ -256,7 +258,7 @@ class ApiServiceProvider {
 
   dynamic signLeaseAgreement(id) async {
     final response = await http.post(
-      Uri.parse('${Environment.leaseagreements}/$id/signatures'),
+      Uri.parse('${Environment.apiUrl}$LEASEAGREEMENTS/$id/signatures'),
       headers: <String, String>{
         'cookie': _authModelProvider.cookie!,
         'Content-Type': 'application/json; charset=UTF-8',
@@ -276,7 +278,7 @@ class ApiServiceProvider {
 
   dynamic joinLeaseAgreement(id) async {
     final response = await http.post(
-      Uri.parse('${Environment.leaseagreements}/$id/join'),
+      Uri.parse('${Environment.apiUrl}$LEASEAGREEMENTS/$id/join'),
       headers: <String, String>{
         'cookie': _authModelProvider.cookie!,
         'Content-Type': 'application/json; charset=UTF-8',
@@ -294,7 +296,7 @@ class ApiServiceProvider {
 
   Future<LeaseAgreement?> getLeaseAgreement(shortId) async {
     final response = await http.get(
-        Uri.parse('${Environment.leaseagreements}?code=$shortId'),
+        Uri.parse('${Environment.apiUrl}$LEASEAGREEMENTS?code=$shortId'),
         headers: <String, String>{
           'cookie': _authModelProvider.cookie!,
           'Content-Type': 'application/json; charset=UTF-8',
@@ -323,7 +325,7 @@ class ApiServiceProvider {
     LeaseAgreement leaseAgreement;
 
     final response = await http.get(
-        Uri.parse('${Environment.leaseagreements}?tenant=${user.id}'),
+        Uri.parse('${Environment.apiUrl}$LEASEAGREEMENTS?tenant=${user.id}'),
         headers: <String, String>{
           'cookie': user.cookie!,
           'Content-Type': 'application/json; charset=UTF-8',
@@ -356,7 +358,7 @@ class ApiServiceProvider {
   dynamic findAllLeaseAgreements() async {
     final response = await http.get(
         Uri.parse(
-            '${Environment.leaseagreements}?tenant=${authModelProvider.user!.id}'),
+            '${Environment.apiUrl}$LEASEAGREEMENTS?tenant=${authModelProvider.user!.id}'),
         headers: <String, String>{
           'cookie': authModelProvider.user!.cookie!,
           'Content-Type': 'application/json; charset=UTF-8',
@@ -380,7 +382,7 @@ class ApiServiceProvider {
     try {
       final response = await http
           .post(
-        Uri.parse(Environment.registration),
+        Uri.parse(Environment.apiUrl + USERS),
         headers: <String, String>{
           'accept': 'application/json',
           'Content-Type': 'application/json; charset=UTF-8',
@@ -414,7 +416,7 @@ class ApiServiceProvider {
     try {
       final response = await http
           .post(
-        Uri.parse(Environment.login),
+        Uri.parse(Environment.apiUrl + LOGIN),
         headers: <String, String>{
           'accept': 'application/json',
           'Content-Type': 'application/json;charset=UTF-8'
@@ -459,11 +461,12 @@ class ApiServiceProvider {
     }
 
     try {
-      final response = await http
-          .get(Uri.parse(Environment.loggedInUser), headers: <String, String>{
-        'cookie': _authModelProvider.cookie!,
-        'Content-Type': 'application/json; charset=UTF-8',
-      });
+      final response = await http.get(
+          Uri.parse(Environment.apiUrl + LOGGEDINUSER),
+          headers: <String, String>{
+            'cookie': _authModelProvider.cookie!,
+            'Content-Type': 'application/json; charset=UTF-8',
+          });
 
       if (response.statusCode == 200) {
         Map<String, dynamic> responseMap = jsonDecode(response.body);
@@ -486,7 +489,7 @@ class ApiServiceProvider {
   dynamic logout() async {
     try {
       final response = await http.post(
-        Uri.parse(Environment.logout),
+        Uri.parse(Environment.apiUrl + LOGOUT),
         headers: <String, String>{
           'cookie': _authModelProvider.cookie!,
           'Content-Type': 'application/json; charset=UTF-8',

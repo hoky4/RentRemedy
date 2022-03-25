@@ -44,7 +44,7 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
     conversation = [];
 
     channel = IOWebSocketChannel.connect(
-      Environment.websocket,
+      Environment.websocketUrl + WEBSOCKET,
       headers: <String, dynamic>{
         'Content-Type': 'application/json',
         "Cookie": cookie
@@ -101,7 +101,7 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
       }
     }, onError: (error) {
       channel = IOWebSocketChannel.connect(
-        Environment.websocket,
+        Environment.websocketUrl + WEBSOCKET,
         headers: <String, dynamic>{
           'Content-Type': 'application/json',
           "Cookie": cookie

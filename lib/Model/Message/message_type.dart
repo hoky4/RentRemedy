@@ -31,23 +31,25 @@ extension MessageTypeExtension on MessageType {
       case MessageType.Text:
         return "Text";
       case MessageType.PaymentDue:
-        return "Payment Due";
+        return "Pay Now";
+      case MessageType.PaymentSuccessful:
+        return "View Payment";
       case MessageType.PaymentProcessing:
         return "Payment Processing";
       case MessageType.PaymentReceived:
-        return "Payment Received";
+        return "View Payment";
       case MessageType.WelcomeMessage:
         return "Welcome Message";
       case MessageType.MaintenanceCreated:
-        return "Maintenance Created";
+        return "View Request";
       case MessageType.MaintenanceCompleted:
-        return "Maintenance Completed";
+        return "View Completion";
       case MessageType.MaintenanceCancelled:
-        return "Maintenanc Cancelled";
+        return "View Cancellation";
       case MessageType.MaintenanceUpdated:
-        return "Maintenance Updated";
+        return "View Update";
       case MessageType.TerminationNotification:
-        return "Termination Notification";
+        return "Pay Termination";
       default:
         return "";
     }

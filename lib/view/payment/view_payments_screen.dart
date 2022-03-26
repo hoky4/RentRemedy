@@ -44,20 +44,7 @@ class _ViewPaymentsScreenState extends State<ViewPaymentsScreen>
         ? Scaffold(
             backgroundColor: Theme.of(context).primaryColor,
             body: Column(children: [
-              if (payments != null) ...[
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: RefreshIndicator(
-                      child: ListView.builder(
-                          itemCount: payments.length,
-                          itemBuilder: (context, index) =>
-                              PaymentItem(payment: payments[index])),
-                      onRefresh: fetchPayments,
-                    ),
-                  ),
-                ),
-              ] else ...[
+              if (payments.isEmpty) ...[
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -71,7 +58,20 @@ class _ViewPaymentsScreenState extends State<ViewPaymentsScreen>
                     ),
                   ),
                 ),
-              ],
+              ] else ...[
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: RefreshIndicator(
+                      child: ListView.builder(
+                          itemCount: payments.length,
+                          itemBuilder: (context, index) =>
+                              PaymentItem(payment: payments[index])),
+                      onRefresh: fetchPayments,
+                    ),
+                  ),
+                ),
+              ]
             ]),
           )
         : Scaffold(

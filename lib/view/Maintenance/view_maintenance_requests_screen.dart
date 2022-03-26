@@ -52,7 +52,21 @@ class _ViewMaintenanceRequestsScreenState
                 tooltip: 'File Maintenance Request',
                 child: const Icon(Icons.add)),
             body: Column(children: [
-              if (maintenanceRequests != null) ...[
+              if (maintenanceRequests.isEmpty) ...[
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: RefreshIndicator(
+                      child: ListView.builder(
+                          itemCount: 1,
+                          itemBuilder: (context, index) => const ListTile(
+                                title: Text("No maintenance requests yet"),
+                              )),
+                      onRefresh: fetchMaintenanceRequests,
+                    ),
+                  ),
+                ),
+              ] else ...[
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -67,21 +81,7 @@ class _ViewMaintenanceRequestsScreenState
                     ),
                   ),
                 ),
-              ] else ...[
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: RefreshIndicator(
-                      child: ListView.builder(
-                          itemCount: 1,
-                          itemBuilder: (context, index) => const ListTile(
-                                title: Text("No maintenance requests yet"),
-                              )),
-                      onRefresh: fetchMaintenanceRequests,
-                    ),
-                  ),
-                ),
-              ],
+              ]
             ]),
           )
         : Scaffold(

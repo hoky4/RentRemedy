@@ -115,12 +115,12 @@ class _MessageScreen2State extends State<MessageScreen2> {
                 setState(() {
                   print('called setState');
                   conversation.add(Message.lessArguments(
-                      userId, landlordId, text, '$tempId', DateTime.now()));
+                      userId, landlordId, text, '$tempId', DateTime.now(), null));
                   isButtonActive = false;
                 });
                 tempId += 1;
               },
-              isButtonActive: isButtonActive),
+              isButtonActive: isButtonActive, onImagePressed: () async {  },),
         ]));
   }
 

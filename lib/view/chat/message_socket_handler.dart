@@ -2,18 +2,20 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/Model/LeaseAgreement/lease_agreement.dart';
+import 'package:rentremedy_mobile/Model/Media/types.dart';
 import 'package:rentremedy_mobile/Model/Message/message.dart';
 import 'package:rentremedy_mobile/Model/environment.dart';
 import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
 import 'package:rentremedy_mobile/Providers/auth_model_provider.dart';
 import 'package:rentremedy_mobile/Providers/message_model_provider.dart';
-import 'package:rentremedy_mobile/Model/Message/model.dart';
-import 'package:rentremedy_mobile/Model/Message/websocket_message.dart';
 import 'package:rentremedy_mobile/Networking/api.dart';
 import 'package:rentremedy_mobile/View/Maintenance/view_maintenance_requests_screen.dart';
 import 'package:rentremedy_mobile/View/Onboarding/join_screen.dart';
 import 'package:rentremedy_mobile/View/Payment/view_payments_screen.dart';
 import 'package:web_socket_channel/io.dart';
+import '../../Model/Media/bucket_object.dart';
+import '../../Model/Message/create_message_request.dart';
+import '../../Model/Message/messaging_socket_response.dart';
 import 'message_screen.dart';
 
 class MessageSocketHandler extends StatefulWidget {
@@ -82,14 +84,23 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
     channel.stream.listen((m) {
       Map<String, dynamic> responseMap = jsonDecode(m);
 
-      if (responseMap['model'] == Model.Message.index) {
+      if (responseMap['model'] == MessagingSocketResponseModelType.message.index || responseMap['model'] == MessagingSocketResponseModelType.mediaMessage.index) {
         Message message = apiService.parseInboundMessageFromSocket(m);
         messageModel.messageReceived(message);
-      } else if (responseMap['model'] == Model.MessageDelivered.index) {
+      } else if (responseMap['model'] == MessagingSocketResponseModelType.messageDelivered.index) {
         DateTime deliveredDate =
             DateTime.parse(responseMap['messageDeliveredDate']);
-        messageModel.movePendingMessageToRecent(
-            responseMap['messageTempId'], deliveredDate, userId);
+        BucketObject? media;
+        try{
+          if (jsonDecode(responseMap['media']) is BucketObject)
+          {
+            media = jsonDecode(responseMap['media']);
+          }
+        } finally
+        {
+          messageModel.movePendingMessageToRecent(
+            responseMap['messageTempId'], deliveredDate, userId, media);
+        }
       }
 
       if (scrollController.hasClients) {
@@ -115,12 +126,12 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
     var messageModel = context.read<MessageModelProvider>();
 
     if (messageModel.sendQueue.isNotEmpty) {
-      WebSocketMessage outboundMsg = messageModel.sendQueue[0];
+      CreateMessageRequest outboundMsg = messageModel.sendQueue[0];
       channel.sink.add(jsonEncode({
         'recipient': outboundMsg.recipient,
-        'messageText': outboundMsg.messageText,
+        'payload': outboundMsg.payload,
         'messageTempId': outboundMsg.messageTempId,
-        'model': 1
+        'model': outboundMsg.model.index
       }));
 
       messageModel.moveFirstMessageFromSendToPending();
@@ -129,6 +140,7 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     var messageModel = context.watch<MessageModelProvider>();
     var authModel = context.read<AuthModelProvider>();
     LeaseAgreement? leaseAgreement = authModel.leaseAgreement;

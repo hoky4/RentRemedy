@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:rentremedy_mobile/Model/Media/bucket_object.dart';
 import 'message_type.dart';
 
 part 'message.g.dart';
@@ -15,15 +16,16 @@ class Message {
       this.messageText,
       this.messageTempId,
       this.readDate,
-      this.actionId);
+      this.actionId,
+      this.media);
 
   Message.lessArguments(this.sender, this.recipient, this.messageText,
-      this.messageTempId, this.creationDate,
-      [this.id = '',
+      this.messageTempId, this.creationDate, this.media,
+      {this.id = '',
       this.type = MessageType.Text,
       this.sentFromSystem = false,
       this.readDate,
-      this.actionId]);
+      this.actionId});
 
   String id;
   MessageType type;
@@ -35,6 +37,7 @@ class Message {
   String? messageTempId;
   DateTime? readDate;
   String? actionId;
+  BucketObject? media;
 
   factory Message.fromJson(Map<String, dynamic> json) =>
       _$MessageFromJson(json);

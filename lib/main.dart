@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
@@ -15,8 +14,7 @@ Future<void> main() async {
   // } else if (kDebugMode) {
   //   await dotenv.load(fileName: '.env.development');
   // }
-
-  await dotenv.load(fileName: Environment.fileName);
+  await dotenv.load(fileName: ".env");
 
   HttpOverrides.global = MyHttpOverrides();
   runApp(const MyApp());

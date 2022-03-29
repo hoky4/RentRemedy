@@ -1,10 +1,17 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/Model/Message/message.dart';
 import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
 import 'package:rentremedy_mobile/Providers/auth_model_provider.dart';
+import '../../Model/Media/types.dart';
+import '../../Model/Media/upload_object_response.dart';
 import 'message_box.dart';
 import 'message_input_container.dart';
+import 'package:http/http.dart' as http;
 
 class MessageScreen extends StatefulWidget {
   List<Message> allMessages;
@@ -50,7 +57,32 @@ class _MessageScreenState extends State<MessageScreen> {
                   }),
             ),
           ),
-          MessageInputContainer(allMessages: widget.allMessages),
+          MessageInputContainer(allMessages: widget.allMessages,
+          onImagePressed: () async {
+            final ImagePicker _picker = ImagePicker();
+          ImageSource imgSource = ImageSource.camera;
+          // Pick an image
+          
+          AlertDialog(title:const Text("Select an Image"), 
+          actions: <Widget>[ 
+            TextButton(child: const Text("Camera"), onPressed: () => {imgSource = ImageSource.camera},),  
+            TextButton(child: const Text("Media Gallery"), onPressed: () => {imgSource = ImageSource.gallery},)],
+            );
+
+          final XFile? image = await _picker.pickImage(source: imgSource);
+          if(image != null)
+          {
+            UploadObjectResponse response = await apiService.uploadImage(image.name, ObjectType.imageMessage);
+            print(response.putUrl);
+            print(image.mimeType);
+            var r = await http.put(Uri.parse(response.putUrl), 
+            headers: <String, String>{
+              'Content-Type': image.mimeType ?? 'image/jpeg',
+            }, 
+            body: await File(image.path).readAsBytes());
+            print(r.statusCode);
+          }
+          },),
         ]));
   }
 }

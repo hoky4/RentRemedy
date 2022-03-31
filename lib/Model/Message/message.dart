@@ -20,9 +20,8 @@ class Message {
       this.media);
 
   Message.lessArguments(this.sender, this.recipient, this.messageText,
-      this.messageTempId, this.creationDate, this.media,
+      this.messageTempId, this.creationDate, this.media, this.type,
       {this.id = '',
-      this.type = MessageType.Text,
       this.sentFromSystem = false,
       this.readDate,
       this.actionId});

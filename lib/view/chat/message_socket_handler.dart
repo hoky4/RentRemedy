@@ -91,12 +91,11 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
         DateTime deliveredDate =
             DateTime.parse(responseMap['messageDeliveredDate']);
         BucketObject? media;
-        try{
-          if (jsonDecode(responseMap['media']) is BucketObject)
-          {
-            media = jsonDecode(responseMap['media']);
-          }
-        } finally
+        try
+        {
+          media = BucketObject.fromJson(responseMap['media']);
+        }
+        finally
         {
           messageModel.movePendingMessageToRecent(
             responseMap['messageTempId'], deliveredDate, userId, media);

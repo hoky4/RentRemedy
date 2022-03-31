@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:rentremedy_mobile/Model/Message/create_message_request.dart';
+import 'package:rentremedy_mobile/Model/Message/message_type.dart';
 
 import '../Model/Media/bucket_object.dart';
 import '../Model/Message/message.dart';
@@ -44,13 +45,15 @@ class MessageModelProvider extends ChangeNotifier {
         pendingQueue.indexWhere(((msg) => msg.messageTempId == messageTempId));
     if (index != -1) {
       CreateMessageRequest deliveredMessage = _pendingQueue.removeAt(index);
+      MessageType type = media == null ? MessageType.Text : MessageType.Image;
       Message wsMsgToMsg = Message.lessArguments(
           userId,
           deliveredMessage.recipient,
           deliveredMessage.payload,
           deliveredMessage.messageTempId,
           messageDeliveredDate,
-          media);
+          media,
+          type);
 
       messageReceived(wsMsgToMsg);
     }

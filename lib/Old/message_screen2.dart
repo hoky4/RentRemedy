@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/Model/Message/message.dart';
+import 'package:rentremedy_mobile/Model/Message/message_type.dart';
 import 'package:rentremedy_mobile/Model/User/user.dart';
 import '../View/auth/login_screen.dart';
 import '../View/Chat/message_box.dart';
@@ -115,7 +116,7 @@ class _MessageScreen2State extends State<MessageScreen2> {
                 setState(() {
                   print('called setState');
                   conversation.add(Message.lessArguments(
-                      userId, landlordId, text, '$tempId', DateTime.now(), null));
+                      userId, landlordId, text, '$tempId', DateTime.now(), null, MessageType.Text));
                   isButtonActive = false;
                 });
                 tempId += 1;

@@ -12,9 +12,12 @@ import 'package:rentremedy_mobile/Model/LeaseAgreement/one_time_security_deposit
 import 'package:rentremedy_mobile/Model/LeaseAgreement/termination_info.dart';
 import 'package:rentremedy_mobile/Model/LeaseAgreement/utility.dart';
 import 'package:rentremedy_mobile/Model/Property/property.dart';
+import 'package:rentremedy_mobile/Model/Review/review_status.dart';
 import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
 import 'package:rentremedy_mobile/Providers/auth_model_provider.dart';
+import '../../Model/Review/review.dart';
 import 'join_screen.dart';
+import 'package:rating_dialog/rating_dialog.dart';
 
 class TermsScreen extends StatefulWidget {
   final LeaseAgreement leaseAgreement;
@@ -164,6 +167,17 @@ class _TermsScreenState extends State<TermsScreen> {
     );
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      if (widget.leaseAgreement.terminationInfo?.terminationDate != null &&
+          widget.leaseAgreement.review?.status == ReviewStatus.Pending) {
+        showRatingPromptAlert(context);
+      }
+    });
+  }
+
   Widget terminationInfo(TerminationInfo info) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(32.0, 0.0, 0, 0),
@@ -235,7 +249,7 @@ class _TermsScreenState extends State<TermsScreen> {
         ),
         onPressed: () => showDialog<String>(
           context: context,
-          builder: (BuildContext context) => AlertDialog(
+          builder: (BuildContext dialogContext) => AlertDialog(
             backgroundColor: Theme.of(context).primaryColor,
             title: const Text(
               'Complete before Terminating',
@@ -464,6 +478,7 @@ class _TermsScreenState extends State<TermsScreen> {
                             user.leaseAgreement = leaseAgreement;
                           });
                         }
+                        showRatingPromptAlert(context);
                       }
                     } on Exception catch (e) {
                       print(
@@ -480,23 +495,118 @@ class _TermsScreenState extends State<TermsScreen> {
             ],
           ),
         ),
-        // onPressed: () async {
-        //   try {
-        //     // LeaseAgreement leaseAgreement =
-        //     //     await apiService.terminateLeaseAgreement(leaseAgreemenId);
-        //     // print('Lease agreement terminated');
-
-        //     Navigator.pushReplacementNamed(context, '/terminateSuccess');
-        //   } on Exception catch (e) {
-        //     print("Error terminating leaseAgreement: ${e.toString()}");
-        //     ScaffoldMessenger.of(context)
-        //         .showSnackBar(SnackBar(content: Text(e.toString())));
-        //   }
-        // },
         child: const Text('Terminate',
             style: TextStyle(fontSize: 20, color: Colors.white)),
       ),
     );
+  }
+
+  void showRatingPromptAlert(BuildContext context) {
+    showDialog<String>(
+        context: context,
+        builder: (BuildContext dialogContext) => AlertDialog(
+              backgroundColor: Theme.of(context).primaryColor,
+              title: const Text(
+                'Would you like to review your landlord?',
+                style: TextStyle(color: Colors.white),
+              ),
+              actions: <Widget>[noButton(context), yesButton(context)],
+            ));
+  }
+
+  Widget yesButton(BuildContext context) {
+    return ElevatedButton(
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
+      ),
+      onPressed: () async {
+        Navigator.of(context).pop();
+        showRatingAlert(context);
+      },
+      child: const Text(
+        'Yes',
+        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  Widget noButton(BuildContext context) {
+    ApiServiceProvider apiService =
+        Provider.of<ApiServiceProvider>(context, listen: false);
+    return ElevatedButton(
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
+      ),
+      onPressed: () async {
+        try {
+          Review review = await apiService.submitReview(
+              widget.leaseAgreement.tenant!.id,
+              widget.leaseAgreement.landlord.id,
+              0,
+              "",
+              ReviewStatus.Rejected);
+
+          widget.leaseAgreement.review = review;
+
+          ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(content: Text("Review Rejected")));
+          Navigator.of(context).pop();
+        } on Exception catch (e) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(e.toString())));
+        }
+      },
+      child: const Text(
+        'No',
+        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  void showRatingAlert(BuildContext context) {
+    ApiServiceProvider apiService =
+        Provider.of<ApiServiceProvider>(context, listen: false);
+    showDialog(
+        context: context,
+        builder: (dialogContext) => RatingDialog(
+              initialRating: 1.0,
+              // your app's name?
+              title: const Text(
+                'Review Landlord',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              message: const Text(
+                'Tap a star to set your rating. Add more description here if you want.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 15),
+              ),
+              // image: const FlutterLogo(size: 100),
+
+              submitButtonText: 'Submit',
+              commentHint: 'Description',
+              onCancelled: () => print('cancelled'),
+              onSubmitted: (response) async {
+                try {
+                  Review review = await apiService.submitReview(
+                      widget.leaseAgreement.tenant!.id,
+                      widget.leaseAgreement.landlord.id,
+                      response.rating.toInt(),
+                      response.comment,
+                      ReviewStatus.FilledOut);
+                  widget.leaseAgreement.review = review;
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Review Submitted")));
+                } on Exception catch (e) {
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text(e.toString())));
+                }
+              },
+            ));
   }
 
   Widget maintenanceProvided(List<Maintenance> maintenance) {

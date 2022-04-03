@@ -8,6 +8,7 @@ import 'package:rentremedy_mobile/Model/LeaseAgreement/utility.dart';
 import 'package:rentremedy_mobile/Model/Property/property.dart';
 import 'package:rentremedy_mobile/Model/LeaseAgreement/signature.dart';
 import 'package:rentremedy_mobile/Model/LeaseAgreement/status.dart';
+import 'package:rentremedy_mobile/Model/Review/review.dart';
 import 'package:rentremedy_mobile/Model/User/user.dart';
 part 'lease_agreement.g.dart';
 
@@ -31,7 +32,8 @@ class LeaseAgreement {
       this.monthlyFees,
       this.amenitiesProvided,
       this.utilitiesProvided,
-      this.maintenanceProvided);
+      this.maintenanceProvided,
+      this.review);
 
   String id;
   String shortId;
@@ -51,6 +53,7 @@ class LeaseAgreement {
   List<Amenity> amenitiesProvided;
   List<Utility> utilitiesProvided;
   List<Maintenance> maintenanceProvided;
+  Review? review;
 
   factory LeaseAgreement.fromJson(Map<String, dynamic?> json) =>
       _$LeaseAgreementFromJson(json);

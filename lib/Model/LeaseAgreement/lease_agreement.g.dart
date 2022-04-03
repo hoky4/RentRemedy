@@ -44,6 +44,9 @@ LeaseAgreement _$LeaseAgreementFromJson(Map<String, dynamic> json) =>
       (json['maintenanceProvided'] as List<dynamic>)
           .map((e) => $enumDecode(_$MaintenanceEnumMap, e))
           .toList(),
+      json['review'] == null
+          ? null
+          : Review.fromJson(json['review'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$LeaseAgreementToJson(LeaseAgreement instance) =>
@@ -70,6 +73,7 @@ Map<String, dynamic> _$LeaseAgreementToJson(LeaseAgreement instance) =>
       'maintenanceProvided': instance.maintenanceProvided
           .map((e) => _$MaintenanceEnumMap[e])
           .toList(),
+      'review': instance.review?.toJson(),
     };
 
 const _$StatusEnumMap = {

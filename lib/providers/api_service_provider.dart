@@ -14,11 +14,15 @@ import 'package:rentremedy_mobile/Model/Payments/payment_intent_response.dart';
 import 'package:rentremedy_mobile/Model/Payments/setup_intent_request.dart';
 import 'package:rentremedy_mobile/Model/Payments/setup_intent_response.dart';
 import 'package:rentremedy_mobile/Model/Property/address.dart';
+import 'package:rentremedy_mobile/Model/Review/review_status.dart';
 import 'package:rentremedy_mobile/Model/environment.dart';
 import 'package:rentremedy_mobile/Networking/api.dart';
 import 'package:rentremedy_mobile/Networking/api_exception.dart';
 import 'package:rentremedy_mobile/Providers/auth_model_provider.dart';
 import 'package:http/http.dart' as http;
+
+import '../Model/Review/review.dart';
+import '../Model/Review/review_request.dart';
 
 class ApiServiceProvider {
   late AuthModelProvider _authModelProvider;
@@ -27,6 +31,29 @@ class ApiServiceProvider {
 
   set authModelProvider(AuthModelProvider authModelProvider) {
     _authModelProvider = authModelProvider;
+  }
+
+  dynamic submitReview(String reviewerId, String revieweeId, int score,
+      String description, ReviewStatus status) async {
+    ReviewRequest request =
+        ReviewRequest(reviewerId, revieweeId, score, description, status);
+    final response = await http.patch(
+      Uri.parse('${Environment.apiUrl}$REVIEW'),
+      headers: <String, String>{
+        'cookie': _authModelProvider.cookie!,
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(request.toJson()),
+    );
+
+    if (response.statusCode == 201) {
+      Map<String, dynamic> responseMap = jsonDecode(response.body);
+      Review review = Review.fromJson(responseMap);
+
+      return review;
+    } else {
+      return _handleError(response);
+    }
   }
 
   dynamic terminateLeaseAgreement(String id, String reason, String line1,
@@ -332,6 +359,7 @@ class ApiServiceProvider {
         });
 
     if (response.statusCode == 200) {
+      print('resp-body: ${response.body}');
       Map<String, dynamic> responseMap = json.decode(response.body);
       List<dynamic> leaseAgreements = responseMap['leaseAgreements'];
 

@@ -200,7 +200,7 @@ class _MaintenanceRequestScreenState extends State<MaintenanceRequestScreen> {
                           Container(width: 100, height: 100, padding: const EdgeInsets.all(4), child: ImageFullScreenWrapperWidget(url: i.getUrl, dark: true))
                         ).followedBy(
                           [Container(width: 100, height: 100, padding: const EdgeInsets.all(4), child: IconButton(
-                          icon: const Icon(Icons.add_a_photo), 
+                          icon: const Icon(Icons.add_a_photo, color: Colors.white), 
                           iconSize: 80,
                           onPressed: () async {
                             imageFilePicker.showFilePicker(context);

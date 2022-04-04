@@ -17,7 +17,7 @@ class CreditCardScreen extends StatefulWidget {
 }
 
 class _CreditCardScreenState extends State<CreditCardScreen> {
-  String cardNumber = '';
+  String cardNumber = '4242424242424242';
   String expiryDate = '';
   String cardHolderName = '';
   String cvvCode = '';

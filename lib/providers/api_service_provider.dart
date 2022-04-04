@@ -22,6 +22,7 @@ import 'package:rentremedy_mobile/Networking/api_exception.dart';
 import 'package:rentremedy_mobile/Providers/auth_model_provider.dart';
 import 'package:http/http.dart' as http;
 
+import '../Model/Media/bucket_object.dart';
 import '../Model/Media/upload_object_request.dart';
 
 
@@ -127,12 +128,17 @@ class ApiServiceProvider {
   }
 
   dynamic createMaintenanceRequest(String item, String location,
-      String description, SeverityType severity) async {
+      String description, SeverityType severity, List<BucketObject> images) async {
     // User user = User(
     //     _authModelProvider.user!.id,
     //     _authModelProvider.user!.firstName,
     //     _authModelProvider.user!.lastName,
     //     _authModelProvider.user!.email);
+    List<String> imageIds = [];
+    for(var image in images)
+    {
+      imageIds.add(image.id);
+    }
     MaintenanceRequestRequest request = MaintenanceRequestRequest(
         // user,
         _authModelProvider.leaseAgreement!.id,
@@ -141,7 +147,8 @@ class ApiServiceProvider {
         item,
         location,
         description,
-        null);
+        null,
+        imageIds);
     final response =
         await http.post(Uri.parse(Environment.apiUrl + MAINTENANCE),
             headers: <String, String>{

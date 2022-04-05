@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
 class MessageTextBox extends StatefulWidget {
+  Future<void> Function() onImagePressed;
   Future<void> Function(String text) onPressed;
   bool isButtonActive;
 
   MessageTextBox(
-      {Key? key, required this.onPressed, required this.isButtonActive})
+      {Key? key, required this.onPressed, required this.isButtonActive, required this.onImagePressed})
       : super(key: key);
 
   @override
@@ -33,7 +34,7 @@ class _MessageTextBox extends State<MessageTextBox> {
         padding: const EdgeInsets.all(8.0),
         child: Row(
           children: <Widget>[
-            IconButton(icon: const Icon(Icons.add), onPressed: () {}),
+            IconButton(icon: const Icon(Icons.image, color: Colors.white), onPressed: () {widget.onImagePressed();}),
             Expanded(
               child: TextField(
                 controller: txtMessage,

@@ -1,7 +1,17 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:mime/mime.dart';
 import 'package:provider/provider.dart';
 import 'package:rentremedy_mobile/Model/Maintenance/severity_type.dart';
+import 'package:rentremedy_mobile/Model/Media/bucket_object.dart';
+import 'package:rentremedy_mobile/Model/Media/upload_object_response.dart';
 import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
+import 'package:rentremedy_mobile/View/Components/image_full_screen_wrapper.dart';
+import 'package:rentremedy_mobile/view/Components/image_picker.dart';
+import 'package:http/http.dart' as http;
+import '../../Model/Media/types.dart';
 
 class MaintenanceRequestScreen extends StatefulWidget {
   MaintenanceRequestScreen({Key? key}) : super(key: key);
@@ -17,6 +27,7 @@ class _MaintenanceRequestScreenState extends State<MaintenanceRequestScreen> {
   final TextEditingController txtLocation = TextEditingController();
   final TextEditingController txtDescription = TextEditingController();
   SeverityType dropdownValue = SeverityType.None;
+  final List<BucketObject> images = [];
   bool isLoading = false;
 
   late ApiServiceProvider apiService;
@@ -27,8 +38,24 @@ class _MaintenanceRequestScreenState extends State<MaintenanceRequestScreen> {
     apiService = Provider.of<ApiServiceProvider>(context, listen: false);
   }
 
+  Future<void> onImagePicked(XFile file) async {
+    UploadObjectResponse response = await apiService.uploadImage(file.name, ObjectType.imageMaintenance);
+    await http.put(Uri.parse(response.putUrl), 
+    headers: <String, String>{
+      'Content-Type': lookupMimeType(file.path) ?? 'unknown',
+      }, 
+    body: await File(file.path).readAsBytes());
+
+    setState(() {
+      images.add(response.bucketObject);
+    });
+    
+    print("added image to list");
+  }
+
   @override
   Widget build(BuildContext context) {
+    ImageFilePicker imageFilePicker = ImageFilePicker(onImagePicked: onImagePicked);
     return SafeArea(
       child: Scaffold(
           backgroundColor: Theme.of(context).primaryColor,
@@ -166,6 +193,20 @@ class _MaintenanceRequestScreenState extends State<MaintenanceRequestScreen> {
                         )
                       ],
                     ),
+                    Wrap(
+                      //mainAxisAlignment: MainAxisAlignment.start,
+                      children:
+                        images.map((i) =>
+                          Container(width: 100, height: 100, padding: const EdgeInsets.all(4), child: ImageFullScreenWrapperWidget(url: i.getUrl, dark: true))
+                        ).followedBy(
+                          [Container(width: 100, height: 100, padding: const EdgeInsets.all(4), child: IconButton(
+                          icon: const Icon(Icons.add_a_photo, color: Colors.white), 
+                          iconSize: 80,
+                          onPressed: () async {
+                            imageFilePicker.showFilePicker(context);
+                            }
+                          ))]).toList(),
+                        ),
                     Visibility(
                         maintainSize: false,
                         maintainAnimation: true,
@@ -185,7 +226,7 @@ class _MaintenanceRequestScreenState extends State<MaintenanceRequestScreen> {
                                   txtItem.text,
                                   txtLocation.text,
                                   txtDescription.text,
-                                  dropdownValue);
+                                  dropdownValue, images);
 
                               setState(() {
                                 isLoading = false;

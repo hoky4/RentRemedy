@@ -12,7 +12,7 @@ Property _$PropertyFromJson(Map<String, dynamic> json) => Property(
       json['description'] as String,
       Address.fromJson(json['address'] as Map<String, dynamic>),
       (json['leaseAgreements'] as List<dynamic>)
-          .map((e) => e as String)
+          .map((e) => ViewLeaseAgreement.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
@@ -21,5 +21,6 @@ Map<String, dynamic> _$PropertyToJson(Property instance) => <String, dynamic>{
       'name': instance.name,
       'description': instance.description,
       'address': instance.address.toJson(),
-      'leaseAgreements': instance.leaseAgreements,
+      'leaseAgreements':
+          instance.leaseAgreements.map((e) => e.toJson()).toList(),
     };

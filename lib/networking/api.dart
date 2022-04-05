@@ -7,3 +7,4 @@ const String CONVERSATION = '/api/messages/conversation';
 const String WEBSOCKET = '/api/ws/connect';
 const String PAYMENT = '/api/payments';
 const String MAINTENANCE = '/api/maintenance-requests';
+const String UPLOAD = '/api/images';

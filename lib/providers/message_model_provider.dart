@@ -1,22 +1,24 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'package:rentremedy_mobile/Model/Message/websocket_message.dart';
+import 'package:rentremedy_mobile/Model/Message/create_message_request.dart';
+import 'package:rentremedy_mobile/Model/Message/message_type.dart';
 
+import '../Model/Media/bucket_object.dart';
 import '../Model/Message/message.dart';
 
 class MessageModelProvider extends ChangeNotifier {
   List<Message> _recentMessages = [];
-  List<WebSocketMessage> _sendQueue = [];
-  List<WebSocketMessage> _pendingQueue = [];
+  List<CreateMessageRequest> _sendQueue = [];
+  List<CreateMessageRequest> _pendingQueue = [];
 
   UnmodifiableListView<Message> get recentMessages =>
       UnmodifiableListView(_recentMessages);
 
-  UnmodifiableListView<WebSocketMessage> get sendQueue =>
+  UnmodifiableListView<CreateMessageRequest> get sendQueue =>
       UnmodifiableListView(_sendQueue);
 
-  UnmodifiableListView<WebSocketMessage> get pendingQueue =>
+  UnmodifiableListView<CreateMessageRequest> get pendingQueue =>
       UnmodifiableListView(_pendingQueue);
 
   void messageReceived(Message message) {
@@ -24,7 +26,7 @@ class MessageModelProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void sendMessage(WebSocketMessage message) {
+  void sendMessage(CreateMessageRequest message) {
     _sendQueue.add(message);
     notifyListeners();
   }
@@ -32,24 +34,26 @@ class MessageModelProvider extends ChangeNotifier {
   void moveFirstMessageFromSendToPending() {
     if (_sendQueue.isEmpty) return;
 
-    WebSocketMessage message = _sendQueue.removeAt(0);
+    CreateMessageRequest message = _sendQueue.removeAt(0);
     _pendingQueue.add(message);
 
     notifyListeners();
   }
 
-  void movePendingMessageToRecent(
-      String messageTempId, DateTime messageDeliveredDate, String userId) {
+  void movePendingMessageToRecent(String messageTempId, DateTime messageDeliveredDate, String userId, BucketObject? media) {
     final int index =
         pendingQueue.indexWhere(((msg) => msg.messageTempId == messageTempId));
     if (index != -1) {
-      WebSocketMessage deliveredMessage = _pendingQueue.removeAt(index);
+      CreateMessageRequest deliveredMessage = _pendingQueue.removeAt(index);
+      MessageType type = media == null ? MessageType.Text : MessageType.Image;
       Message wsMsgToMsg = Message.lessArguments(
           userId,
           deliveredMessage.recipient,
-          deliveredMessage.messageText,
+          deliveredMessage.payload,
           deliveredMessage.messageTempId,
-          messageDeliveredDate);
+          messageDeliveredDate,
+          media,
+          type);
 
       messageReceived(wsMsgToMsg);
     }

@@ -65,7 +65,7 @@ class ViewPaymentScreen extends StatelessWidget {
                   "Late Fee", "\$${convertToDollar(payment.lateFee)}"),
             ],
             paymentDetailLine("Paid Date: ",
-                DateFormat.yMMMMd('en_US').format(payment.dueDate))
+                DateFormat.yMMMMd('en_US').format(payment.dueDate.toLocal()))
           ],
         ),
       ),

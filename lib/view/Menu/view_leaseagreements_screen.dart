@@ -101,7 +101,7 @@ class LeaseAgreementItem extends StatelessWidget {
         color: Theme.of(context).dividerColor,
         child: ListTile(
           title: Text(
-            "${DateFormat.yMMMMd('en_US').format(leaseAgreement.startDate)} to ${DateFormat.yMMMMd('en_US').format(leaseAgreement.endDate)}",
+            "${DateFormat.yMMMMd('en_US').format(leaseAgreement.startDate.toLocal())} to ${DateFormat.yMMMMd('en_US').format(leaseAgreement.endDate.toLocal())}",
             style: const TextStyle(color: Colors.white),
           ),
           subtitle: Text(

@@ -93,7 +93,7 @@ class PaymentItem extends StatelessWidget {
         color: Theme.of(context).dividerColor,
         child: ListTile(
           title: Text(
-            DateFormat.yMMMMd('en_US').format(payment.dueDate),
+            DateFormat.yMMMMd('en_US').format(payment.dueDate.toLocal()),
             style: TextStyle(color: Colors.white),
           ),
           subtitle: payment.paymentDate != null

@@ -80,7 +80,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   style: lateFeeStyle),
             ],
             paymentDetailLine("Due: ",
-                DateFormat.yMMMMd('en_US').format(widget.payment.dueDate)),
+                DateFormat.yMMMMd('en_US').format(widget.payment.dueDate.toLocal())),
           ],
         ),
       ),

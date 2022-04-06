@@ -9,8 +9,8 @@
 .history
 .svn/
 
-.env.production
-.env.development
+*.g.dart
+.env
 
 # IntelliJ related
 *.iml

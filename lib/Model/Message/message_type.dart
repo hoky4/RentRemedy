@@ -10,19 +10,19 @@ enum MessageType {
   @JsonValue(3)
   PaymentProcessing,
   @JsonValue(4)
-  PaymentReceived,
-  @JsonValue(5)
   WelcomeMessage,
-  @JsonValue(6)
+  @JsonValue(5)
   MaintenanceCreated,
-  @JsonValue(7)
+  @JsonValue(6)
   MaintenanceCompleted,
-  @JsonValue(8)
+  @JsonValue(7)
   MaintenanceCancelled,
-  @JsonValue(9)
+  @JsonValue(8)
   MaintenanceUpdated,
+  @JsonValue(9)
+  TerminationNotification,
   @JsonValue(10)
-  TerminationNotification
+  Image
 }
 
 extension MessageTypeExtension on MessageType {
@@ -36,8 +36,6 @@ extension MessageTypeExtension on MessageType {
         return "View Payment";
       case MessageType.PaymentProcessing:
         return "Payment Processing";
-      case MessageType.PaymentReceived:
-        return "View Payment";
       case MessageType.WelcomeMessage:
         return "Welcome Message";
       case MessageType.MaintenanceCreated:

@@ -9,6 +9,7 @@ import 'package:rentremedy_mobile/Providers/auth_model_provider.dart';
 import 'package:rentremedy_mobile/View/Maintenance/view_maintenance_request_screen.dart';
 import 'package:rentremedy_mobile/View/Payment/payment_screen.dart';
 
+import '../Components/image_full_screen_wrapper.dart';
 import '../Payment/view_payment_screen.dart';
 
 class MessageBox extends StatelessWidget {
@@ -49,6 +50,10 @@ class MessageBox extends StatelessWidget {
             ),
             child: Column(
               children: [
+                if(message.type == MessageType.Image)
+                  ...[
+                    Center(child: ImageFullScreenWrapperWidget(url: message.media?.getUrl ?? '', dark: true))]
+                else
                 Text(
                   message.messageText,
                   style: const TextStyle(color: Colors.white

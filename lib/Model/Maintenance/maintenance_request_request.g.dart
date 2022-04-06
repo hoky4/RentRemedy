@@ -18,6 +18,7 @@ MaintenanceRequestRequest _$MaintenanceRequestRequestFromJson(
       json['dateTime'] == null
           ? null
           : DateTime.parse(json['dateTime'] as String),
+      (json['imageIds'] as List<dynamic>?)?.map((e) => e as String).toList(),
     );
 
 Map<String, dynamic> _$MaintenanceRequestRequestToJson(
@@ -30,6 +31,7 @@ Map<String, dynamic> _$MaintenanceRequestRequestToJson(
       'location': instance.location,
       'description': instance.description,
       'dateTime': instance.dateTime?.toIso8601String(),
+      'imageIds': instance.imageIds,
     };
 
 const _$SeverityTypeEnumMap = {

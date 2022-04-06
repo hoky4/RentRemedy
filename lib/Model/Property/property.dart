@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:rentremedy_mobile/Model/LeaseAgreement/view_lease_agreement.dart';
 import 'address.dart';
 part 'property.g.dart';
 
@@ -10,7 +11,7 @@ class Property {
   String name;
   String description;
   Address address;
-  List<String> leaseAgreements;
+  List<ViewLeaseAgreement> leaseAgreements;
 
   factory Property.fromJson(Map<String, dynamic> json) => _$PropertyFromJson(json);
 

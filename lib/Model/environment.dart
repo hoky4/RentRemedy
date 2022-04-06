@@ -1,19 +1,21 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Environment {
-  static String get fileName {
-    if (kReleaseMode) {
-      return '.env.production';
-    }
-    return '.env.development';
-  }
-
   static String get apiUrl {
-    return dotenv.env['API_URL'] ?? "API_URL not found";
+    String? url = dotenv.env['API_URL'];
+    if(url == null)
+    {
+      throw Exception("apiUrl is null");
+    }
+    return url;
   }
 
   static String get websocketUrl {
-    return dotenv.env['WEBSOCKET'] ?? "WEBSOCKET not found";
+    String? url = dotenv.env['WEBSOCKET'];
+    if(url == null)
+    {
+      throw Exception("websocket url is null");
+    }
+    return url;
   }
 }

@@ -15,6 +15,7 @@ import 'package:rentremedy_mobile/Model/Property/property.dart';
 import 'package:rentremedy_mobile/Model/Review/review_status.dart';
 import 'package:rentremedy_mobile/Providers/api_service_provider.dart';
 import 'package:rentremedy_mobile/Providers/auth_model_provider.dart';
+import '../../Model/LeaseAgreement/status.dart';
 import '../../Model/Review/review.dart';
 import 'join_screen.dart';
 import 'package:rating_dialog/rating_dialog.dart';
@@ -43,7 +44,7 @@ class _TermsScreenState extends State<TermsScreen> {
               if (widget.leaseAgreement.signatures.isEmpty) ...[
                 TextButton(
                   style: TextButton.styleFrom(
-                    primary: Colors.white70, // foreground
+                    primary: Colors.white70,
                   ),
                   onPressed: () {
                     // Update with a unsigned lease agreement
@@ -59,7 +60,7 @@ class _TermsScreenState extends State<TermsScreen> {
               ] else ...[
                 TextButton(
                   style: TextButton.styleFrom(
-                    primary: Colors.white70, // foreground
+                    primary: Colors.white70,
                   ),
                   onPressed: () {
                     Navigator.pop(context);
@@ -100,14 +101,10 @@ class _TermsScreenState extends State<TermsScreen> {
                           thickness: 1, indent: 32, endIndent: 32, height: 48),
                       signedInfo(
                           widget.leaseAgreement.signatures.first.signDate),
-                      // const SizedBox(height: 24),
                     ],
                     if (authModel
                             .leaseAgreement?.terminationInfo?.terminationDate !=
                         null) ...[
-                      // if (widget
-                      //         .leaseAgreement.terminationInfo?.terminationDate !=
-                      //     null) ...[
                       const Divider(
                           thickness: 1, indent: 32, endIndent: 32, height: 48),
                       terminationInfo(
@@ -120,11 +117,10 @@ class _TermsScreenState extends State<TermsScreen> {
             ),
             if (widget.leaseAgreement.signatures.isEmpty) ...[
               Container(
-                  // alignment: Alignment.center,
                   width: double.infinity,
                   decoration: BoxDecoration(
                       color: Theme.of(context)
-                          .primaryColorDark), //Colors.black12),
+                          .primaryColorDark),
                   child: Column(
                     children: [
                       Row(
@@ -144,11 +140,10 @@ class _TermsScreenState extends State<TermsScreen> {
                     .leaseAgreement?.terminationInfo?.terminationDate ==
                 null) ...[
               Container(
-                  // alignment: Alignment.center,
                   width: double.infinity,
                   decoration: BoxDecoration(
                       color: Theme.of(context)
-                          .primaryColorDark), //Colors.black12),
+                          .primaryColorDark),
                   child: Column(
                     children: [
                       Row(
@@ -171,8 +166,10 @@ class _TermsScreenState extends State<TermsScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-      if (widget.leaseAgreement.terminationInfo?.terminationDate != null &&
-          widget.leaseAgreement.review?.status == ReviewStatus.Pending) {
+      if ((widget.leaseAgreement.terminationInfo?.terminationDate != null || 
+          widget.leaseAgreement.status == Status.Terminated || 
+          widget.leaseAgreement.status == Status.Completed) &&
+          widget.leaseAgreement.review?.status == ReviewStatus.Pending ) {
         showRatingPromptAlert(context);
       }
     });
@@ -190,8 +187,6 @@ class _TermsScreenState extends State<TermsScreen> {
             const SizedBox(height: 8.0),
             detailLine("Terminated on: ",
                 DateFormat.yMMMMd('en_US').format(info.terminationDate!)),
-            // Text("Terminated on ${DateFormat.yMMMMd('en_US').format(info.terminationDate!)}",
-            //     style: bodyStyle),
             SizedBox(height: 4.0),
             detailLine("Reason: ", info.reason!),
             SizedBox(height: 4.0),
@@ -214,8 +209,6 @@ class _TermsScreenState extends State<TermsScreen> {
             const SizedBox(height: 8.0),
             detailLine(
                 "Signed on: ", DateFormat.yMMMMd('en_US').format(signedDate)),
-            // Text("Signed on ${DateFormat.yMMMMd('en_US').format(signedDate)}",
-            //     style: bodyStyle),
           ],
         ),
       ),

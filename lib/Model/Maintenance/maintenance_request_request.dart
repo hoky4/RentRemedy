@@ -5,7 +5,7 @@ part 'maintenance_request_request.g.dart';
 @JsonSerializable(explicitToJson: true)
 class MaintenanceRequestRequest {
   MaintenanceRequestRequest(this.leaseAgreementId, this.propertyId,
-      this.severity, this.item, this.location, this.description, this.dateTime,);
+      this.severity, this.item, this.location, this.description, this.dateTime, this.imageIds);
 
   // User user;
   String leaseAgreementId;
@@ -15,6 +15,7 @@ class MaintenanceRequestRequest {
   String location;
   String description;
   DateTime? dateTime;
+  List<String>? imageIds;
 
   factory MaintenanceRequestRequest.fromJson(Map<String, dynamic> json) =>
       _$MaintenanceRequestRequestFromJson(json);

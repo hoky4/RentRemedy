@@ -82,20 +82,20 @@ class ViewMaintenanceRequestScreen extends StatelessWidget {
             maintenanceDetailLine(
                 "Date Submitted: ",
                 DateFormat.yMMMMd('en_US')
-                    .format(maintenanceRequest.submissionDate)),
+                    .format(maintenanceRequest.submissionDate.toLocal())),
             const SizedBox(height: 8.0),
             maintenanceDetailLine(
                 "Est. Completion: ",
                 maintenanceRequest.projectedCompletionDate != null
                     ? DateFormat.yMMMMd('en_US')
-                        .format(maintenanceRequest.projectedCompletionDate!)
+                        .format(maintenanceRequest.projectedCompletionDate!.toLocal())
                     : "N/A"),
             const SizedBox(height: 8.0),
             maintenanceDetailLine(
                 "Date Completed: ",
                 maintenanceRequest.completionDate != null
                     ? DateFormat.yMMMMd('en_US')
-                        .format(maintenanceRequest.completionDate!)
+                        .format(maintenanceRequest.completionDate!.toLocal())
                     : "N/A"),
           ],
         ),

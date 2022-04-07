@@ -186,7 +186,9 @@ class _TermsScreenState extends State<TermsScreen> {
             Text("Termination", style: categoryStyle),
             const SizedBox(height: 8.0),
             detailLine("Terminated on: ",
-                DateFormat.yMMMMd('en_US').format(info.terminationDate!)),
+                DateFormat.yMMMMd('en_US').format(info.terminationDate!.toLocal())),
+            // Text("Terminated on ${DateFormat.yMMMMd('en_US').format(info.terminationDate!)}",
+            //     style: bodyStyle),
             SizedBox(height: 4.0),
             detailLine("Reason: ", info.reason!),
             SizedBox(height: 4.0),
@@ -208,7 +210,9 @@ class _TermsScreenState extends State<TermsScreen> {
             Text("Signature", style: categoryStyle),
             const SizedBox(height: 8.0),
             detailLine(
-                "Signed on: ", DateFormat.yMMMMd('en_US').format(signedDate)),
+                "Signed on: ", DateFormat.yMMMMd('en_US').format(signedDate.toLocal())),
+            // Text("Signed on ${DateFormat.yMMMMd('en_US').format(signedDate)}",
+            //     style: bodyStyle),
           ],
         ),
       ),
@@ -730,7 +734,7 @@ class _TermsScreenState extends State<TermsScreen> {
                 "\$${convertToDollar(securityDeposit.refundAmount)}"),
             const SizedBox(height: 8.0),
             detailLine("Due Date: ",
-                DateFormat.yMMMMd('en_US').format(securityDeposit.dueDate)),
+                DateFormat.yMMMMd('en_US').format(securityDeposit.dueDate.toLocal())),
           ],
         ),
       ),
@@ -792,7 +796,7 @@ class _TermsScreenState extends State<TermsScreen> {
         return detailLine("Due Date: ", monthlyFees.dueDateType.value);
       case DueDateType.DayOfMonth:
         return detailLine("Due Date: ",
-            "${DateFormat.yMMMMd('en_US').format(monthlyFees.dueDate!)} *(or end of month)");
+            "${DateFormat.yMMMMd('en_US').format(monthlyFees.dueDate!.toLocal())} *(or end of month)");
       default:
         return Text("Not avaliable.", style: bodyStyle);
     }
@@ -809,7 +813,7 @@ class _TermsScreenState extends State<TermsScreen> {
             Text("Duration", style: categoryStyle),
             const SizedBox(height: 8.0),
             detailLine("",
-                "${DateFormat.yMMMMd('en_US').format(startDate)} to ${DateFormat.yMMMMd('en_US').format(endDate)}"),
+                "${DateFormat.yMMMMd('en_US').format(startDate.toLocal())} to ${DateFormat.yMMMMd('en_US').format(endDate.toLocal())}"),
           ],
         ),
       ),

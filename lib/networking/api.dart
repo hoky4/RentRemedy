@@ -8,3 +8,4 @@ const String WEBSOCKET = '/api/ws/connect';
 const String PAYMENT = '/api/payments';
 const String MAINTENANCE = '/api/maintenance-requests';
 const String REVIEW = '/api/review';
+const String UPLOAD = '/api/images';

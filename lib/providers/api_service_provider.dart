@@ -8,6 +8,8 @@ import 'package:rentremedy_mobile/Model/LeaseAgreement/terminate_lease_agreement
 import 'package:rentremedy_mobile/Model/Maintenance/maintenance_request_request.dart';
 import 'package:rentremedy_mobile/Model/Maintenance/maintenance_request.dart';
 import 'package:rentremedy_mobile/Model/Maintenance/severity_type.dart';
+import 'package:rentremedy_mobile/Model/Media/types.dart';
+import 'package:rentremedy_mobile/Model/Media/upload_object_response.dart';
 import 'package:rentremedy_mobile/Model/Message/message.dart';
 import 'package:rentremedy_mobile/Model/Payments/payment.dart';
 import 'package:rentremedy_mobile/Model/Payments/payment_intent_response.dart';
@@ -16,13 +18,16 @@ import 'package:rentremedy_mobile/Model/Payments/setup_intent_response.dart';
 import 'package:rentremedy_mobile/Model/Property/address.dart';
 import 'package:rentremedy_mobile/Model/Review/review_status.dart';
 import 'package:rentremedy_mobile/Model/environment.dart';
-import 'package:rentremedy_mobile/Networking/api.dart';
+import 'package:rentremedy_mobile/networking/api.dart';
 import 'package:rentremedy_mobile/Networking/api_exception.dart';
 import 'package:rentremedy_mobile/Providers/auth_model_provider.dart';
 import 'package:http/http.dart' as http;
 
 import '../Model/Review/review.dart';
 import '../Model/Review/review_request.dart';
+import '../Model/Media/bucket_object.dart';
+import '../Model/Media/upload_object_request.dart';
+
 
 class ApiServiceProvider {
   late AuthModelProvider _authModelProvider;
@@ -31,6 +36,26 @@ class ApiServiceProvider {
 
   set authModelProvider(AuthModelProvider authModelProvider) {
     _authModelProvider = authModelProvider;
+  }
+
+  Future<UploadObjectResponse> uploadImage(String filename, ObjectType type) async {
+    UploadObjectRequest request = UploadObjectRequest(filename, type);
+    final response = await http.post(Uri.parse('${Environment.apiUrl}$UPLOAD'), 
+    headers: <String, String>{
+        'cookie': _authModelProvider.cookie!,
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(request.toJson()),
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseMap = json.decode(response.body);
+      UploadObjectResponse uploadObjectResponse = UploadObjectResponse.fromJson(responseMap);
+
+      return uploadObjectResponse;
+    } else {
+      return _handleError(response);
+    }
   }
 
   dynamic submitReview(String reviewerId, String revieweeId, int score,
@@ -122,19 +147,23 @@ class ApiServiceProvider {
               maintenanceRequests.map((i) => MaintenanceRequest.fromJson(i)));
 
       return maintenanceRequestList;
-      // }
     } else {
       return _handleError(response);
     }
   }
 
   dynamic createMaintenanceRequest(String item, String location,
-      String description, SeverityType severity) async {
+      String description, SeverityType severity, List<BucketObject> images) async {
     // User user = User(
     //     _authModelProvider.user!.id,
     //     _authModelProvider.user!.firstName,
     //     _authModelProvider.user!.lastName,
     //     _authModelProvider.user!.email);
+    List<String> imageIds = [];
+    for(var image in images)
+    {
+      imageIds.add(image.id);
+    }
     MaintenanceRequestRequest request = MaintenanceRequestRequest(
         // user,
         _authModelProvider.leaseAgreement!.id,
@@ -143,7 +172,8 @@ class ApiServiceProvider {
         item,
         location,
         description,
-        null);
+        null,
+        imageIds);
     final response =
         await http.post(Uri.parse(Environment.apiUrl + MAINTENANCE),
             headers: <String, String>{

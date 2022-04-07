@@ -19,6 +19,9 @@ Message _$MessageFromJson(Map<String, dynamic> json) => Message(
           ? null
           : DateTime.parse(json['readDate'] as String),
       json['actionId'] as String?,
+      json['media'] == null
+          ? null
+          : BucketObject.fromJson(json['media'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
@@ -32,6 +35,7 @@ Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
       'messageTempId': instance.messageTempId,
       'readDate': instance.readDate?.toIso8601String(),
       'actionId': instance.actionId,
+      'media': instance.media?.toJson(),
     };
 
 const _$MessageTypeEnumMap = {
@@ -39,11 +43,11 @@ const _$MessageTypeEnumMap = {
   MessageType.PaymentDue: 1,
   MessageType.PaymentSuccessful: 2,
   MessageType.PaymentProcessing: 3,
-  MessageType.PaymentReceived: 4,
-  MessageType.WelcomeMessage: 5,
-  MessageType.MaintenanceCreated: 6,
-  MessageType.MaintenanceCompleted: 7,
-  MessageType.MaintenanceCancelled: 8,
-  MessageType.MaintenanceUpdated: 9,
-  MessageType.TerminationNotification: 10,
+  MessageType.WelcomeMessage: 4,
+  MessageType.MaintenanceCreated: 5,
+  MessageType.MaintenanceCompleted: 6,
+  MessageType.MaintenanceCancelled: 7,
+  MessageType.MaintenanceUpdated: 8,
+  MessageType.TerminationNotification: 9,
+  MessageType.Image: 10,
 };

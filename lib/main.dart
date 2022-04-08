@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
@@ -9,12 +10,12 @@ import 'package:rentremedy_mobile/Providers/message_model_provider.dart';
 import 'package:rentremedy_mobile/Routing/route_page.dart';
 
 Future<void> main() async {
-  // if (kReleaseMode) {
-  //   await dotenv.load(fileName: '.env.production');
-  // } else if (kDebugMode) {
-  //   await dotenv.load(fileName: '.env.development');
-  // }
-  await dotenv.load(fileName: ".env");
+  if (kReleaseMode) {
+    await dotenv.load(fileName: '.env.production');
+  } else if (kDebugMode) {
+    await dotenv.load(fileName: '.env.development');
+  }
+  // await dotenv.load(fileName: ".env");
 
   HttpOverrides.global = MyHttpOverrides();
   runApp(const MyApp());

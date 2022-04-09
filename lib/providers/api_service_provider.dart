@@ -397,7 +397,7 @@ class ApiServiceProvider {
         print('No existing lease agreements found.');
         return null;
       } else {
-        print('Active lease agreement found.');
+        print('Lease agreement found.');
 
         List<LeaseAgreement> leaseAgreementList = List<LeaseAgreement>.from(
             leaseAgreements.map((i) => LeaseAgreement.fromJson(i)));
@@ -405,8 +405,14 @@ class ApiServiceProvider {
             .where((i) => (i.status == Status.AssignedUnsigned ||
                 i.status == Status.AssignedSigned))
             .toList();
-        leaseAgreement = signedLeaseAgreements.first;
-        return leaseAgreement;
+            if(signedLeaseAgreements.isNotEmpty)
+            {
+                return signedLeaseAgreements.first;
+            }
+            else
+            {
+              return null;
+            }
       }
     } else {
       return _handleError(response);

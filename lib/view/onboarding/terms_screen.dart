@@ -536,6 +536,7 @@ class _TermsScreenState extends State<TermsScreen> {
       onPressed: () async {
         try {
           Review review = await apiService.submitReview(
+              widget.leaseAgreement.review!.id,
               widget.leaseAgreement.tenant!.id,
               widget.leaseAgreement.landlord.id,
               0,
@@ -588,6 +589,7 @@ class _TermsScreenState extends State<TermsScreen> {
               onSubmitted: (response) async {
                 try {
                   Review review = await apiService.submitReview(
+                      widget.leaseAgreement.review!.id,
                       widget.leaseAgreement.tenant!.id,
                       widget.leaseAgreement.landlord.id,
                       response.rating.toInt(),

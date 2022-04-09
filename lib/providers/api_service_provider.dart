@@ -58,10 +58,10 @@ class ApiServiceProvider {
     }
   }
 
-  dynamic submitReview(String reviewerId, String revieweeId, int score,
+  dynamic submitReview(String id, String reviewerId, String revieweeId, int score,
       String description, ReviewStatus status) async {
     ReviewRequest request =
-        ReviewRequest(reviewerId, revieweeId, score, description, status);
+        ReviewRequest(id, reviewerId, revieweeId, score, description, status);
     final response = await http.patch(
       Uri.parse('${Environment.apiUrl}$REVIEW'),
       headers: <String, String>{

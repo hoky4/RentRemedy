@@ -40,7 +40,7 @@ class _MaintenanceRequestScreenState extends State<MaintenanceRequestScreen> {
 
   Future<void> onImagePicked(XFile file) async {
     UploadObjectResponse response = await apiService.uploadImage(file.name, ObjectType.imageMaintenance);
-    await http.put(Uri.parse(response.putUrl), 
+  await http.put(Uri.parse(response.putUrl), 
     headers: <String, String>{
       'Content-Type': lookupMimeType(file.path) ?? 'unknown',
       }, 

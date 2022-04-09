@@ -10,7 +10,12 @@ Set up Flutter https://flutter.dev/docs/get-started/install
    4b. Configure dart and flutter path in IDE
    4c. Set up android emulator in IDE
 
-Create a file called ".env" at the base directory for the project with the following variables:
+Create a file called ".env.development" at the base directory for the project with the following variables:
 
 API_URL=http://'your ip4 address':5000
 WEBSOCKET=ws://'your ip4 address':5000
+
+Create a file called ".env.production" at the base directory for the project with the following variables:
+
+API_URL=https://api.myrentremedy.com
+WEBSOCKET=wss://api.myrentremedy.com

@@ -182,19 +182,20 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
               ],
             ]),
         drawer: Drawer(
+          backgroundColor: Theme.of(context).primaryColorDark,
           child: ListView(
             // padding: EdgeInsets.zero,
             children: [
               DrawerHeader(
                 decoration: const BoxDecoration(
-                  color: Colors.blue,
+                  color: Color(0xff071A2F),
                 ),
-                child: Text('${authModel.user?.email}'),
+                child: Text('Welcome ${authModel.user?.firstName}', style: const TextStyle(fontSize: 16, color: Colors.white),),
               ),
               if (authModel.leaseAgreement!.signatures.isNotEmpty) ...[
                 ListTile(
-                  title: const Text('Lease Agreement'),
-                  leading: const Icon(Icons.document_scanner),
+                  title: const Text('Lease Agreement', style: TextStyle(fontSize: 14, color: Colors.white70)),
+                  leading: const Icon(Icons.document_scanner, color: Colors.white70),
                   onTap: () {
                     LeaseAgreement? leaseAgreement = authModel.leaseAgreement;
                     if (leaseAgreement != null) {
@@ -204,8 +205,8 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
                 ),
               ],
               ListTile(
-                title: const Text('Logout'),
-                leading: const Icon(Icons.logout),
+                title: const Text('Logout', style: TextStyle(fontSize: 14, color: Colors.white70)),
+                leading: const Icon(Icons.logout, color: Colors.white70),
                 onTap: () {
                   authModel.logoutUser();
                   messageModel.clearRecentMessages();

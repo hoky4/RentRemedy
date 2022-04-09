@@ -52,34 +52,35 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
         // ),
       ),
       drawer: Drawer(
-        child: ListView(
-          // padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: const BoxDecoration(
-                color: Colors.blue,
+          backgroundColor: Theme.of(context).primaryColorDark,
+          child: ListView(
+            // padding: EdgeInsets.zero,
+            children: [
+              DrawerHeader(
+                decoration: const BoxDecoration(
+                  color: Color(0xff071A2F),
+                ),
+                child: Text('Welcome ${authModel.user?.firstName}', style: const TextStyle(fontSize: 16, color: Colors.white),),
               ),
-              child: Text('${authModel.user?.email}'),
-            ),
-            ListTile(
-              title: const Text('Lease Agreement'),
-              leading: const Icon(Icons.document_scanner),
-              onTap: () {
-                Navigator.pushNamed(context, '/viewLeaseAgreements');
-              },
-            ),
-            ListTile(
-              title: const Text('Logout'),
-              leading: const Icon(Icons.logout),
-              onTap: () {
-                authModel.logoutUser();
-                messageModel.clearRecentMessages();
-                Navigator.pushReplacementNamed(context, '/login');
-              },
-            ),
-          ],
+              ListTile(
+                title: const Text('Lease Agreement', style: TextStyle(fontSize: 14, color: Colors.white70)),
+                leading: const Icon(Icons.document_scanner, color: Colors.white70),
+                onTap: () {
+                  Navigator.pushNamed(context, '/viewLeaseAgreements');
+                },
+              ),
+              ListTile(
+                title: const Text('Logout', style: TextStyle(fontSize: 14, color: Colors.white70)),
+                leading: const Icon(Icons.logout, color: Colors.white70),
+                onTap: () {
+                  authModel.logoutUser();
+                  messageModel.clearRecentMessages();
+                  Navigator.pushReplacementNamed(context, '/login');
+                },
+              ),
+            ],
+          ),
         ),
-      ),
       body: SingleChildScrollView(
         child: Container(
             padding: const EdgeInsets.all(36),

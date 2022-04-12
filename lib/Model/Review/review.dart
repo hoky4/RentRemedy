@@ -4,10 +4,10 @@ part 'review.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class Review {
-  Review(this.reviewerId, this.revieweeId, this.score, this.description,
+  Review(this.id, this.reviewerId, this.revieweeId, this.score, this.description,
       this.status);
 
-  // String id;
+  String id;
   String? reviewerId;
   String? revieweeId;
   int score;

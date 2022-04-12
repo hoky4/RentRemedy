@@ -102,13 +102,12 @@ class _TermsScreenState extends State<TermsScreen> {
                       signedInfo(
                           widget.leaseAgreement.signatures.first.signDate),
                     ],
-                    if (authModel
-                            .leaseAgreement?.terminationInfo?.terminationDate !=
+                    if (widget
+                            .leaseAgreement.terminationInfo?.terminationDate !=
                         null) ...[
                       const Divider(
                           thickness: 1, indent: 32, endIndent: 32, height: 48),
-                      terminationInfo(
-                          authModel.leaseAgreement!.terminationInfo!),
+                      terminationInfo(widget.leaseAgreement.terminationInfo!),
                     ],
                     const SizedBox(height: 24),
                   ],
@@ -118,9 +117,8 @@ class _TermsScreenState extends State<TermsScreen> {
             if (widget.leaseAgreement.signatures.isEmpty) ...[
               Container(
                   width: double.infinity,
-                  decoration: BoxDecoration(
-                      color: Theme.of(context)
-                          .primaryColorDark),
+                  decoration:
+                      BoxDecoration(color: Theme.of(context).primaryColorDark),
                   child: Column(
                     children: [
                       Row(
@@ -136,14 +134,12 @@ class _TermsScreenState extends State<TermsScreen> {
                       )
                     ],
                   )),
-            ] else if (authModel
-                    .leaseAgreement?.terminationInfo?.terminationDate ==
+            ] else if (widget.leaseAgreement.terminationInfo?.terminationDate ==
                 null) ...[
               Container(
                   width: double.infinity,
-                  decoration: BoxDecoration(
-                      color: Theme.of(context)
-                          .primaryColorDark),
+                  decoration:
+                      BoxDecoration(color: Theme.of(context).primaryColorDark),
                   child: Column(
                     children: [
                       Row(
@@ -166,10 +162,10 @@ class _TermsScreenState extends State<TermsScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-      if ((widget.leaseAgreement.terminationInfo?.terminationDate != null || 
-          widget.leaseAgreement.status == Status.Terminated || 
-          widget.leaseAgreement.status == Status.Completed) &&
-          widget.leaseAgreement.review?.status == ReviewStatus.Pending ) {
+      if ((widget.leaseAgreement.terminationInfo?.terminationDate != null ||
+              widget.leaseAgreement.status == Status.Terminated ||
+              widget.leaseAgreement.status == Status.Completed) &&
+          widget.leaseAgreement.review?.status == ReviewStatus.Pending) {
         showRatingPromptAlert(context);
       }
     });
@@ -185,8 +181,10 @@ class _TermsScreenState extends State<TermsScreen> {
           children: [
             Text("Termination", style: categoryStyle),
             const SizedBox(height: 8.0),
-            detailLine("Terminated on: ",
-                DateFormat.yMMMMd('en_US').format(info.terminationDate!.toLocal())),
+            detailLine(
+                "Terminated on: ",
+                DateFormat.yMMMMd('en_US')
+                    .format(info.terminationDate!.toLocal())),
             // Text("Terminated on ${DateFormat.yMMMMd('en_US').format(info.terminationDate!)}",
             //     style: bodyStyle),
             SizedBox(height: 4.0),
@@ -209,8 +207,8 @@ class _TermsScreenState extends State<TermsScreen> {
           children: [
             Text("Signature", style: categoryStyle),
             const SizedBox(height: 8.0),
-            detailLine(
-                "Signed on: ", DateFormat.yMMMMd('en_US').format(signedDate.toLocal())),
+            detailLine("Signed on: ",
+                DateFormat.yMMMMd('en_US').format(signedDate.toLocal())),
             // Text("Signed on ${DateFormat.yMMMMd('en_US').format(signedDate)}",
             //     style: bodyStyle),
           ],
@@ -472,7 +470,8 @@ class _TermsScreenState extends State<TermsScreen> {
                         LoggedInUser? user = authModel.user;
                         if (user != null) {
                           setState(() {
-                            user.leaseAgreement = leaseAgreement;
+                            widget.leaseAgreement.terminationInfo =
+                                leaseAgreement.terminationInfo;
                           });
                         }
                         showRatingPromptAlert(context);
@@ -537,6 +536,7 @@ class _TermsScreenState extends State<TermsScreen> {
       onPressed: () async {
         try {
           Review review = await apiService.submitReview(
+              widget.leaseAgreement.review!.id,
               widget.leaseAgreement.tenant!.id,
               widget.leaseAgreement.landlord.id,
               0,
@@ -589,6 +589,7 @@ class _TermsScreenState extends State<TermsScreen> {
               onSubmitted: (response) async {
                 try {
                   Review review = await apiService.submitReview(
+                      widget.leaseAgreement.review!.id,
                       widget.leaseAgreement.tenant!.id,
                       widget.leaseAgreement.landlord.id,
                       response.rating.toInt(),
@@ -733,8 +734,10 @@ class _TermsScreenState extends State<TermsScreen> {
             detailLine("Refund Amount: ",
                 "\$${convertToDollar(securityDeposit.refundAmount)}"),
             const SizedBox(height: 8.0),
-            detailLine("Due Date: ",
-                DateFormat.yMMMMd('en_US').format(securityDeposit.dueDate.toLocal())),
+            detailLine(
+                "Due Date: ",
+                DateFormat.yMMMMd('en_US')
+                    .format(securityDeposit.dueDate.toLocal())),
           ],
         ),
       ),

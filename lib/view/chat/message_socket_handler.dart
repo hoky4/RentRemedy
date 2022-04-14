@@ -34,6 +34,8 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
   late String cookie;
   bool isLoading = true;
   final ScrollController scrollController = ScrollController();
+  int retryCount = 0;
+  bool socketClosed = false;
 
   @override
   void initState() {
@@ -45,6 +47,16 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
 
     conversation = [];
 
+    connectSocket();
+
+    fetchConversation();
+
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      setupChannel();
+    });
+  }
+
+  void connectSocket() {
     channel = IOWebSocketChannel.connect(
       Environment.websocketUrl + WEBSOCKET,
       headers: <String, dynamic>{
@@ -52,11 +64,6 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
         "Cookie": cookie
       },
     );
-    fetchConversation();
-
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-      setupChannel();
-    });
   }
 
   @override
@@ -78,27 +85,31 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
   }
 
   /// listener and handler for inbound and delivered messages
-  void setupChannel() {
+  Future<void> setupChannel() async {
     var messageModel = context.read<MessageModelProvider>();
 
     channel.stream.listen((m) {
+      retryCount = 0;
+      socketClosed = false;
+
       Map<String, dynamic> responseMap = jsonDecode(m);
 
-      if (responseMap['model'] == MessagingSocketResponseModelType.message.index || responseMap['model'] == MessagingSocketResponseModelType.mediaMessage.index) {
+      if (responseMap['model'] ==
+              MessagingSocketResponseModelType.message.index ||
+          responseMap['model'] ==
+              MessagingSocketResponseModelType.mediaMessage.index) {
         Message message = apiService.parseInboundMessageFromSocket(m);
         messageModel.messageReceived(message);
-      } else if (responseMap['model'] == MessagingSocketResponseModelType.messageDelivered.index) {
+      } else if (responseMap['model'] ==
+          MessagingSocketResponseModelType.messageDelivered.index) {
         DateTime deliveredDate =
             DateTime.parse(responseMap['messageDeliveredDate']);
         BucketObject? media;
-        try
-        {
+        try {
           media = BucketObject.fromJson(responseMap['media']);
-        }
-        finally
-        {
+        } finally {
           messageModel.movePendingMessageToRecent(
-            responseMap['messageTempId'], deliveredDate, userId, media);
+              responseMap['messageTempId'], deliveredDate, userId, media);
         }
       }
 
@@ -109,22 +120,33 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
           duration: const Duration(milliseconds: 300),
         );
       }
-    }, onError: (error) {
-      channel = IOWebSocketChannel.connect(
-        Environment.websocketUrl + WEBSOCKET,
-        headers: <String, dynamic>{
-          'Content-Type': 'application/json',
-          "Cookie": cookie
-        },
-      );
-    });
+    },
+        onError: (error) => _onDisconnected(),
+        onDone: _onDisconnected,
+        cancelOnError: true);
+  }
+
+  void _onDisconnected() {
+    print('Websocket Disconnected');
+
+    channel.sink.close();
+    socketClosed = true;
+
+    if (retryCount > 5) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Unable to connect to websocket. No internet.")));
+      return;
+    }
+    connectSocket();
+    setupChannel();
+    retryCount++;
   }
 
   /// hanlder for sending messages
   void checkForNewMessages() {
     var messageModel = context.read<MessageModelProvider>();
-
-    if (messageModel.sendQueue.isNotEmpty) {
+  
+    if (messageModel.sendQueue.isNotEmpty && !socketClosed) {
       CreateMessageRequest outboundMsg = messageModel.sendQueue[0];
       channel.sink.add(jsonEncode({
         'recipient': outboundMsg.recipient,
@@ -190,12 +212,17 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
                 decoration: const BoxDecoration(
                   color: Color(0xff071A2F),
                 ),
-                child: Text('Welcome ${authModel.user?.firstName}', style: const TextStyle(fontSize: 16, color: Colors.white),),
+                child: Text(
+                  'Welcome ${authModel.user?.firstName}',
+                  style: const TextStyle(fontSize: 16, color: Colors.white),
+                ),
               ),
               if (authModel.leaseAgreement!.signatures.isNotEmpty) ...[
                 ListTile(
-                  title: const Text('Lease Agreement', style: TextStyle(fontSize: 14, color: Colors.white70)),
-                  leading: const Icon(Icons.document_scanner, color: Colors.white70),
+                  title: const Text('Lease Agreement',
+                      style: TextStyle(fontSize: 14, color: Colors.white70)),
+                  leading:
+                      const Icon(Icons.document_scanner, color: Colors.white70),
                   onTap: () {
                     LeaseAgreement? leaseAgreement = authModel.leaseAgreement;
                     if (leaseAgreement != null) {
@@ -205,7 +232,8 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
                 ),
               ],
               ListTile(
-                title: const Text('Logout', style: TextStyle(fontSize: 14, color: Colors.white70)),
+                title: const Text('Logout',
+                    style: TextStyle(fontSize: 14, color: Colors.white70)),
                 leading: const Icon(Icons.logout, color: Colors.white70),
                 onTap: () {
                   authModel.logoutUser();
@@ -244,13 +272,17 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
   void dipose() {
     super.dispose();
     channel.sink.close();
+    socketClosed = true;
     print('...closing socket.........');
   }
 
   @override
   void deactivate() {
     super.deactivate();
+    print('Shutting down websocket socket.');
+
     channel.sink.close();
+    socketClosed = true;
     var messageModel = context.read<MessageModelProvider>();
     messageModel.clearRecentMessages();
   }

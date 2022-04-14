@@ -29,13 +29,19 @@ class _ViewPaymentsScreenState extends State<ViewPaymentsScreen>
   }
 
   Future fetchPayments() async {
-    List<Payment> paymentsList = await apiService.getAllPayments();
-    if (mounted) {
-      setState(() {
-        payments = paymentsList;
-        isLoading = false;
-      });
-    }
+    try {
+      List<Payment> paymentsList = await apiService.getAllPayments();
+      if (mounted) {
+        setState(() {
+          payments = paymentsList;
+          isLoading = false;
+        });
+      }
+    } on Exception catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+                "Problem getting payments: ${e.toString()}")));
+      }
   }
 
   @override

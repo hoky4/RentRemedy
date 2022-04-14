@@ -30,14 +30,20 @@ class _ViewMaintenanceRequestsScreenState
   }
 
   Future fetchMaintenanceRequests() async {
-    List<MaintenanceRequest> maintenanceRequestList =
+    try {
+      List<MaintenanceRequest> maintenanceRequestList =
         await apiService.getAllMaintenanceRequests();
-    if (mounted) {
-      setState(() {
-        maintenanceRequests = maintenanceRequestList;
-        isLoading = false;
-      });
-    }
+      if (mounted) {
+        setState(() {
+          maintenanceRequests = maintenanceRequestList;
+          isLoading = false;
+        });
+      }
+    } on Exception catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+                "Problem getting maintenance request: ${e.toString()}")));
+      }
   }
 
   @override

@@ -124,14 +124,18 @@ class _TermsScreenState extends State<TermsScreen> {
                       Row(
                         children: [
                           const Spacer(),
-                          acceptButton(context, widget.leaseAgreement.id),
+                          Padding(padding: const EdgeInsets.all(8.0),
+                            child: acceptButton(context, widget.leaseAgreement.id)
+                          ),
+                          
                           const Spacer()
                         ],
                       ),
                       const Text(
                         "By selecting accept, I agree to the terms above.",
                         style: TextStyle(color: Colors.white),
-                      )
+                      ),
+                      const SizedBox(height: 4.0)
                     ],
                   )),
             ] else if (widget.leaseAgreement.terminationInfo?.terminationDate ==
@@ -145,7 +149,9 @@ class _TermsScreenState extends State<TermsScreen> {
                       Row(
                         children: [
                           const Spacer(),
-                          terminateButton(context, widget.leaseAgreement.id),
+                          Padding(padding: const EdgeInsets.all(8.0),
+                            child: terminateButton(context, widget.leaseAgreement.id),
+                          ),
                           const Spacer()
                         ],
                       )

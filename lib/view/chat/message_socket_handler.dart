@@ -34,6 +34,8 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
   late String cookie;
   bool isLoading = true;
   final ScrollController scrollController = ScrollController();
+  int retryCount = 0;
+  bool socketClosed = false;
 
   @override
   void initState() {
@@ -87,6 +89,9 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
     var messageModel = context.read<MessageModelProvider>();
 
     channel.stream.listen((m) {
+      retryCount = 0;
+      socketClosed = false;
+
       Map<String, dynamic> responseMap = jsonDecode(m);
 
       if (responseMap['model'] ==
@@ -115,26 +120,33 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
           duration: const Duration(milliseconds: 300),
         );
       }
-    }, onError: (error) => _onDisconnected(), 
-    onDone: _onDisconnected
-    , cancelOnError: true);
+    },
+        onError: (error) => _onDisconnected(),
+        onDone: _onDisconnected,
+        cancelOnError: true);
   }
 
   void _onDisconnected() {
     print('Websocket Disconnected');
-    if (channel.sink != null) {
-      channel.sink.close();
+
+    channel.sink.close();
+    socketClosed = true;
+
+    if (retryCount > 5) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Unable to connect to websocket. No internet.")));
+      return;
     }
     connectSocket();
     setupChannel();
+    retryCount++;
   }
 
   /// hanlder for sending messages
   void checkForNewMessages() {
     var messageModel = context.read<MessageModelProvider>();
-
-    if (messageModel.sendQueue.isNotEmpty) {
-
+  
+    if (messageModel.sendQueue.isNotEmpty && !socketClosed) {
       CreateMessageRequest outboundMsg = messageModel.sendQueue[0];
       channel.sink.add(jsonEncode({
         'recipient': outboundMsg.recipient,
@@ -260,6 +272,7 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
   void dipose() {
     super.dispose();
     channel.sink.close();
+    socketClosed = true;
     print('...closing socket.........');
   }
 
@@ -269,6 +282,7 @@ class _MessageSocketHandlerState extends State<MessageSocketHandler>
     print('Shutting down websocket socket.');
 
     channel.sink.close();
+    socketClosed = true;
     var messageModel = context.read<MessageModelProvider>();
     messageModel.clearRecentMessages();
   }

@@ -130,25 +130,30 @@ class ApiServiceProvider {
   }
 
   dynamic getAllMaintenanceRequests() async {
-    final response = await http.get(
+    try {
+      final response = await http.get(
       Uri.parse(Environment.apiUrl + MAINTENANCE),
       headers: <String, String>{
         'cookie': _authModelProvider.cookie!,
         'Content-Type': 'application/json',
       },
-    );
+      );
 
-    if (response.statusCode == 200) {
-      Map<String, dynamic> responseMap = json.decode(response.body);
-      List<dynamic> maintenanceRequests = responseMap['maintenanceRequests'];
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseMap = json.decode(response.body);
+        List<dynamic> maintenanceRequests = responseMap['maintenanceRequests'];
 
-      List<MaintenanceRequest> maintenanceRequestList =
-          List<MaintenanceRequest>.from(
-              maintenanceRequests.map((i) => MaintenanceRequest.fromJson(i)));
+        List<MaintenanceRequest> maintenanceRequestList =
+            List<MaintenanceRequest>.from(
+                maintenanceRequests.map((i) => MaintenanceRequest.fromJson(i)));
 
-      return maintenanceRequestList;
-    } else {
-      return _handleError(response);
+        return maintenanceRequestList;
+      } else {
+        return _handleError(response);
+      }
+    } on SocketException {
+      print('No net');
+      throw Exception('No Internet connection');
     }
   }
 
@@ -243,24 +248,30 @@ class ApiServiceProvider {
   }
 
   dynamic getAllPayments() async {
-    final response = await http.get(
+    try {
+      final response = await http.get(
       Uri.parse(Environment.apiUrl + PAYMENT),
       headers: <String, String>{
         'cookie': _authModelProvider.cookie!,
         'Content-Type': 'application/json',
       },
-    );
+      );
 
-    if (response.statusCode == 200) {
-      Map<String, dynamic> responseMap = json.decode(response.body);
-      List<dynamic> payments = responseMap['payments'];
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseMap = json.decode(response.body);
+        List<dynamic> payments = responseMap['payments'];
 
-      List<Payment> paymentList =
-          List<Payment>.from(payments.map((i) => Payment.fromJson(i)));
+        List<Payment> paymentList =
+            List<Payment>.from(payments.map((i) => Payment.fromJson(i)));
 
-      return paymentList;
-    } else {
-      return _handleError(response);
+        return paymentList;
+      } else {
+        return _handleError(response);
+      }
+
+    } on SocketException {
+      print('No net');
+      throw Exception('No Internet connection');
     }
   }
 
@@ -420,7 +431,8 @@ class ApiServiceProvider {
   }
 
   dynamic findAllLeaseAgreements() async {
-    final response = await http.get(
+    try {
+      final response = await http.get(
         Uri.parse(
             '${Environment.apiUrl}$LEASEAGREEMENTS?tenant=${authModelProvider.user!.id}'),
         headers: <String, String>{
@@ -428,17 +440,22 @@ class ApiServiceProvider {
           'Content-Type': 'application/json; charset=UTF-8',
         });
 
-    if (response.statusCode == 200) {
-      Map<String, dynamic> responseMap = json.decode(response.body);
-      List<dynamic> leaseAgreements = responseMap['leaseAgreements'];
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseMap = json.decode(response.body);
+        List<dynamic> leaseAgreements = responseMap['leaseAgreements'];
 
-      List<LeaseAgreement> leaseAgreementList = List<LeaseAgreement>.from(
-          leaseAgreements.map((i) => LeaseAgreement.fromJson(i)));
+        List<LeaseAgreement> leaseAgreementList = List<LeaseAgreement>.from(
+            leaseAgreements.map((i) => LeaseAgreement.fromJson(i)));
 
-      return leaseAgreementList;
-    } else {
-      return _handleError(response);
+        return leaseAgreementList;
+      } else {
+        return _handleError(response);
+      }
+    } on SocketException {
+      print('No net');
+      throw Exception('No Internet connection');
     }
+    
   }
 
   dynamic signup(firstName, lastName, email, password) async {

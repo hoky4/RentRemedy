@@ -31,14 +31,21 @@ class _ViewLeaseAgreementsScreenState extends State<ViewLeaseAgreementsScreen> {
 
   Future fetchLeaseAgreements() async {
     LoggedInUser user = apiService.authModelProvider.user!;
-    List<LeaseAgreement> leaseAgreementList =
+    try {
+      List<LeaseAgreement> leaseAgreementList =
         await apiService.findAllLeaseAgreements();
-    if (mounted) {
-      setState(() {
-        leaseAgreements = leaseAgreementList;
-        isLoading = false;
-      });
-    }
+      if (mounted) {
+        setState(() {
+          leaseAgreements = leaseAgreementList;
+          isLoading = false;
+        });
+      }
+    } on Exception catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+                "Problem getting lease agreements: ${e.toString()}")));
+      }
+    
   }
 
   @override

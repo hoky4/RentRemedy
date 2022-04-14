@@ -52,10 +52,10 @@ class MessageBox extends StatelessWidget {
               children: [
                 if(message.type == MessageType.Image)
                   ...[
-                    Center(child: ImageFullScreenWrapperWidget(url: message.media?.getUrl ?? '', dark: true))]
+                    Center(child: ImageFullScreenWrapperWidget(url: message.media != null ? message.media!.getUrl : '', dark: true))]
                 else
                 Text(
-                  message.messageText,
+                  message.messageText ?? '',
                   style: const TextStyle(color: Colors.white
                       // color: message.sender != landlordId
                       //     ? Colors.white

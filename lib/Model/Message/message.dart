@@ -32,7 +32,7 @@ class Message {
   String recipient;
   bool sentFromSystem;
   DateTime creationDate;
-  String messageText;
+  String? messageText;
   String? messageTempId;
   DateTime? readDate;
   String? actionId;

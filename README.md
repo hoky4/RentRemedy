@@ -10,8 +10,10 @@ Rent management tool to facilitate communication between landlords and tenants, 
 ## Interactable Payment Reminder Messages
 ![payment](https://user-images.githubusercontent.com/96437864/163682786-88d79db8-44b9-4d88-b734-aafe05cdaa0b.gif)
 
-## File Maintenance Requests and get updates
+## File Maintenance Requests
 ![maintenance request 1](https://user-images.githubusercontent.com/96437864/163683448-77429436-7eb4-4c73-aa0c-4eea6254afef.gif)
+
+### Get status updates on maintenance requests
 ![maintenance request 2](https://user-images.githubusercontent.com/96437864/163683455-1da11b6c-fd04-4030-babb-4a29828abd5b.gif)
 
 

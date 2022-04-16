@@ -2,7 +2,7 @@
 
 Rent management tool to facilitate communication between landlords and tenants, mange/pay rent, and file maintenance reports. 
 
-![Onboarding (short-480)](https://user-images.githubusercontent.com/96437864/163681259-aae3da8e-a44a-416e-976f-ef5188cff06b.gif)
+![Onboarding-_short-480_](https://user-images.githubusercontent.com/96437864/163681474-66c53bca-2660-46f2-8f9b-84225ec00202.gif)
 - Onboard Tenant
 
 

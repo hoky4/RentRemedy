@@ -3,8 +3,12 @@
 Rent management tool to facilitate communication between landlords and tenants, mange/pay rent, and file maintenance reports. 
 
 
-### Onboard Tenant
+## Onboard Tenant
 ![onboarding](https://user-images.githubusercontent.com/96437864/163682288-89685212-9f76-43c6-a7e6-e95a228f7fdf.gif)
+
+
+## Interactable Payment Reminder Messages
+![payment](https://user-images.githubusercontent.com/96437864/163682452-39dbc86b-e731-40e2-afa0-33aa23078372.gif)
 
 
 ## How to run project

@@ -14,7 +14,7 @@ Rent management tool to facilitate communication between landlords and tenants, 
 ![maintenance request 1](https://user-images.githubusercontent.com/96437864/163683448-77429436-7eb4-4c73-aa0c-4eea6254afef.gif)
 
 ### Get status updates on maintenance requests
-![maintenance request 2](https://user-images.githubusercontent.com/96437864/163683455-1da11b6c-fd04-4030-babb-4a29828abd5b.gif)
+![maintenance request 2](https://user-images.githubusercontent.com/96437864/163683649-2835185d-1c47-4ae6-bcaa-34c72319cfc4.gif)
 
 
 ## Terminate Lease Agreement

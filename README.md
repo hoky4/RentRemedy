@@ -1,4 +1,4 @@
-# Rent Remedy
+# Rent Remedy (iOS/Android - Flutter)
 
 Rent management tool to facilitate communication between landlords and tenants, mange/pay rent, and file maintenance reports. 
 

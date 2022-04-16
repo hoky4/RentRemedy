@@ -11,6 +11,10 @@ Rent management tool to facilitate communication between landlords and tenants, 
 ![payment](https://user-images.githubusercontent.com/96437864/163682786-88d79db8-44b9-4d88-b734-aafe05cdaa0b.gif)
 
 
+## Terminate Lease Agreement
+![termination](https://user-images.githubusercontent.com/96437864/163682990-60896396-791d-45e4-be62-2387ad5d8b9f.gif)
+
+
 ## How to run project
 Set up Flutter https://flutter.dev/docs/get-started/install
 

@@ -1,6 +1,6 @@
 # Rent Remedy (iOS/Android - Flutter)
 
-Rent management tool to facilitate communication between landlords and tenants, mange/pay rent, and file maintenance reports. 
+Rent management tool to facilitate communication between landlords and tenants, mange/pay rent, and file maintenance reports. Rent Remedy is different because it has a focus on ease of use, consolidation of information through a messaging and file transfer system, and useful data presentation. Rent Remedy has an especially strong focus on features which will make the chaotic first and last months of a lease seamless and smooth for tenants and landlords.
 
 
 ## Onboard Tenant

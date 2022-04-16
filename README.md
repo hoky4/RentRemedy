@@ -19,6 +19,10 @@ Rent management tool to facilitate communication between landlords and tenants, 
 ![termination](https://user-images.githubusercontent.com/96437864/163682990-60896396-791d-45e4-be62-2387ad5d8b9f.gif)
 
 
+## Review Landord
+![review landlord](https://user-images.githubusercontent.com/96437864/163684040-f5aaaf06-a9f0-4138-b843-aa151be5647b.gif)
+
+
 ## How to run project
 Set up Flutter https://flutter.dev/docs/get-started/install
 

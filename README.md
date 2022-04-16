@@ -1,4 +1,10 @@
-# Mobile app
+# Rent Remedy
+
+Rent management tool to facilitate communication between landlords and tenants, mange/pay rent, and file maintenance reports. 
+
+![Onboarding (short-480)](https://user-images.githubusercontent.com/96437864/163681077-65133d1b-19ef-4fa1-84e7-b75ca1f1354e.gif)
+- Onboard Tenant
+
 
 Set up Flutter https://flutter.dev/docs/get-started/install
 
